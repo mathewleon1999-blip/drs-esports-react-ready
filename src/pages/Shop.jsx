@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { motion } from "framer-motion";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
@@ -108,6 +108,20 @@ function Shop() {
     
     return result;
   }, [searchQuery, priceRange, sortBy, categoryFilter]);
+
+  // Body scroll lock when modal is open
+  useEffect(() => {
+    if (selectedJersey) {
+      document.body.classList.add('modal-open');
+    } else {
+      document.body.classList.remove('modal-open');
+    }
+    
+    // Cleanup on unmount
+    return () => {
+      document.body.classList.remove('modal-open');
+    };
+  }, [selectedJersey]);
 
   const categories = ["all", ...new Set(jerseys.map(j => j.category))];
 
