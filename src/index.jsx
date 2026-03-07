@@ -74,4 +74,3 @@ ReactDOM.createRoot(document.getElementById('root')).render(
 
 // Initialize Capacitor features (will skip on web)
 initApp();
-

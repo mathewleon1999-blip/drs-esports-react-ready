@@ -29,10 +29,18 @@
   --glass-secondary: rgba(255, 0, 110, 0.1);
 }
 
+/* ========================================
+   MOBILE SCROLL FIX - CRITICAL
+   ======================================== */
+
+/* HTML - base scroll behavior */
 html {
   scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+  overflow-x: hidden;
 }
 
+/* Body - allow vertical scroll, prevent horizontal */
 body {
   margin: 0;
   font-family: 'Rajdhani', sans-serif;
@@ -43,7 +51,73 @@ body {
   background-attachment: fixed;
   color: var(--text-light);
   overflow-x: hidden;
+  overflow-y: auto;
+  height: auto;
+  min-height: 100vh;
   line-height: 1.6;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+}
+
+/* React Root - ensure proper scroll behavior */
+#root {
+  min-height: 100vh;
+  overflow-x: hidden;
+  overflow-y: visible;
+}
+
+/* Page container - base for all pages */
+.page-container {
+  min-height: 100vh;
+  overflow-x: hidden;
+  padding-top: 80px;
+}
+
+/* Mobile-specific scroll fixes */
+@media (max-width: 768px) {
+  html, body {
+    overflow-x: hidden;
+    overflow-y: auto;
+    height: auto;
+    min-height: 100vh;
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  #root {
+    min-height: 100vh;
+    height: auto;
+    overflow-y: auto;
+  }
+  
+  .page-container {
+    min-height: 100vh;
+    height: auto;
+    overflow: visible;
+  }
+  
+  /* Fix for fixed navbar blocking content */
+  main {
+    min-height: calc(100vh - 80px);
+    padding-bottom: 20px;
+  }
+}
+
+/* iOS Safari specific fixes */
+@supports (-webkit-touch-callout: none) {
+  html, body, #root {
+    height: -webkit-fill-available;
+    min-height: -webkit-fill-available;
+  }
+  
+  .page-container {
+    min-height: calc(-webkit-fill-available - 80px);
+    min-height: calc(100vh - 80px);
+  }
+}
+
+/* Prevent pull-to-refresh on mobile (optional - remove if not wanted) */
+body {
+  overscroll-behavior-y: contain;
 }
 
 /* Glassmorphism Base Classes */
