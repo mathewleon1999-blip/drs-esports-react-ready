@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">DRS Esports</string>
+    <string name="title_activity_main">DRS Esports</string>
+    <string name="package_name">com.drs.esports</string>
+    <string name="custom_url_scheme">com.drs.esports</string>
+</resources>

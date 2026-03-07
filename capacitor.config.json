@@ -1,0 +1,28 @@
+{
+  "appId": "com.drs.esports",
+  "appName": "DRS Esports",
+  "webDir": "dist",
+  "bundledWebRuntime": false,
+  "npmClient": "npm",
+  "android": {
+    "allowMixedContent": true
+  },
+  "ios": {
+    "allowsLinkPreviews": true,
+    "swiftVersion": "5.0"
+  },
+  "server": {
+    "androidScheme": "https",
+    "cleartext": true
+  },
+  "plugins": {
+    "SplashScreen": {
+      "launchShowDuration": 3000,
+      "launchAutoHide": true,
+      "backgroundColor": "#0a0e14",
+      "androidSplashResourceName": "splash",
+      "androidScaleType": "CENTER_CROP"
+    }
+  }
+}
+
