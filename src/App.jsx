@@ -39,7 +39,8 @@ const Predictions = lazy(() => import("./pages/Predictions"));
 const PrizePool = lazy(() => import("./pages/PrizePool"));
 
 function App() {
-  // Register service worker for PWA
+  // Service worker disabled for Vercel deployment - uncomment for local/PWA use
+  /*
   useEffect(() => {
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('/sw.js')
@@ -51,6 +52,7 @@ function App() {
         });
     }
   }, []);
+  */
 
   return (
     <>
