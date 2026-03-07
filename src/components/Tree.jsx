@@ -283,9 +283,10 @@ function Tree() {
 
   return (
     <section className="team-tree" style={{ 
-      padding: "100px 20px", 
+      padding: "80px 10px 40px", 
       background: "var(--gradient-dark)",
       minHeight: "100vh",
+      overflowX: "auto",
     }}>
       <style>{`
         @keyframes pulse {

@@ -2023,44 +2023,215 @@
 }
 
 /* ========================================
-   FAMILY TREE POPUP MOBILE STYLES
+   FAMILY TREE MOBILE STYLES
    ======================================== */
 
+/* Mobile Family Tree Container */
+.team-tree {
+  padding: 80px 10px 40px !important;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.team-tree .container {
+  display: flex;
+  justify-content: center;
+  min-width: fit-content;
+}
+
+/* Family Tree Header - Mobile */
+.team-tree > div:first-child {
+  margin-bottom: 20px !important;
+}
+
+.team-tree h2 {
+  font-size: 24px !important;
+  padding: 0 10px;
+}
+
+.team-tree > div:first-child p {
+  font-size: 11px !important;
+  padding: 0 10px;
+}
+
+/* Filter Buttons - Mobile */
+.team-tree [style*="display: flex"][style*="justify-content: center"] {
+  gap: 6px !important;
+  padding: 0 10px;
+}
+
+.team-tree [style*="display: flex"][style*="justify-content: center"] button {
+  padding: 6px 12px !important;
+  font-size: 10px !important;
+  min-height: 32px;
+  border-radius: 15px !important;
+}
+
+/* Tree Node Cards - Mobile */
+.team-tree .tree-node,
+.team-tree [style*="background: rgba(17, 24, 39"] {
+  min-width: 80px !important;
+  max-width: 100px !important;
+  padding: 8px 10px !important;
+  border-radius: 8px !important;
+}
+
+/* Root Node - Mobile */
+.team-tree .tree-node:first-child,
+.team-tree [style*="border-radius: 20"] {
+  min-width: 120px !important;
+  max-width: 160px !important;
+  padding: 12px 15px !important;
+  border-radius: 12px !important;
+}
+
+/* Node Icons - Mobile */
+.team-tree [style*="font-size: 42px"],
+.team-tree [style*="font-size: 30px"],
+.team-tree [style*="font-size: 26px"] {
+  font-size: 24px !important;
+  margin-bottom: 4px !important;
+}
+
+.team-tree img {
+  width: 35px !important;
+  height: 35px !important;
+}
+
+.team-tree .tree-node:first-child img {
+  width: 45px !important;
+  height: 45px !important;
+}
+
+/* Node Text - Mobile */
+.team-tree h4 {
+  font-size: 10px !important;
+  margin-bottom: 2px !important;
+  letter-spacing: 0.5px !important;
+}
+
+.team-tree .tree-node:first-child h4 {
+  font-size: 12px !important;
+}
+
+.team-tree p {
+  font-size: 8px !important;
+  line-height: 1.2 !important;
+}
+
+.team-tree .tree-node:first-child p {
+  font-size: 10px !important;
+}
+
+/* Connector Lines - Mobile */
+.team-tree [style*="height: 25"],
+.team-tree [style*="height: 20"] {
+  height: 12px !important;
+}
+
+.team-tree [style*="width: 2"] {
+  width: 1px !important;
+}
+
+/* Children Container - Mobile */
+.team-tree [style*="gap: 30"],
+.team-tree [style*="gap: 15"],
+.team-tree [style*="paddingTop: 25"] {
+  gap: 10px !important;
+  padding-top: 15px !important;
+}
+
+/* Horizontal Connector Bar - Mobile */
+.team-tree [style*="width: calc"],
+.team-tree [style*="maxWidth:"] {
+  width: 90% !important;
+  max-width: none !important;
+}
+
+/* Selected Node Popup - Mobile */
+.team-tree [style*="position: fixed"],
+.team-tree [style*="bottom: 30"] {
+  bottom: 20px !important;
+  left: 10px !important;
+  right: 10px !important;
+  transform: none !important;
+  max-width: none !important;
+  width: auto !important;
+  padding: 15px 20px !important;
+  border-radius: 12px !important;
+  gap: 12px !important;
+}
+
+/* Popup Icon - Mobile */
+.team-tree [style*="position: fixed"] > div:first-child {
+  font-size: 28px !important;
+}
+
+.team-tree [style*="position: fixed"] img {
+  width: 45px !important;
+  height: 45px !important;
+}
+
+/* Popup Text - Mobile */
+.team-tree [style*="position: fixed"] h3 {
+  font-size: 16px !important;
+  margin-bottom: 3px !important;
+}
+
+.team-tree [style*="position: fixed"] p {
+  font-size: 11px !important;
+}
+
+/* Popup Close Button - Mobile */
+.team-tree [style*="position: fixed"] button {
+  width: 24px !important;
+  height: 24px !important;
+  font-size: 16px !important;
+  top: -8px !important;
+  right: -8px !important;
+  min-height: 24px !important;
+  padding: 0 !important;
+}
+
+/* Scrollbar - Mobile */
+.team-tree::-webkit-scrollbar {
+  height: 4px;
+}
+
+.team-tree::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 2px;
+}
+
+.team-tree::-webkit-scrollbar-thumb {
+  background: var(--primary);
+  border-radius: 2px;
+}
+
+/* Animation improvements - Mobile */
 @media (max-width: 480px) {
-  /* Family Tree Popup Mobile Styles */
-  .team-tree [style*="position: fixed"] {
-    max-width: 95vw !important;
-    max-height: 70vh !important;
-    padding: 15px 20px !important;
-    gap: 12px !important;
-    border-radius: 12px !important;
-    overflow-y: auto !important;
-    -webkit-overflow-scrolling: touch;
+  @keyframes pulse {
+    0%, 100% { opacity: 0.6; }
+    50% { opacity: 1; }
   }
   
-  .team-tree [style*="position: fixed"] > div:first-child {
-    font-size: 32px !important;
+  .tree-node {
+    transition: all 0.2s ease !important;
   }
   
-  .team-tree [style*="position: fixed"] img {
-    width: 50px !important;
-    height: 50px !important;
+  .tree-node[style*="scale: 1.05"] {
+    transform: scale(1.02) !important;
   }
-  
-  .team-tree [style*="position: fixed"] h3 {
-    font-size: 16px !important;
-  }
-  
-  .team-tree [style*="position: fixed"] p {
-    font-size: 11px !important;
-  }
-  
-  .team-tree [style*="position: fixed"] button {
-    width: 24px !important;
-    height: 24px !important;
-    font-size: 14px !important;
-    top: -8px !important;
-    right: -8px !important;
-  }
+}
+
+/* Prevent zoom on double tap */
+.team-tree .tree-node {
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Better spacing for nested children on mobile */
+.team-tree [style*="position: relative"] {
+  margin: 0 3px;
 }
 
