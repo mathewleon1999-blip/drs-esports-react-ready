@@ -6368,33 +6368,43 @@ body.dark-mode {
   padding: 10px;
 }
 
+/* Mobile Navigation - Fixed sidebar - Always hidden by default */
 .mobile-nav {
-  position: fixed;
-  top: 70px;
-  right: 0;
-  width: 280px;
-  height: calc(100vh - 70px);
-  background: var(--card-bg);
-  padding: 20px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  overflow-y: auto;
-  z-index: 999;
-  border-left: 1px solid rgba(0, 212, 255, 0.1);
+  position: fixed !important;
+  top: 70px !important;
+  right: 0 !important;
+  width: 280px !important;
+  height: calc(100vh - 70px) !important;
+  background: var(--card-bg) !important;
+  padding: 20px !important;
+  display: none !important;
+  flex-direction: column !important;
+  gap: 10px !important;
+  overflow-y: auto !important;
+  z-index: 999 !important;
+  border-left: 1px solid rgba(0, 212, 255, 0.1) !important;
 }
 
+/* Show mobile nav when visible (handled by framer-motion) */
+.mobile-nav[data-visible="true"],
+.mobile-nav[style*="display: flex"],
+html:not(.desktop) .mobile-nav {
+  display: flex !important;
+}
+
+/* Ensure mobile nav links are properly styled */
 .mobile-nav a {
-  padding: 15px;
-  color: var(--text-light);
-  text-decoration: none;
-  border-radius: 8px;
-  transition: all 0.3s ease;
+  padding: 15px !important;
+  color: var(--text-light) !important;
+  text-decoration: none !important;
+  border-radius: 8px !important;
+  transition: all 0.3s ease !important;
+  display: block !important;
 }
 
 .mobile-nav a:hover {
-  background: rgba(0, 212, 255, 0.1);
-  color: var(--primary);
+  background: rgba(0, 212, 255, 0.1) !important;
+  color: var(--primary) !important;
 }
 
 @media (max-width: 1024px) {
