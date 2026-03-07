@@ -1,0 +1,44 @@
+# Robots.txt for DRS Esports
+# https://drsesports.com
+
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://drsesports.com/sitemap.xml
+
+# Crawl-delay (optional, for politeness)
+Crawl-delay: 1
+
+# Disallow admin/private pages
+Disallow: /admin
+Disallow: /admin-dashboard
+Disallow: /player-dashboard
+Disallow: /cart
+Disallow: /order-tracking
+
+# Allow important pages
+Allow: /shop
+Allow: /tournaments
+Allow: /teams
+Allow: /leaderboard
+Allow: /news
+Allow: /about
+Allow: /contact
+
+# Googlebot
+User-agent: Googlebot
+Allow: /
+Crawl-delay: 1
+
+# Bingbot
+User-agent: Bingbot
+Allow: /
+Crawl-delay: 1
+
+# DuckDuckBot
+User-agent: DuckDuckBot
+Allow: /
+
+# Sitemap indexes for international targeting
+Sitemap: https://drsesports.com/sitemap-index.xml
