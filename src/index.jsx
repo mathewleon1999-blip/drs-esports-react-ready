@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
 import App from './App';
 import './index.css';
+import './mobile-fixes.css';
 
 // Global error handler to catch runtime errors
 window.addEventListener('error', (e) => {

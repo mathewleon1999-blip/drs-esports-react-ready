@@ -1,0 +1,2022 @@
+/* Mobile Responsive Fixes - Comprehensive */
+@media (max-width: 480px) {
+  /* Base mobile styles */
+  html {
+    font-size: 14px;
+  }
+  
+  body {
+    overflow-x: hidden;
+  }
+  
+  /* Navbar mobile */
+  .navbar {
+    padding: 12px 15px !important;
+    height: 60px;
+  }
+  
+  .navbar .logo {
+    width: 50px;
+  }
+  
+  .navbar-links {
+    display: none !important;
+  }
+  
+  .mobile-menu-btn {
+    display: block !important;
+  }
+  
+  /* Page container */
+  .page-container {
+    padding-top: 70px;
+  }
+  
+  /* Hero section mobile */
+  .hero {
+    padding: 80px 15px 40px;
+    min-height: auto;
+  }
+  
+  .hero h1 {
+    font-size: 28px !important;
+  }
+  
+  .hero-title-main {
+    font-size: 40px !important;
+  }
+  
+  .hero-title-sub {
+    font-size: 18px !important;
+    letter-spacing: 5px !important;
+  }
+  
+  .hero-subtitle {
+    font-size: 14px !important;
+    letter-spacing: 2px;
+  }
+  
+  .hero-cta {
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 30px;
+  }
+  
+  .primary-btn, .secondary-btn {
+    width: 100%;
+    padding: 14px 20px;
+    font-size: 13px;
+    text-align: center;
+  }
+  
+  .hero-stats {
+    flex-direction: column;
+    gap: 15px;
+    padding: 20px 15px;
+  }
+  
+  .hero-stat .stat-value {
+    font-size: 24px;
+  }
+  
+  /* Shop page mobile */
+  .shop-hero {
+    padding: 60px 15px 30px;
+  }
+  
+  .shop-hero h1 {
+    font-size: 28px !important;
+  }
+  
+  .shop-hero p {
+    font-size: 14px;
+  }
+  
+  .shop-filters {
+    padding: 15px;
+  }
+  
+  .filters-bar {
+    flex-direction: column;
+    gap: 12px;
+    padding: 10px;
+  }
+  
+  .filters-bar .search-box {
+    width: 100%;
+    min-width: unset;
+  }
+  
+  .filters-bar .search-input {
+    width: 100%;
+    padding: 12px 12px 12px 40px;
+    font-size: 14px;
+  }
+  
+  .filter-toggle-btn {
+    width: 100%;
+    padding: 12px;
+    font-size: 14px;
+  }
+  
+  .sort-box {
+    width: 100%;
+    flex-direction: column;
+    gap: 8px;
+  }
+  
+  .sort-box label {
+    font-size: 13px;
+  }
+  
+  .sort-select {
+    width: 100%;
+    padding: 12px;
+    font-size: 14px;
+  }
+  
+  .filter-info {
+    font-size: 12px;
+  }
+  
+  /* Products Grid - HORIZONTAL SCROLL FIX */
+  .shop-products {
+    padding: 30px 15px;
+    overflow-x: hidden;
+  }
+  
+  .products-grid {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 15px !important;
+    max-width: 100%;
+  }
+  
+  /* Enable horizontal scroll if needed */
+  .shop-products .container {
+    overflow-x: visible;
+    padding: 0 10px;
+  }
+  
+  /* Product Card mobile */
+  .product-card {
+    margin-bottom: 0;
+    border-radius: 10px;
+  }
+  
+  .product-card .featured-badge {
+    font-size: 10px;
+    padding: 4px 8px;
+    top: 10px;
+    right: 10px;
+  }
+  
+  .product-card .wishlist-btn {
+    width: 32px;
+    height: 32px;
+    font-size: 14px;
+    top: 8px;
+    right: 8px;
+  }
+  
+  .product-image {
+    height: 140px !important;
+    padding: 15px;
+  }
+  
+  .product-image img {
+    max-width: 100%;
+    height: auto;
+  }
+  
+  .product-info {
+    padding: 15px;
+  }
+  
+  .product-info h3 {
+    font-size: 13px !important;
+    margin-bottom: 6px;
+  }
+  
+  .product-description {
+    font-size: 11px;
+    margin-bottom: 8px;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  
+  .product-colors {
+    margin-bottom: 8px;
+    gap: 5px;
+  }
+  
+  .color-dot {
+    width: 12px;
+    height: 12px;
+  }
+  
+  .color-count {
+    font-size: 10px;
+  }
+  
+  .product-price {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+  
+  .product-price .price {
+    font-size: 18px !important;
+  }
+  
+  .product-price .sizes {
+    font-size: 10px;
+  }
+  
+  .add-to-cart-btn {
+    padding: 10px 12px;
+    font-size: 12px;
+    border-radius: 6px;
+  }
+  
+  /* Modal mobile */
+  .modal-overlay {
+    padding: 15px;
+    align-items: flex-start;
+    overflow-y: auto;
+  }
+  
+  .product-modal {
+    width: 100%;
+    max-width: 100%;
+    margin: 20px 0;
+    border-radius: 12px;
+  }
+  
+  .modal-close {
+    top: 10px;
+    right: 10px;
+    width: 32px;
+    height: 32px;
+    font-size: 20px;
+  }
+  
+  .modal-content {
+    grid-template-columns: 1fr;
+    gap: 20px;
+    padding: 20px;
+  }
+  
+  .modal-image {
+    height: 200px;
+    border-radius: 8px;
+  }
+  
+  .modal-details {
+    padding: 0;
+  }
+  
+  .modal-details h2 {
+    font-size: 20px;
+    margin-bottom: 10px;
+  }
+  
+  .modal-description {
+    font-size: 13px;
+    margin-bottom: 15px;
+  }
+  
+  .modal-price {
+    font-size: 24px !important;
+    margin-bottom: 20px;
+  }
+  
+  .option-group {
+    margin-bottom: 15px;
+  }
+  
+  .option-group label {
+    font-size: 13px;
+    margin-bottom: 8px;
+  }
+  
+  .color-options, .size-options {
+    gap: 8px;
+  }
+  
+  .color-option, .size-option {
+    padding: 8px 12px;
+    font-size: 12px;
+  }
+  
+  .confirm-add-btn {
+    padding: 14px;
+    font-size: 14px;
+    margin-top: 15px;
+  }
+  
+  /* Size Guide mobile */
+  .size-guide {
+    padding: 40px 15px;
+  }
+  
+  .size-guide h2 {
+    font-size: 24px;
+    margin-bottom: 25px;
+  }
+  
+  .size-table table {
+    font-size: 12px;
+  }
+  
+  .size-table th, .size-table td {
+    padding: 10px 8px;
+  }
+  
+  /* Glass Buttons mobile */
+  .glass {
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+  }
+  
+  .glass-hover:hover {
+    transform: translateY(-3px);
+  }
+  
+  /* Toast Notification mobile */
+  .toast-notification {
+    left: 15px;
+    right: 15px;
+    transform: none;
+    width: auto;
+    padding: 12px 20px;
+    font-size: 13px;
+    border-radius: 8px;
+  }
+  
+  /* Cart page mobile */
+  .cart-hero {
+    padding: 60px 15px 30px;
+  }
+  
+  .cart-hero h1 {
+    font-size: 28px !important;
+  }
+  
+  .cart-content {
+    padding: 30px 15px;
+  }
+  
+  .cart-grid {
+    grid-template-columns: 1fr;
+    gap: 25px;
+  }
+  
+  .cart-header {
+    flex-direction: column;
+    gap: 15px;
+    align-items: flex-start;
+  }
+  
+  .cart-header h2 {
+    font-size: 20px;
+  }
+  
+  .cart-item {
+    flex-direction: column;
+    padding: 15px;
+    gap: 12px;
+  }
+  
+  .item-image {
+    width: 100%;
+    text-align: center;
+  }
+  
+  .item-image img {
+    max-width: 150px;
+    height: auto;
+    border-radius: 8px;
+  }
+  
+  .item-details h3 {
+    font-size: 16px;
+  }
+  
+  .item-variant {
+    font-size: 12px;
+  }
+  
+  .item-price {
+    font-size: 18px;
+  }
+  
+  .item-actions {
+    flex-direction: row;
+    width: 100%;
+  }
+  
+  .remove-btn {
+    width: 100%;
+    padding: 10px;
+    font-size: 13px;
+  }
+  
+  .order-summary {
+    padding: 20px;
+    border-radius: 12px;
+  }
+  
+  .order-summary h2 {
+    font-size: 20px;
+  }
+  
+  .summary-row {
+    font-size: 14px;
+    padding: 10px 0;
+  }
+  
+  .checkout-btn {
+    padding: 14px;
+    font-size: 14px;
+  }
+  
+  /* Checkout modal mobile */
+  .checkout-modal {
+    max-width: 100%;
+    margin: 10px;
+    border-radius: 12px;
+  }
+  
+  .checkout-content {
+    padding: 25px 20px;
+  }
+  
+  .checkout-content h2 {
+    font-size: 22px;
+  }
+  
+  .form-group {
+    margin-bottom: 15px;
+  }
+  
+  .form-group label {
+    font-size: 13px;
+    margin-bottom: 6px;
+  }
+  
+  .form-group input, 
+  .form-group textarea {
+    padding: 12px 14px;
+    font-size: 14px;
+  }
+  
+  .form-row {
+    grid-template-columns: 1fr;
+    gap: 15px;
+  }
+  
+  .place-order-btn {
+    padding: 14px;
+    font-size: 15px;
+  }
+  
+  /* Footer mobile */
+  footer {
+    padding: 40px 15px 20px;
+  }
+  
+  .footer-logo {
+    width: 80px;
+    margin-bottom: 20px;
+  }
+  
+  .social-links {
+    gap: 12px;
+    margin-bottom: 25px;
+  }
+  
+  .social-link {
+    width: 40px;
+    height: 40px;
+    font-size: 16px;
+  }
+  
+  .footer-text {
+    font-size: 12px;
+  }
+  
+  /* Stats section mobile */
+  .stats {
+    padding: 50px 15px;
+  }
+  
+  .stats h2 {
+    font-size: 24px;
+    margin-bottom: 8px;
+  }
+  
+  .stats-subtitle {
+    font-size: 12px;
+    margin-bottom: 30px;
+  }
+  
+  .stats-grid {
+    grid-template-columns: 1fr;
+    gap: 15px;
+  }
+  
+  .stat-card {
+    padding: 25px 20px;
+    border-radius: 10px;
+  }
+  
+  .stat-number {
+    font-size: 32px !important;
+  }
+  
+  .stat-label {
+    font-size: 12px;
+  }
+  
+  /* Team section mobile */
+  .team {
+    padding: 50px 15px;
+  }
+  
+  .team h2 {
+    font-size: 24px;
+  }
+  
+  .team-subtitle {
+    font-size: 12px;
+    margin-bottom: 30px;
+  }
+  
+  .team-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  
+  .player-card {
+    padding: 25px 20px;
+    border-radius: 10px;
+  }
+  
+  .player-avatar {
+    width: 80px;
+    height: 80px;
+    font-size: 28px;
+  }
+  
+  .player-name {
+    font-size: 18px;
+  }
+  
+  /* Tournaments mobile */
+  .tournaments {
+    padding: 50px 15px;
+  }
+  
+  .tournaments h2 {
+    font-size: 24px;
+  }
+  
+  .tournaments-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  
+  .tournament-card {
+    padding: 20px;
+    border-radius: 10px;
+  }
+  
+  .tournament-name {
+    font-size: 18px;
+  }
+  
+  .tournament-prize {
+    font-size: 22px;
+  }
+  
+  /* About page mobile */
+  .about-hero {
+    padding: 60px 15px 30px;
+  }
+  
+  .about-hero h1 {
+    font-size: 28px !important;
+  }
+  
+  .about-tagline {
+    font-size: 14px;
+  }
+  
+  .about-section {
+    padding: 40px 15px;
+  }
+  
+  .about-content-grid {
+    grid-template-columns: 1fr;
+    gap: 30px;
+  }
+  
+  .about-text h2 {
+    font-size: 22px;
+    margin-bottom: 15px;
+  }
+  
+  .about-text p {
+    font-size: 14px;
+    line-height: 1.7;
+  }
+  
+  .values-section {
+    padding: 40px 15px;
+  }
+  
+  .values-section h2 {
+    font-size: 24px;
+    margin-bottom: 30px;
+  }
+  
+  .values-grid {
+    grid-template-columns: 1fr;
+    gap: 15px;
+  }
+  
+  .value-card {
+    padding: 25px 20px;
+    border-radius: 10px;
+  }
+  
+  .value-icon {
+    font-size: 36px;
+  }
+  
+  .value-card h3 {
+    font-size: 18px;
+  }
+  
+  /* Login page mobile */
+  .login-hero {
+    padding: 60px 15px 30px;
+  }
+  
+  .login-hero h1 {
+    font-size: 28px !important;
+  }
+  
+  .login-section {
+    padding: 30px 15px;
+  }
+  
+  .login-section .container {
+    grid-template-columns: 1fr;
+    gap: 25px;
+  }
+  
+  .login-container {
+    padding: 25px 20px;
+    border-radius: 12px;
+  }
+  
+  .login-tabs {
+    margin-bottom: 20px;
+  }
+  
+  .tab-btn {
+    padding: 12px;
+    font-size: 13px;
+  }
+  
+  .login-form .form-group {
+    margin-bottom: 15px;
+  }
+  
+  .login-form .form-group label {
+    font-size: 13px;
+  }
+  
+  .login-form .form-group input {
+    padding: 12px 14px;
+    font-size: 14px;
+  }
+  
+  .submit-btn {
+    padding: 14px;
+    font-size: 14px;
+  }
+  
+  .login-footer {
+    flex-direction: column;
+    gap: 12px;
+    text-align: center;
+  }
+  
+  .login-benefits {
+    padding: 25px 20px;
+    border-radius: 12px;
+  }
+  
+  .login-benefits h3 {
+    font-size: 20px;
+  }
+  
+  .benefits-list li {
+    font-size: 14px;
+    padding: 12px 0;
+  }
+  
+  /* Contact page mobile */
+  .contact-hero {
+    padding: 60px 15px 30px;
+  }
+  
+  .contact-hero h1 {
+    font-size: 28px !important;
+  }
+  
+  .contact-content {
+    padding: 30px 15px;
+  }
+  
+  .contact-grid {
+    grid-template-columns: 1fr;
+    gap: 30px;
+  }
+  
+  .contact-form-container {
+    padding: 25px 20px;
+    border-radius: 12px;
+  }
+  
+  .contact-form-container h2 {
+    font-size: 22px;
+    margin-bottom: 20px;
+  }
+  
+  .contact-form .form-group {
+    margin-bottom: 15px;
+  }
+  
+  .contact-info-container h2 {
+    font-size: 22px;
+  }
+  
+  .contact-info-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  
+  .contact-info-item .info-icon {
+    width: 50px;
+    height: 50px;
+    font-size: 24px;
+  }
+  
+  .social-icons {
+    flex-wrap: wrap;
+    justify-content: flex-start;
+  }
+  
+  /* Admin page mobile */
+  .admin-hero {
+    padding: 60px 15px 30px;
+  }
+  
+  .admin-hero h1 {
+    font-size: 28px !important;
+  }
+  
+  .admin-section {
+    padding: 30px 15px;
+  }
+  
+  .admin-section .container {
+    grid-template-columns: 1fr;
+    gap: 25px;
+  }
+  
+  .admin-container {
+    padding: 25px 20px;
+    border-radius: 12px;
+  }
+  
+  .admin-header h2 {
+    font-size: 22px;
+  }
+  
+  .admin-form .form-group {
+    margin-bottom: 15px;
+  }
+  
+  .features-grid {
+    grid-template-columns: 1fr;
+    gap: 15px;
+  }
+  
+  /* Wishlist page mobile */
+  .wishlist-hero {
+    padding: 60px 15px 30px;
+  }
+  
+  .wishlist-hero h1 {
+    font-size: 28px !important;
+  }
+  
+  .wishlist-content {
+    padding: 30px 15px;
+  }
+  
+  .wishlist-header {
+    justify-content: center;
+  }
+  
+  .wishlist-grid {
+    gap: 15px;
+  }
+  
+  .wishlist-item {
+    flex-direction: column;
+    padding: 15px;
+    gap: 12px;
+  }
+  
+  .wishlist-item-image {
+    width: 100%;
+    height: 180px;
+  }
+  
+  .wishlist-item-info h3 {
+    font-size: 16px;
+  }
+  
+  .wishlist-item-description {
+    font-size: 12px;
+  }
+  
+  .wishlist-item-price .price {
+    font-size: 20px;
+  }
+  
+  .wishlist-item-actions {
+    flex-direction: column;
+  }
+  
+  .move-to-cart-btn, 
+  .remove-wishlist-btn {
+    width: 100%;
+    padding: 12px;
+    font-size: 13px;
+  }
+  
+  /* Donation page mobile */
+  .donation-hero {
+    padding: 60px 15px 30px;
+  }
+  
+  .donation-hero h1 {
+    font-size: 28px !important;
+  }
+  
+  .donation-content {
+    padding: 30px 15px;
+  }
+  
+  .donation-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .donation-form-container {
+    padding: 25px 20px;
+    border-radius: 12px;
+  }
+  
+  .preset-amounts {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+  }
+  
+  .amount-btn {
+    padding: 14px 10px;
+    font-size: 14px;
+  }
+  
+  .payment-methods {
+    grid-template-columns: 1fr;
+  }
+  
+  /* Newsletter page mobile */
+  .newsletter-hero {
+    padding: 60px 15px 30px;
+  }
+  
+  .newsletter-hero h1 {
+    font-size: 28px !important;
+  }
+  
+  .newsletter-content {
+    padding: 30px 15px;
+  }
+  
+  .benefits-grid {
+    grid-template-columns: 1fr;
+    gap: 15px;
+  }
+  
+  .benefit-card {
+    padding: 20px;
+    border-radius: 10px;
+  }
+  
+  .newsletter-form {
+    padding: 25px 20px;
+    border-radius: 12px;
+  }
+  
+  .interests-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  /* FAQ page mobile */
+  .faq-hero {
+    padding: 60px 15px 30px;
+  }
+  
+  .faq-hero h1 {
+    font-size: 28px !important;
+  }
+  
+  .faq-content {
+    padding: 30px 15px;
+  }
+  
+  /* Privacy & Terms mobile */
+  .privacy-hero,
+  .terms-hero {
+    padding: 60px 15px 30px;
+  }
+  
+  .privacy-hero h1,
+  .terms-hero h1 {
+    font-size: 28px !important;
+  }
+  
+  .privacy-content,
+  .terms-content {
+    padding: 30px 15px;
+  }
+  
+  /* Tournaments page mobile */
+  .tournaments-hero {
+    padding: 60px 15px 30px;
+  }
+  
+  .tournaments-hero h1 {
+    font-size: 28px !important;
+  }
+  
+  .tournaments-content {
+    padding: 30px 15px;
+  }
+  
+  .tournament-tabs {
+    gap: 8px;
+    margin-bottom: 25px;
+  }
+  
+  .tournament-tabs .tab-btn {
+    padding: 10px 16px;
+    font-size: 13px;
+  }
+  
+  .tournaments-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  
+  .tournament-card {
+    padding: 20px;
+    border-radius: 10px;
+  }
+  
+  .tournament-image {
+    height: 150px;
+  }
+  
+  .tournament-info {
+    padding: 20px;
+  }
+  
+  .tournament-info h3 {
+    font-size: 18px;
+  }
+  
+  .tournament-description {
+    font-size: 13px;
+  }
+  
+  .tournament-details {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    padding: 12px;
+  }
+  
+  .tournament-actions {
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .register-btn, .bracket-btn {
+    width: 100%;
+    padding: 12px;
+    font-size: 13px;
+  }
+  
+  /* Live Stream page mobile */
+  .stream-hero {
+    padding: 60px 15px 30px;
+  }
+  
+  .stream-content {
+    padding: 30px 15px;
+  }
+  
+  .streams-grid {
+    grid-template-columns: 1fr;
+    gap: 15px;
+  }
+  
+  .stream-card {
+    border-radius: 10px;
+  }
+  
+  .stream-thumbnail {
+    height: 140px;
+  }
+  
+  /* Leaderboard page mobile */
+  .leaderboard-hero {
+    padding: 60px 15px 30px;
+  }
+  
+  .leaderboard-hero h1 {
+    font-size: 28px !important;
+  }
+  
+  .leaderboard-content {
+    padding: 30px 15px;
+  }
+  
+  .leaderboard-filters {
+    flex-direction: column;
+    gap: 15px;
+  }
+  
+  .filter-group {
+    width: 100%;
+  }
+  
+  .filter-group select {
+    width: 100%;
+  }
+  
+  .rankings-table {
+    overflow-x: auto;
+  }
+  
+  .rankings-table table {
+    min-width: 500px;
+  }
+  
+  /* News page mobile */
+  .news-hero {
+    padding: 60px 15px 30px;
+  }
+  
+  .news-hero h1 {
+    font-size: 28px !important;
+  }
+  
+  .news-content {
+    padding: 30px 15px;
+  }
+  
+  .featured-article {
+    grid-template-columns: 1fr;
+    padding: 20px;
+    gap: 20px;
+    border-radius: 12px;
+  }
+  
+  .news-grid {
+    grid-template-columns: 1fr;
+    gap: 15px;
+  }
+  
+  .news-card {
+    border-radius: 10px;
+  }
+  
+  .news-image {
+    height: 150px;
+  }
+  
+  /* Schedule page mobile */
+  .schedule-hero {
+    padding: 60px 15px 30px;
+  }
+  
+  .schedule-hero h1 {
+    font-size: 28px !important;
+  }
+  
+  .schedule-content {
+    padding: 30px 15px;
+  }
+  
+  .calendar-grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+  }
+  
+  .calendar-day {
+    padding: 10px 5px;
+  }
+  
+  .day-number {
+    font-size: 18px;
+  }
+  
+  .match-card {
+    padding: 20px;
+    border-radius: 10px;
+  }
+  
+  .match-teams {
+    flex-direction: column;
+    gap: 15px;
+  }
+  
+  .match-schedule {
+    flex-direction: column;
+    gap: 12px;
+    align-items: flex-start;
+  }
+  
+  /* Teams page mobile */
+  .teams-hero {
+    padding: 60px 15px 30px;
+  }
+  
+  .teams-hero h1 {
+    font-size: 28px !important;
+  }
+  
+  .teams-content {
+    padding: 30px 15px;
+  }
+  
+  .teams-header {
+    flex-direction: column;
+    gap: 15px;
+  }
+  
+  .teams-filters {
+    width: 100%;
+    justify-content: center;
+  }
+  
+  .teams-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  
+  /* Achievement page mobile */
+  .achievements-hero {
+    padding: 60px 15px 30px;
+  }
+  
+  .achievements-hero h1 {
+    font-size: 28px !important;
+  }
+  
+  .achievements-stats {
+    padding: 30px 15px;
+  }
+  
+  .records-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+  
+  .achievements-grid {
+    grid-template-columns: 1fr;
+    gap: 15px;
+  }
+  
+  .achievement-card {
+    flex-direction: column;
+    padding: 20px;
+    gap: 15px;
+    border-radius: 10px;
+  }
+  
+  .achievement-badge {
+    font-size: 36px;
+  }
+  
+  /* Player Dashboard mobile */
+  .player-dashboard {
+    padding-top: 70px;
+  }
+  
+  .dashboard-header {
+    padding: 40px 15px 30px;
+  }
+  
+  .dashboard-header h1 {
+    font-size: 24px !important;
+  }
+  
+  .dashboard-header .user-avatar-large {
+    font-size: 56px;
+  }
+  
+  .dashboard-body {
+    padding: 30px 15px;
+  }
+  
+  .dashboard-tabs {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  
+  .dashboard-tabs .tab-btn {
+    flex: 1;
+    min-width: 80px;
+    padding: 10px 12px;
+    font-size: 12px;
+  }
+  
+  .profile-card, 
+  .membership-card {
+    padding: 20px;
+    border-radius: 10px;
+  }
+  
+  .detail-item {
+    flex-direction: column;
+    gap: 5px;
+    padding: 12px 0;
+  }
+  
+  /* Order Tracking mobile */
+  .tracking-hero {
+    padding: 60px 15px 30px;
+  }
+  
+  .tracking-hero h1 {
+    font-size: 28px !important;
+  }
+  
+  .tracking-search {
+    padding: 25px 15px;
+  }
+  
+  .tracking-search .search-box form {
+    flex-direction: column;
+    gap: 12px;
+  }
+  
+  .order-input {
+    width: 100%;
+    padding: 14px 16px;
+  }
+  
+  .search-btn {
+    width: 100%;
+    padding: 14px;
+  }
+  
+  .demo-buttons {
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .demo-buttons button {
+    width: 100%;
+  }
+  
+  .order-tracking-card {
+    border-radius: 12px;
+    margin: 0 10px;
+  }
+  
+  .tracking-header {
+    flex-direction: column;
+    gap: 10px;
+    padding: 20px;
+    text-align: center;
+  }
+  
+  .tracking-items {
+    padding: 20px;
+  }
+  
+  .tracking-item {
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .item-total {
+    margin-left: 0;
+    margin-top: 8px;
+  }
+  
+  .delivery-info {
+    flex-direction: column;
+    text-align: center;
+    gap: 12px;
+  }
+  
+  .tracking-timeline .timeline {
+    flex-direction: column;
+    gap: 20px;
+  }
+  
+  /* Dashboard mobile */
+  .dashboard-sidebar {
+    display: none;
+  }
+  
+  .dashboard-content {
+    margin-left: 0;
+    padding: 20px 15px;
+  }
+  
+  .dashboard-content h1 {
+    font-size: 24px;
+  }
+  
+  .panel-header {
+    flex-direction: column;
+    gap: 15px;
+    align-items: stretch;
+  }
+  
+  .search-box input {
+    min-width: unset;
+    width: 100%;
+  }
+  
+  .stats-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  
+  .table-container {
+    overflow-x: auto;
+  }
+  
+  .table-container table {
+    min-width: 600px;
+  }
+  
+  /* Reviews mobile */
+  .product-reviews {
+    padding: 25px 15px;
+    margin-top: 25px;
+    border-radius: 12px;
+  }
+  
+  .reviews-summary {
+    grid-template-columns: 1fr;
+    padding: 20px;
+    gap: 20px;
+  }
+  
+  .rating-number {
+    font-size: 40px !important;
+  }
+  
+  .reviews-actions {
+    flex-direction: column;
+    gap: 12px;
+  }
+  
+  .write-review-btn,
+  .filter-reviews {
+    width: 100%;
+    text-align: center;
+  }
+  
+  .review-card {
+    padding: 20px;
+    border-radius: 10px;
+  }
+  
+  .review-header {
+    flex-direction: column;
+    gap: 12px;
+  }
+  
+  .reviewer-info {
+    flex-direction: row;
+  }
+  
+  /* Empty states mobile */
+  .empty-cart,
+  .empty-wishlist,
+  .no-products,
+  .no-orders {
+    padding: 40px 15px;
+  }
+  
+  .empty-cart-icon,
+  .empty-wishlist-icon,
+  .no-products-icon {
+    font-size: 56px;
+  }
+  
+  .empty-cart-content h2,
+  .empty-wishlist-content h2,
+  .no-products h3 {
+    font-size: 22px;
+  }
+  
+  /* Success pages mobile */
+  .order-success,
+  .donation-success {
+    padding: 40px 15px;
+  }
+  
+  .success-icon {
+    font-size: 56px;
+  }
+  
+  .order-success h1,
+  .donation-success h1 {
+    font-size: 26px;
+  }
+  
+  .success-actions {
+    flex-direction: column;
+    gap: 12px;
+  }
+  
+  .success-actions .primary-btn,
+  .success-actions .secondary-btn {
+    width: 100%;
+    text-align: center;
+  }
+  
+  /* Admin Dashboard mobile */
+  .admin-dashboard {
+    flex-direction: column;
+    padding-top: 70px;
+  }
+  
+  .admin-dashboard .dashboard-content {
+    padding: 20px 15px;
+  }
+  
+  /* Better touch targets for mobile */
+  button,
+  .btn,
+  a,
+  input[type="checkbox"],
+  input[type="radio"],
+  select {
+    min-height: 44px;
+  }
+  
+  /* Prevent text selection on buttons */
+  button, 
+  .btn {
+    -webkit-tap-highlight-color: transparent;
+  }
+  
+  /* Smooth scrolling */
+  html {
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  /* Fix for fixed position elements on mobile */
+  .navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+  }
+  
+  /* Improve modal scrolling on mobile */
+  .modal-overlay {
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  /* Glass effect improvements for mobile */
+  .glass {
+    -webkit-backdrop-filter: blur(20px);
+    backdrop-filter: blur(20px);
+  }
+  
+  /* Primary button improvements */
+  .primary-btn {
+    -webkit-appearance: none;
+    appearance: none;
+    touch-action: manipulation;
+  }
+  
+  /* Hide elements that don't work well on mobile */
+  .scroll-indicator {
+    display: none;
+  }
+}
+
+/* Extra small devices */
+@media (max-width: 320px) {
+  .products-grid {
+    grid-template-columns: 1fr !important;
+  }
+  
+  .hero h1 {
+    font-size: 24px;
+  }
+  
+  .stat-number {
+    font-size: 28px;
+  }
+}
+
+/* Landscape mobile */
+@media (max-height: 500px) and (orientation: landscape) {
+  .hero {
+    min-height: auto;
+    padding: 80px 20px 30px;
+  }
+  
+  .modal-overlay {
+    align-items: center;
+    padding: 20px;
+  }
+}
+
+/* High contrast mode for accessibility */
+@media (prefers-contrast: high) {
+  .product-card,
+  .stat-card,
+  .player-card,
+  .tournament-card {
+    border-width: 2px;
+    border-color: var(--primary);
+  }
+  
+  .add-to-cart-btn,
+  .primary-btn {
+    border: 2px solid #000;
+  }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+/* ========================================
+   GLASS BUTTON STYLES - MOBILE ENHANCED
+   ======================================== */
+
+/* Glass Button Base */
+.glass-btn {
+  background: var(--glass-bg, rgba(255, 255, 255, 0.1));
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid var(--glass-border, rgba(255, 255, 255, 0.2));
+  border-radius: 8px;
+  padding: 12px 24px;
+  color: var(--text-light, #e0e6ed);
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.glass-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+  transition: left 0.5s ease;
+}
+
+.glass-btn:hover::before {
+  left: 100%;
+}
+
+.glass-btn:hover {
+  background: var(--glass-bg-hover, rgba(255, 255, 255, 0.15));
+  border-color: var(--primary, #00d4ff);
+  box-shadow: 0 0 20px rgba(0, 212, 255, 0.3);
+  transform: translateY(-2px);
+}
+
+.glass-btn:active {
+  transform: translateY(0) scale(0.98);
+}
+
+/* Primary Glass Button */
+.glass-btn-primary {
+  background: linear-gradient(135deg, rgba(0, 212, 255, 0.3) 0%, rgba(0, 102, 255, 0.3) 100%);
+  border-color: rgba(0, 212, 255, 0.5);
+  color: #00d4ff;
+}
+
+.glass-btn-primary:hover {
+  background: linear-gradient(135deg, rgba(0, 212, 255, 0.5) 0%, rgba(0, 102, 255, 0.5) 100%);
+  box-shadow: 0 0 30px rgba(0, 212, 255, 0.5);
+  color: #fff;
+}
+
+/* Secondary Glass Button */
+.glass-btn-secondary {
+  background: linear-gradient(135deg, rgba(255, 0, 110, 0.2) 0%, rgba(255, 77, 148, 0.2) 100%);
+  border-color: rgba(255, 0, 110, 0.4);
+  color: #ff006e;
+}
+
+.glass-btn-secondary:hover {
+  background: linear-gradient(135deg, rgba(255, 0, 110, 0.4) 0%, rgba(255, 77, 148, 0.4) 100%);
+  box-shadow: 0 0 30px rgba(255, 0, 110, 0.4);
+  color: #fff;
+}
+
+/* Glass Button Sizes */
+.glass-btn-sm {
+  padding: 8px 16px;
+  font-size: 12px;
+  border-radius: 6px;
+}
+
+.glass-btn-lg {
+  padding: 16px 32px;
+  font-size: 16px;
+  border-radius: 10px;
+}
+
+.glass-btn-xl {
+  padding: 20px 40px;
+  font-size: 18px;
+  border-radius: 12px;
+}
+
+/* Full Width Glass Button */
+.glass-btn-block {
+  width: 100%;
+  display: block;
+  text-align: center;
+}
+
+/* Glass Button with Icon */
+.glass-btn-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.glass-btn-icon svg,
+.glass-btn-icon span {
+  width: 18px;
+  height: 18px;
+}
+
+/* Mobile Glass Button Touch Optimization */
+@media (max-width: 480px) {
+  .glass-btn {
+    min-height: 48px;
+    padding: 14px 24px;
+    font-size: 15px;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+  }
+  
+  .glass-btn-sm {
+    min-height: 40px;
+    padding: 10px 18px;
+    font-size: 13px;
+  }
+  
+  .glass-btn-lg {
+    min-height: 56px;
+    padding: 18px 36px;
+    font-size: 16px;
+  }
+  
+  .glass-btn-xl {
+    min-height: 64px;
+    padding: 22px 44px;
+    font-size: 18px;
+  }
+  
+  /* Improve tap targets */
+  .glass-btn::after {
+    content: '';
+    position: absolute;
+    top: -10px;
+    left: -10px;
+    right: -10px;
+    bottom: -10px;
+  }
+  
+  /* Remove hover effects on touch devices */
+  @media (hover: none) {
+    .glass-btn:hover::before {
+      left: -100%;
+    }
+    
+    .glass-btn:hover {
+      transform: none;
+    }
+  }
+  
+  /* Active state for touch */
+  .glass-btn:active {
+    transform: scale(0.96);
+    box-shadow: 0 0 15px rgba(0, 212, 255, 0.3);
+  }
+}
+
+/* Add to Cart Button - Enhanced Glass Style */
+.add-to-cart-btn {
+  background: linear-gradient(135deg, rgba(0, 212, 255, 0.3) 0%, rgba(0, 102, 255, 0.3) 100%) !important;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(0, 212, 255, 0.4) !important;
+  border-radius: 8px !important;
+  color: #00d4ff !important;
+  font-family: 'Rajdhani', sans-serif !important;
+  font-weight: 600 !important;
+  transition: all 0.3s ease !important;
+  position: relative;
+  overflow: hidden;
+}
+
+.add-to-cart-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+  transition: left 0.5s ease;
+}
+
+.add-to-cart-btn:hover::before {
+  left: 100%;
+}
+
+.add-to-cart-btn:hover {
+  background: linear-gradient(135deg, rgba(0, 212, 255, 0.5) 0%, rgba(0, 102, 255, 0.5) 100%) !important;
+  border-color: #00d4ff !important;
+  box-shadow: 0 0 25px rgba(0, 212, 255, 0.5) !important;
+  transform: translateY(-2px);
+  color: #fff !important;
+}
+
+.add-to-cart-btn:active {
+  transform: translateY(0) scale(0.98);
+}
+
+/* Mobile Add to Cart Button */
+@media (max-width: 480px) {
+  .add-to-cart-btn {
+    width: 100%;
+    padding: 14px 20px;
+    font-size: 14px;
+    min-height: 48px;
+  }
+  
+  .add-to-cart-btn:hover {
+    transform: translateY(-1px);
+  }
+  
+  .add-to-cart-btn:active {
+    transform: scale(0.98);
+  }
+}
+
+/* Confirm Add Button - Enhanced */
+.confirm-add-btn {
+  background: linear-gradient(135deg, rgba(0, 212, 255, 0.4) 0%, rgba(0, 102, 255, 0.4) 100%) !important;
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+  border: 2px solid rgba(0, 212, 255, 0.6) !important;
+  border-radius: 10px !important;
+  color: #00d4ff !important;
+  font-family: 'Orbitron', sans-serif !important;
+  font-weight: 700 !important;
+  padding: 16px 24px !important;
+  transition: all 0.3s ease !important;
+  position: relative;
+  overflow: hidden;
+}
+
+.confirm-add-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+  transition: left 0.5s ease;
+}
+
+.confirm-add-btn:hover::before {
+  left: 100%;
+}
+
+.confirm-add-btn:hover {
+  background: linear-gradient(135deg, rgba(0, 212, 255, 0.6) 0%, rgba(0, 102, 255, 0.6) 100%) !important;
+  box-shadow: 0 0 30px rgba(0, 212, 255, 0.6) !important;
+  transform: translateY(-2px);
+  color: #fff !important;
+}
+
+/* Mobile Confirm Add Button */
+@media (max-width: 480px) {
+  .confirm-add-btn {
+    width: 100%;
+    padding: 16px !important;
+    font-size: 15px !important;
+    min-height: 52px;
+  }
+}
+
+/* Quick View Button */
+.quick-view-btn {
+  background: rgba(255, 255, 255, 0.05) !important;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  border-radius: 8px !important;
+  color: var(--text-light, #e0e6ed) !important;
+  transition: all 0.3s ease !important;
+}
+
+.quick-view-btn:hover {
+  background: rgba(0, 212, 255, 0.15) !important;
+  border-color: var(--primary, #00d4ff) !important;
+  color: var(--primary, #00d4ff) !important;
+}
+
+/* ========================================
+   ADDITIONAL MOBILE FIXES
+   ======================================== */
+
+/* Ensure product cards are scrollable on mobile */
+@media (max-width: 480px) {
+  /* Enable proper scrolling in shop */
+  .shop-products {
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  /* Product grid scroll fix */
+  .products-grid {
+    contain: layout style;
+    transform: translateZ(0);
+  }
+  
+  /* Ensure modal doesn't overflow */
+  .product-modal {
+    max-height: 90vh;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  /* Fix for iOS Safari viewport issues */
+  @supports (-webkit-touch-callout: none) {
+    .page-container {
+      min-height: -webkit-fill-available;
+    }
+  }
+  
+  /* Proper touch handling */
+  .product-card,
+  .add-to-cart-btn,
+  .quick-view-btn,
+  .confirm-add-btn {
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+  }
+  
+  /* Prevent double-tap zoom on buttons */
+  button,
+  .btn {
+    touch-action: manipulation;
+  }
+  
+  /* Improve scroll performance */
+  * {
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  /* Fix for sticky elements */
+  .navbar {
+    -webkit-position: sticky;
+    position: sticky;
+  }
+  
+  /* Ensure cart items scroll properly */
+  .cart-items {
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
+/* Fix for horizontal scroll issues */
+@media (max-width: 768px) {
+  body {
+    overflow-x: hidden;
+    max-width: 100vw;
+  }
+  
+  /* Prevent horizontal scroll */
+  html, 
+  body {
+    overflow-x: hidden;
+  }
+  
+  /* Ensure containers don't overflow */
+  .container,
+  .shop-products .container,
+  .shop-filters .container {
+    max-width: 100vw;
+    overflow-x: hidden;
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+}
+
+/* iOS specific fixes */
+@supports (-webkit-touch-callout: none) {
+  @media (max-width: 480px) {
+    /* iOS Safari safe area */
+    .page-container {
+      padding-top: calc(70px + env(safe-area-inset-top, 0px));
+      padding-bottom: env(safe-area-inset-bottom, 0px);
+    }
+    
+    /* iOS Safari modal fix */
+    .modal-overlay {
+      position: fixed;
+      overscroll-behavior: contain;
+    }
+    
+    /* iOS Safari button fix */
+    .add-to-cart-btn,
+    .confirm-add-btn,
+    .quick-view-btn {
+      -webkit-appearance: none;
+      appearance: none;
+    }
+  }
+}
+
+/* Android specific fixes */
+@media (max-width: 480px) and (pointer: coarse) {
+  /* Larger touch targets on Android */
+  .add-to-cart-btn,
+  .confirm-add-btn,
+  .quick-view-btn {
+    min-height: 52px;
+    padding: 16px 24px;
+  }
+  
+  /* Improve scrolling on Android */
+  .shop-products,
+  .modal-overlay {
+    -webkit-overflow-scrolling: touch;
+  }
