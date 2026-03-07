@@ -3,6 +3,15 @@ import ReactDOM from 'react-dom/client';
 import App from './App';
 import './index.css';
 
+// Global error handler to catch runtime errors
+window.addEventListener('error', (e) => {
+  console.error('GLOBAL ERROR:', e.error);
+});
+
+window.addEventListener('unhandledrejection', (e) => {
+  console.error('UNHANDLED REJECTION:', e.reason);
+});
+
 // Capacitor App lifecycle - only import on web platform
 const isCapacitor = () => {
   return window.Capacitor?.isNativePlatform?.() === true;
