@@ -35,15 +35,34 @@ const defaultUser = {
   transactions: []
 };
 
+// Safe localStorage helper
+const getLocalStorage = (key, defaultValue) => {
+  try {
+    if (typeof window === 'undefined') return defaultValue;
+    const stored = localStorage.getItem(key);
+    return stored ? JSON.parse(stored) : defaultValue;
+  } catch {
+    return defaultValue;
+  }
+};
+
+const setLocalStorage = (key, value) => {
+  try {
+    if (typeof window === 'undefined') return;
+    localStorage.setItem(key, JSON.stringify(value));
+  } catch {
+    // Silently fail if localStorage is not available
+  }
+};
+
 export function LoyaltyProvider({ children }) {
   const [userLoyalty, setUserLoyalty] = useState(() => {
-    const stored = localStorage.getItem('drs-loyalty');
-    return stored ? JSON.parse(stored) : defaultUser;
+    return getLocalStorage('drs-loyalty', defaultUser);
   });
 
   // Save to localStorage whenever loyalty data changes
   useEffect(() => {
-    localStorage.setItem('drs-loyalty', JSON.stringify(userLoyalty));
+    setLocalStorage('drs-loyalty', userLoyalty);
   }, [userLoyalty]);
 
   // Calculate user's tier based on points

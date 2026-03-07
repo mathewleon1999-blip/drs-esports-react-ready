@@ -2,6 +2,26 @@ import { createContext, useContext, useState, useEffect } from 'react';
 
 const PredictionsContext = createContext();
 
+// Safe localStorage helpers
+const getLocalStorage = (key, defaultValue) => {
+  try {
+    if (typeof window === 'undefined') return defaultValue;
+    const stored = localStorage.getItem(key);
+    return stored ? JSON.parse(stored) : defaultValue;
+  } catch {
+    return defaultValue;
+  }
+};
+
+const setLocalStorage = (key, value) => {
+  try {
+    if (typeof window === 'undefined') return;
+    localStorage.setItem(key, JSON.stringify(value));
+  } catch {
+    // Silently fail
+  }
+};
+
 // Points for correct predictions
 export const PREDICTION_POINTS = {
   EXACT_SCORE: 30,    // Perfect score prediction
@@ -79,37 +99,34 @@ const DEFAULT_COMPLETED_MATCHES = [
 
 export function PredictionsProvider({ children }) {
   const [matches, setMatches] = useState(() => {
-    const stored = localStorage.getItem('drs-matches');
-    return stored ? JSON.parse(stored) : [...DEFAULT_MATCHES, ...DEFAULT_COMPLETED_MATCHES];
+    return getLocalStorage('drs-matches', [...DEFAULT_MATCHES, ...DEFAULT_COMPLETED_MATCHES]);
   });
 
   const [userPredictions, setUserPredictions] = useState(() => {
-    const stored = localStorage.getItem('drs-predictions');
-    return stored ? JSON.parse(stored) : {};
+    return getLocalStorage('drs-predictions', {});
   });
 
   const [leaderboard, setLeaderboard] = useState(() => {
-    const stored = localStorage.getItem('drs-prediction-leaderboard');
-    return stored ? JSON.parse(stored) : [
+    return getLocalStorage('drs-prediction-leaderboard', [
       { id: 1, username: 'ProGamer123', points: 450, correct: 12, streak: 5 },
       { id: 2, username: 'EsportsKing', points: 380, correct: 10, streak: 3 },
       { id: 3, username: 'BattleMaster', points: 320, correct: 9, streak: 2 },
       { id: 4, username: 'ShadowNinja', points: 290, correct: 8, streak: 4 },
       { id: 5, username: 'PhoenixRise', points: 250, correct: 7, streak: 1 }
-    ];
+    ]);
   });
 
   // Save to localStorage
   useEffect(() => {
-    localStorage.setItem('drs-matches', JSON.stringify(matches));
+    setLocalStorage('drs-matches', matches);
   }, [matches]);
 
   useEffect(() => {
-    localStorage.setItem('drs-predictions', JSON.stringify(userPredictions));
+    setLocalStorage('drs-predictions', userPredictions);
   }, [userPredictions]);
 
   useEffect(() => {
-    localStorage.setItem('drs-prediction-leaderboard', JSON.stringify(leaderboard));
+    setLocalStorage('drs-prediction-leaderboard', leaderboard);
   }, [leaderboard]);
 
   // Get user's total points

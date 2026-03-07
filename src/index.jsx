@@ -3,15 +3,25 @@ import ReactDOM from 'react-dom/client';
 import App from './App';
 import './index.css';
 
-// Capacitor App lifecycle
-import { App as CapacitorApp } from '@capacitor/app';
-import { SplashScreen } from '@capacitor/splash-screen';
-import { StatusBar } from '@capacitor/status-bar';
-import { Device } from '@capacitor/device';
+// Capacitor App lifecycle - only import on web platform
+const isCapacitor = () => {
+  return window.Capacitor?.isNativePlatform?.() === true;
+};
 
-// Initialize app
+// Initialize app - only run Capacitor code on native platforms
 const initApp = async () => {
+  // Skip Capacitor initialization on web
+  if (!isCapacitor()) {
+    return;
+  }
+  
   try {
+    // Dynamic import for Capacitor to avoid web build issues
+    const { App: CapacitorApp } = await import('@capacitor/app');
+    const { SplashScreen } = await import('@capacitor/splash-screen');
+    const { StatusBar } = await import('@capacitor/status-bar');
+    const { Device } = await import('@capacitor/device');
+    
     // Hide splash screen
     await SplashScreen.hide();
     
@@ -49,6 +59,6 @@ ReactDOM.createRoot(document.getElementById('root')).render(
   </React.StrictMode>
 );
 
-// Initialize Capacitor features
+// Initialize Capacitor features (will skip on web)
 initApp();
 

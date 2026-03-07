@@ -2,14 +2,33 @@ import { createContext, useContext, useState, useEffect } from "react";
 
 const WishlistContext = createContext();
 
+// Safe localStorage helpers
+const getLocalStorage = (key, defaultValue) => {
+  try {
+    if (typeof window === 'undefined') return defaultValue;
+    const saved = localStorage.getItem(key);
+    return saved ? JSON.parse(saved) : defaultValue;
+  } catch {
+    return defaultValue;
+  }
+};
+
+const setLocalStorage = (key, value) => {
+  try {
+    if (typeof window === 'undefined') return;
+    localStorage.setItem(key, JSON.stringify(value));
+  } catch {
+    // Silently fail
+  }
+};
+
 // Helper functions for localStorage
 export const getWishlist = () => {
-  const saved = localStorage.getItem("drs-wishlist");
-  return saved ? JSON.parse(saved) : [];
+  return getLocalStorage("drs-wishlist", []);
 };
 
 export const saveWishlist = (wishlist) => {
-  localStorage.setItem("drs-wishlist", JSON.stringify(wishlist));
+  setLocalStorage("drs-wishlist", wishlist);
 };
 
 export const useWishlist = () => {

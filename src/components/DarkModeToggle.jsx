@@ -1,14 +1,34 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 
+// Safe localStorage helpers
+const getLocalStorage = (key, defaultValue) => {
+  try {
+    if (typeof window === 'undefined') return defaultValue;
+    const saved = localStorage.getItem(key);
+    return saved ? saved : defaultValue;
+  } catch {
+    return defaultValue;
+  }
+};
+
+const setLocalStorage = (key, value) => {
+  try {
+    if (typeof window === 'undefined') return;
+    localStorage.setItem(key, value);
+  } catch {
+    // Silently fail
+  }
+};
+
 function DarkModeToggle() {
   const [isDark, setIsDark] = useState(() => {
-    const saved = localStorage.getItem("drs-theme");
-    return saved ? saved === "dark" : false;
+    const saved = getLocalStorage("drs-theme", "false");
+    return saved === "dark";
   });
 
   useEffect(() => {
-    localStorage.setItem("drs-theme", isDark ? "dark" : "light");
+    setLocalStorage("drs-theme", isDark ? "dark" : "light");
     document.body.classList.toggle("dark-mode", isDark);
   }, [isDark]);
 
