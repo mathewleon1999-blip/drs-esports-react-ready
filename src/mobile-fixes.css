@@ -880,36 +880,375 @@
   .donation-hero {
     padding: 60px 15px 30px;
   }
-  
+
   .donation-hero h1 {
-    font-size: 28px !important;
+    font-size: 26px !important;
   }
-  
-  .donation-content {
-    padding: 30px 15px;
-  }
-  
-  .donation-grid {
-    grid-template-columns: 1fr;
-  }
-  
-  .donation-form-container {
-    padding: 25px 20px;
-    border-radius: 12px;
-  }
-  
-  .preset-amounts {
-    grid-template-columns: repeat(3, 1fr);
-    gap: 10px;
-  }
-  
-  .amount-btn {
-    padding: 14px 10px;
+
+  .donation-hero p {
     font-size: 14px;
   }
-  
-  .payment-methods {
+
+  .donation-content {
+    padding: 20px 12px 40px;
+  }
+
+  .donation-grid {
     grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .donation-form-container {
+    padding: 20px 15px;
+    border-radius: 12px;
+  }
+
+  .donation-form-container h2 {
+    font-size: 20px;
+    margin-bottom: 18px;
+  }
+
+  .amount-section label,
+  .payment-section label {
+    font-size: 13px;
+    margin-bottom: 10px;
+  }
+
+  .preset-amounts {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    margin-bottom: 10px;
+  }
+
+  .amount-btn {
+    padding: 14px 6px;
+    font-size: 14px;
+    border-radius: 8px;
+    min-height: 50px;
+    font-weight: 600;
+  }
+
+  .custom-amount {
+    margin-top: 8px;
+  }
+
+  .custom-amount input {
+    width: 100%;
+    padding: 14px 12px;
+    font-size: 16px;
+    border-radius: 8px;
+    min-height: 50px;
+    text-align: center;
+  }
+
+  .payment-methods {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+  }
+
+  .payment-btn {
+    padding: 12px 8px;
+    font-size: 13px;
+    border-radius: 8px;
+    min-height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+  }
+
+  .donor-form .form-group {
+    margin-bottom: 14px;
+  }
+
+  .donor-form label {
+    font-size: 13px;
+    margin-bottom: 6px;
+  }
+
+  .donor-form input,
+  .donor-form textarea {
+    width: 100%;
+    padding: 12px 14px;
+    font-size: 15px;
+    border-radius: 8px;
+    min-height: 48px;
+  }
+
+  .donor-form textarea {
+    min-height: 80px;
+  }
+
+  .checkbox-group {
+    margin-top: 14px;
+    margin-bottom: 14px;
+  }
+
+  .checkbox-label {
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .checkbox-label input[type="checkbox"] {
+    width: 22px;
+    height: 22px;
+    min-width: 22px;
+  }
+
+  .donation-summary {
+    padding: 14px;
+    border-radius: 10px;
+    margin: 14px 0;
+  }
+
+  .donation-summary .summary-row {
+    padding: 10px 0;
+    font-size: 14px;
+  }
+
+  .donation-summary .summary-row.total {
+    font-size: 18px;
+    padding-top: 12px;
+    margin-top: 8px;
+  }
+
+  .donation-summary .amount {
+    font-size: 18px;
+  }
+
+  .donate-btn {
+    width: 100%;
+    padding: 16px;
+    font-size: 16px;
+    border-radius: 10px;
+    min-height: 56px;
+    margin-top: 12px;
+  }
+
+  .secure-notice {
+    font-size: 11px;
+    margin-top: 12px;
+  }
+
+  /* Donation Sidebar Mobile */
+  .donation-sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    order: -1;
+  }
+
+  .info-card {
+    padding: 16px 14px;
+    border-radius: 10px;
+  }
+
+  .info-card h3 {
+    font-size: 17px;
+    margin-bottom: 14px;
+  }
+
+  .info-card ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .info-card li {
+    font-size: 13px;
+    padding: 8px 0;
+    line-height: 1.4;
+    border-bottom: 1px solid rgba(0, 212, 255, 0.05);
+  }
+
+  .info-card li:last-child {
+    border-bottom: none;
+  }
+
+  .tax-card {
+    padding: 14px;
+  }
+
+  .tax-card p {
+    font-size: 13px;
+    line-height: 1.5;
+  }
+
+  .tax-note {
+    font-size: 11px !important;
+  }
+
+  .recent-donors-card {
+    padding: 16px 14px;
+    border-radius: 10px;
+  }
+
+  .recent-donors-card h3 {
+    font-size: 17px;
+    margin-bottom: 14px;
+  }
+
+  .donors-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .donor-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px;
+    background: var(--dark-bg);
+    border-radius: 8px;
+  }
+
+  .donor-avatar {
+    width: 36px;
+    height: 36px;
+    min-width: 36px;
+    font-size: 14px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .donor-info {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .donor-name {
+    font-size: 13px;
+    font-weight: 600;
+    display: block;
+  }
+
+  .donor-message {
+    font-size: 11px;
+    color: var(--text-muted);
+    display: block;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .donor-amount {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--primary);
+    white-space: nowrap;
+  }
+
+  .contact-card {
+    padding: 14px;
+  }
+
+  .contact-card p {
+    font-size: 13px;
+    margin-bottom: 8px;
+  }
+
+  /* Donation Success Mobile */
+  .donation-success {
+    padding: 30px 15px;
+  }
+
+  .success-animation {
+    font-size: 56px;
+    margin-bottom: 20px;
+  }
+
+  .donation-success h1 {
+    font-size: 24px;
+    margin-bottom: 15px;
+  }
+
+  .success-message {
+    font-size: 15px;
+    line-height: 1.6;
+    margin-bottom: 20px;
+  }
+
+  .success-message .highlight {
+    font-size: 22px;
+  }
+
+  .success-details {
+    padding: 15px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+  }
+
+  .success-details p {
+    font-size: 13px;
+    margin-bottom: 6px;
+  }
+
+  .success-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+
+  .success-actions .primary-btn,
+  .success-actions .secondary-btn {
+    width: 100%;
+    padding: 14px 20px;
+    font-size: 14px;
+    text-align: center;
+  }
+
+  .share-donation {
+    margin-top: 25px;
+  }
+
+  .share-donation p {
+    font-size: 14px;
+    margin-bottom: 12px;
+  }
+
+  .share-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+  }
+
+  .share-btn {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+  }
+
+  /* Navbar Donate Link Mobile */
+  .donate-link-mobile {
+    display: block;
+    margin-top: 15px;
+    padding: 14px 15px;
+    font-size: 15px;
+    text-align: center;
+  }
+
+  /* Hero Donate Button Mobile */
+  .donate-btn-hero {
+    padding: 14px 24px;
+    font-size: 13px;
+    border-radius: 8px;
+  }
+
+  /* Footer Donate Button Mobile */
+  .footer-donate-btn {
+    padding: 12px 24px;
+    font-size: 13px;
+    border-radius: 8px;
   }
   
   /* Newsletter page mobile */
