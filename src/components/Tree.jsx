@@ -405,6 +405,9 @@ function Tree() {
               gap: 20,
               boxShadow: `0 0 50px ${selectedNode.color}30`,
               zIndex: 100,
+              maxWidth: "90vw",
+              maxHeight: "80vh",
+              overflowY: "auto",
             }}
           >
             <div style={{

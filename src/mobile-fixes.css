@@ -2020,3 +2020,47 @@
   .modal-overlay {
     -webkit-overflow-scrolling: touch;
   }
+}
+
+/* ========================================
+   FAMILY TREE POPUP MOBILE STYLES
+   ======================================== */
+
+@media (max-width: 480px) {
+  /* Family Tree Popup Mobile Styles */
+  .team-tree [style*="position: fixed"] {
+    max-width: 95vw !important;
+    max-height: 70vh !important;
+    padding: 15px 20px !important;
+    gap: 12px !important;
+    border-radius: 12px !important;
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  .team-tree [style*="position: fixed"] > div:first-child {
+    font-size: 32px !important;
+  }
+  
+  .team-tree [style*="position: fixed"] img {
+    width: 50px !important;
+    height: 50px !important;
+  }
+  
+  .team-tree [style*="position: fixed"] h3 {
+    font-size: 16px !important;
+  }
+  
+  .team-tree [style*="position: fixed"] p {
+    font-size: 11px !important;
+  }
+  
+  .team-tree [style*="position: fixed"] button {
+    width: 24px !important;
+    height: 24px !important;
+    font-size: 14px !important;
+    top: -8px !important;
+    right: -8px !important;
+  }
+}
+

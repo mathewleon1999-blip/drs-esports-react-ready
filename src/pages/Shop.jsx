@@ -407,6 +407,11 @@ function Shop() {
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.3 }}
+            style={{
+              maxWidth: "90vw",
+              maxHeight: "85vh",
+              overflowY: "auto",
+            }}
           >
             <button className="modal-close" onClick={() => setSelectedJersey(null)}>×</button>
             <div className="modal-content">
