@@ -6368,7 +6368,7 @@ body.dark-mode {
   padding: 10px;
 }
 
-/* Mobile Navigation - Fixed sidebar - Always hidden by default */
+/* Mobile Navigation - Fixed sidebar */
 .mobile-nav {
   position: fixed !important;
   top: 70px !important;
@@ -6377,7 +6377,6 @@ body.dark-mode {
   height: calc(100vh - 70px) !important;
   background: var(--card-bg) !important;
   padding: 20px !important;
-  display: none !important;
   flex-direction: column !important;
   gap: 10px !important;
   overflow-y: auto !important;
