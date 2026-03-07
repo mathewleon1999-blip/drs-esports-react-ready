@@ -388,131 +388,134 @@ function Tree() {
       <AnimatePresence>
         {selectedNode && (
           <>
-            {/* Backdrop */}
+            {/* Modal Overlay */}
             <motion.div
+              className="tree-modal-overlay"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setSelectedNode(null)}
               style={{
                 position: "fixed",
-                top: 0,
-                left: 0,
-                width: "100%",
-                height: "100%",
-                background: "rgba(0, 0, 0, 0.7)",
-                zIndex: 99,
+                inset: 0,
+                background: "rgba(0, 0, 0, 0.65)",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                padding: "16px",
+                zIndex: 9999,
               }}
             />
-            {/* Modal Panel */}
+            {/* Modal Container */}
             <motion.div
+              className="tree-modal"
               initial={{ opacity: 0, y: 50, scale: 0.9 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: 50, scale: 0.9 }}
-              className="tree-popup"
               style={{
+                display: "flex",
+                flexDirection: "column",
+                background: "#0a0f18",
+                borderRadius: "16px",
+                maxWidth: "400px",
+                width: "100%",
+                maxHeight: "85vh",
+                overflow: "hidden",
+                boxShadow: "0 20px 60px rgba(0, 0, 0, 0.6)",
                 position: "fixed",
-                top: "50%",
-                left: "50%",
-                transform: "translate(-50%, -50%)",
-                background: "rgba(17, 24, 39, 0.98)",
-                backdropFilter: "blur(20px)",
-                WebkitBackdropFilter: "blur(20px)",
-                border: `2px solid ${selectedNode.color}`,
-                borderRadius: 20,
-                padding: "25px 30px",
+                inset: 0,
+                margin: "auto",
+                zIndex: 10000,
+              }}
+            >
+              {/* Modal Content - Scrollable */}
+              <div style={{
+                padding: "24px",
+                overflowY: "auto",
+                WebkitOverflowScrolling: "touch",
                 display: "flex",
                 flexDirection: "column",
                 alignItems: "center",
-                gap: 15,
-                boxShadow: `0 0 50px ${selectedNode.color}40`,
-                zIndex: 100,
-                width: "90%",
-                maxWidth: 350,
-                maxHeight: "85vh",
-                overflowY: "auto",
-                WebkitOverflowScrolling: "touch",
-              }}
-            >
-              {/* Avatar */}
-              <div style={{
-                fontSize: 48,
-                filter: `drop-shadow(0 0 15px ${selectedNode.color})`,
-              }}>
-                {selectedNode.image ? (
-                  <img 
-                    src={selectedNode.image} 
-                    alt={selectedNode.name}
-                    style={{
-                      width: 80,
-                      height: 80,
-                      borderRadius: "50%",
-                      objectFit: "cover",
-                      border: `3px solid ${selectedNode.color}`,
-                    }}
-                  />
-                ) : (
-                  selectedNode.icon
-                )}
-              </div>
-              
-              {/* Name */}
-              <h3 style={{
-                fontFamily: "'Orbitron', sans-serif",
-                fontSize: 22,
-                color: selectedNode.color,
-                marginBottom: 5,
                 textAlign: "center",
               }}>
-                {selectedNode.name}
-              </h3>
-              
-              {/* Role */}
-              <p style={{
-                color: "var(--text-muted)",
-                fontSize: 13,
-                textTransform: "uppercase",
-                letterSpacing: 2,
-                textAlign: "center",
-                marginBottom: 10,
-              }}>
-                {selectedNode.role}
-              </p>
-              
-              {/* Additional Info */}
-              {selectedNode.children && (
-                <p style={{
-                  color: "var(--text-light)",
-                  fontSize: 12,
-                  textAlign: "center",
+                {/* Avatar */}
+                <div style={{
+                  fontSize: "56px",
+                  marginBottom: "15px",
+                  filter: `drop-shadow(0 0 15px ${selectedNode.color})`,
                 }}>
-                  {selectedNode.children.length} team members
+                  {selectedNode.image ? (
+                    <img 
+                      src={selectedNode.image} 
+                      alt={selectedNode.name}
+                      style={{
+                        width: "80px",
+                        height: "80px",
+                        borderRadius: "50%",
+                        objectFit: "cover",
+                        border: `3px solid ${selectedNode.color}`,
+                      }}
+                    />
+                  ) : (
+                    selectedNode.icon
+                  )}
+                </div>
+                
+                {/* Name */}
+                <h3 style={{
+                  fontFamily: "'Orbitron', sans-serif",
+                  fontSize: "22px",
+                  color: selectedNode.color,
+                  marginBottom: "8px",
+                }}>
+                  {selectedNode.name}
+                </h3>
+                
+                {/* Role */}
+                <p style={{
+                  color: "var(--text-muted)",
+                  fontSize: "13px",
+                  textTransform: "uppercase",
+                  letterSpacing: "2px",
+                  marginBottom: "15px",
+                }}>
+                  {selectedNode.role}
                 </p>
-              )}
-              
-              {/* Close Button */}
-              <button
-                onClick={() => setSelectedNode(null)}
-                style={{
-                  position: "absolute",
-                  top: 10,
-                  right: 10,
-                  width: 32,
-                  height: 32,
-                  borderRadius: "50%",
-                  border: "none",
-                  background: "var(--secondary)",
-                  color: "white",
-                  cursor: "pointer",
-                  fontSize: 20,
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  fontWeight: "bold",
-                }}
-              >
-                ×
-              </button>
+                
+                {/* Additional Info */}
+                {selectedNode.children && (
+                  <p style={{
+                    color: "var(--text-light)",
+                    fontSize: "12px",
+                  }}>
+                    {selectedNode.children.length} team members
+                  </p>
+                )}
+                
+                {/* Close Button */}
+                <button
+                  onClick={() => setSelectedNode(null)}
+                  style={{
+                    position: "absolute",
+                    top: "12px",
+                    right: "12px",
+                    width: "32px",
+                    height: "32px",
+                    borderRadius: "50%",
+                    border: "none",
+                    background: "var(--secondary)",
+                    color: "white",
+                    cursor: "pointer",
+                    fontSize: "20px",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    fontWeight: "bold",
+                  }}
+                >
+                  ×
+                </button>
+              </div>
             </motion.div>
           </>
         )}
