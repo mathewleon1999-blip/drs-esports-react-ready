@@ -2235,3 +2235,74 @@
   margin: 0 3px;
 }
 
+/* Tree Popup Modal - Mobile Optimized */
+.tree-popup {
+  /* Ensure popup is always centered and above everything */
+  position: fixed !important;
+  top: 50% !important;
+  left: 50% !important;
+  transform: translate(-50%, -50%) !important;
+  z-index: 9999 !important;
+}
+
+/* Tree Popup Backdrop */
+.team-tree > div[style*="position: fixed"][style*="z-index: 99"],
+.team-tree [style*="zIndex: 99"] {
+  position: fixed !important;
+  z-index: 9998 !important;
+}
+
+/* Mobile popup adjustments */
+@media (max-width: 480px) {
+  .tree-popup {
+    width: 85% !important;
+    max-width: 320px !important;
+    padding: 20px !important;
+    border-radius: 16px !important;
+  }
+  
+  .tree-popup > div:first-child {
+    font-size: 36px !important;
+  }
+  
+  .tree-popup img {
+    width: 60px !important;
+    height: 60px !important;
+  }
+  
+  .tree-popup h3 {
+    font-size: 18px !important;
+  }
+  
+  .tree-popup p {
+    font-size: 11px !important;
+  }
+  
+  .tree-popup button {
+    width: 28px !important;
+    height: 28px !important;
+    font-size: 18px !important;
+    top: 8px !important;
+    right: 8px !important;
+  }
+  
+  /* Ensure touch events work on popup */
+  .tree-popup {
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+  }
+  
+  /* Backdrop click to close */
+  .team-tree > div[style*="zIndex: 99"] {
+    cursor: pointer;
+  }
+}
+
+/* Extra small devices */
+@media (max-width: 320px) {
+  .tree-popup {
+    width: 90% !important;
+    padding: 15px !important;
+  }
+}
+
