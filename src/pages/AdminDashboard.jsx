@@ -63,7 +63,7 @@ function AdminDashboard() {
   const [users, setUsers] = useState([]);
   const [tournaments, setTournaments] = useState([]);
   const [news, setNews] = useState([]);
-const [discounts, setDiscounts] = useState([]);
+  const [discounts, setDiscounts] = useState([]);
   const [transactions, setTransactions] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [modalType, setModalType] = useState("");
@@ -77,6 +77,7 @@ const [discounts, setDiscounts] = useState([]);
     player: "",
     sponsor: ""
   });
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const navigate = useNavigate();
 
   // Initialize data from localStorage
@@ -381,9 +382,34 @@ const deleteDiscount = (discountId) => {
   return (
     <>
       <Navbar />
+      
+      {/* Mobile Header */}
+      <div className="admin-mobile-header">
+        <button 
+          className="admin-menu-toggle"
+          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+          aria-label="Toggle menu"
+        >
+          {mobileMenuOpen ? "✕" : "☰"}
+        </button>
+        <h2>⚙️ Admin Panel</h2>
+      </div>
+
+      {/* Mobile Sidebar Overlay */}
+      <div 
+        className={`admin-sidebar-overlay ${mobileMenuOpen ? 'active' : ''}`}
+        onClick={() => setMobileMenuOpen(false)}
+      />
+
       <div className="admin-dashboard">
         {/* Sidebar */}
-        <aside className="dashboard-sidebar">
+        <aside className={`dashboard-sidebar ${mobileMenuOpen ? 'mobile-open' : ''}`}>
+          <button 
+            className="sidebar-close-btn"
+            onClick={() => setMobileMenuOpen(false)}
+          >
+            ✕
+          </button>
           <div className="sidebar-header">
             <h2>⚙️ Admin Panel</h2>
             <p className="welcome-text">Welcome, {admin.username}</p>

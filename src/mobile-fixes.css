@@ -1644,14 +1644,45 @@
   .achievements-hero h1 {
     font-size: 28px !important;
   }
+
+  .achievements-hero p {
+    font-size: 14px;
+  }
   
   .achievements-stats {
     padding: 30px 15px;
+  }
+
+  .achievements-stats .container {
+    padding: 0;
   }
   
   .records-grid {
     grid-template-columns: repeat(2, 1fr);
     gap: 12px;
+  }
+
+  .record-card {
+    padding: 20px 15px;
+    border-radius: 10px;
+  }
+
+  .record-value {
+    font-size: 24px !important;
+  }
+
+  .record-label {
+    font-size: 11px !important;
+  }
+
+  /* Tournament Achievements - Mobile */
+  .tournament-achievements {
+    padding: 40px 15px;
+  }
+
+  .tournament-achievements h2 {
+    font-size: 24px !important;
+    margin-bottom: 20px;
   }
   
   .achievements-grid {
@@ -1663,11 +1694,145 @@
     flex-direction: column;
     padding: 20px;
     gap: 15px;
-    border-radius: 10px;
+    border-radius: 12px;
+    text-align: center;
   }
   
   .achievement-badge {
     font-size: 36px;
+  }
+
+  .achievement-content h3 {
+    font-size: 18px !important;
+    margin-bottom: 8px;
+  }
+
+  .achievement-tournament {
+    font-size: 13px !important;
+    margin-bottom: 10px;
+  }
+
+  .achievement-meta {
+    flex-direction: column !important;
+    gap: 8px !important;
+    align-items: center;
+  }
+
+  .achievement-date,
+  .achievement-position {
+    font-size: 12px;
+  }
+
+  .achievement-prize {
+    font-size: 13px !important;
+    margin-top: 8px;
+  }
+
+  /* Trophy Cabinet - Mobile */
+  .trophy-cabinet {
+    padding: 40px 15px;
+  }
+
+  .trophy-cabinet h2 {
+    font-size: 24px !important;
+    margin-bottom: 20px;
+  }
+
+  .trophies-display {
+    flex-direction: column !important;
+    gap: 15px !important;
+    align-items: center;
+  }
+
+  .trophy-item {
+    flex-direction: column !important;
+    padding: 20px !important;
+    border-radius: 12px !important;
+    width: 100% !important;
+    max-width: 250px !important;
+    text-align: center;
+    gap: 12px !important;
+  }
+
+  .trophy-icon {
+    font-size: 40px !important;
+  }
+
+  .trophy-info {
+    flex-direction: column !important;
+    gap: 5px;
+  }
+
+  .trophy-name {
+    font-size: 16px !important;
+  }
+
+  .trophy-year {
+    font-size: 13px !important;
+  }
+
+  /* Records Section - Mobile */
+  .records-section {
+    padding: 40px 15px;
+  }
+
+  .records-section h2 {
+    font-size: 24px !important;
+    margin-bottom: 20px;
+  }
+
+  .records-list {
+    grid-template-columns: 1fr !important;
+    gap: 15px !important;
+  }
+
+  .record-item {
+    flex-direction: column !important;
+    padding: 20px !important;
+    gap: 12px !important;
+    border-radius: 10px !important;
+    text-align: center;
+  }
+
+  .record-icon {
+    font-size: 28px !important;
+  }
+
+  .record-text h4 {
+    font-size: 16px !important;
+    margin-bottom: 5px;
+  }
+
+  .record-text p {
+    font-size: 13px !important;
+  }
+
+  /* Achievements CTA - Mobile */
+  .achievements-cta {
+    padding: 40px 15px;
+  }
+
+  .achievements-cta .cta-content h2 {
+    font-size: 22px !important;
+    margin-bottom: 10px;
+  }
+
+  .achievements-cta .cta-content p {
+    font-size: 14px !important;
+    margin-bottom: 25px;
+  }
+
+  .achievements-cta .cta-buttons {
+    flex-direction: column !important;
+    gap: 12px !important;
+  }
+
+  .achievements-cta .primary-btn,
+  .achievements-cta .secondary-btn {
+    width: 100% !important;
+    padding: 14px 20px !important;
+    font-size: 14px !important;
+    text-align: center;
   }
   
   /* Player Dashboard mobile */
@@ -2035,1040 +2200,734 @@
 }
 
 /* ========================================
-   GLASS BUTTON STYLES - MOBILE ENHANCED
+   ADMIN DASHBOARD MOBILE STYLES
    ======================================== */
 
-/* Glass Button Base */
-.glass-btn {
-  background: var(--glass-bg, rgba(255, 255, 255, 0.1));
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border: 1px solid var(--glass-border, rgba(255, 255, 255, 0.2));
-  border-radius: 8px;
-  padding: 12px 24px;
-  color: var(--text-light, #e0e6ed);
-  font-family: 'Rajdhani', sans-serif;
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  position: relative;
-  overflow: hidden;
+/* Admin Dashboard - Mobile Navigation Toggle */
+.admin-mobile-header {
+  display: none;
 }
 
-.glass-btn::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-  transition: left 0.5s ease;
+.admin-menu-toggle {
+  display: none;
 }
 
-.glass-btn:hover::before {
-  left: 100%;
+/* Mobile Sidebar Overlay */
+.admin-sidebar-overlay {
+  display: none;
 }
 
-.glass-btn:hover {
-  background: var(--glass-bg-hover, rgba(255, 255, 255, 0.15));
-  border-color: var(--primary, #00d4ff);
-  box-shadow: 0 0 20px rgba(0, 212, 255, 0.3);
-  transform: translateY(-2px);
-}
-
-.glass-btn:active {
-  transform: translateY(0) scale(0.98);
-}
-
-/* Primary Glass Button */
-.glass-btn-primary {
-  background: linear-gradient(135deg, rgba(0, 212, 255, 0.3) 0%, rgba(0, 102, 255, 0.3) 100%);
-  border-color: rgba(0, 212, 255, 0.5);
-  color: #00d4ff;
-}
-
-.glass-btn-primary:hover {
-  background: linear-gradient(135deg, rgba(0, 212, 255, 0.5) 0%, rgba(0, 102, 255, 0.5) 100%);
-  box-shadow: 0 0 30px rgba(0, 212, 255, 0.5);
-  color: #fff;
-}
-
-/* Secondary Glass Button */
-.glass-btn-secondary {
-  background: linear-gradient(135deg, rgba(255, 0, 110, 0.2) 0%, rgba(255, 77, 148, 0.2) 100%);
-  border-color: rgba(255, 0, 110, 0.4);
-  color: #ff006e;
-}
-
-.glass-btn-secondary:hover {
-  background: linear-gradient(135deg, rgba(255, 0, 110, 0.4) 0%, rgba(255, 77, 148, 0.4) 100%);
-  box-shadow: 0 0 30px rgba(255, 0, 110, 0.4);
-  color: #fff;
-}
-
-/* Glass Button Sizes */
-.glass-btn-sm {
-  padding: 8px 16px;
-  font-size: 12px;
-  border-radius: 6px;
-}
-
-.glass-btn-lg {
-  padding: 16px 32px;
-  font-size: 16px;
-  border-radius: 10px;
-}
-
-.glass-btn-xl {
-  padding: 20px 40px;
-  font-size: 18px;
-  border-radius: 12px;
-}
-
-/* Full Width Glass Button */
-.glass-btn-block {
-  width: 100%;
-  display: block;
-  text-align: center;
-}
-
-/* Glass Button with Icon */
-.glass-btn-icon {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-}
-
-.glass-btn-icon svg,
-.glass-btn-icon span {
-  width: 18px;
-  height: 18px;
-}
-
-/* Mobile Glass Button Touch Optimization */
-@media (max-width: 480px) {
-  .glass-btn {
-    min-height: 48px;
-    padding: 14px 24px;
-    font-size: 15px;
-    -webkit-tap-highlight-color: transparent;
-    touch-action: manipulation;
+/* Show mobile header on small screens */
+@media (max-width: 1024px) {
+  /* Mobile Header */
+  .admin-mobile-header {
+    display: flex !important;
+    position: fixed !important;
+    top: 60px !important;
+    left: 0 !important;
+    right: 0 !important;
+    z-index: 999 !important;
+    background: var(--card-bg) !important;
+    padding: 12px 15px !important;
+    border-bottom: 1px solid rgba(0, 212, 255, 0.1) !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3) !important;
   }
   
-  .glass-btn-sm {
-    min-height: 40px;
-    padding: 10px 18px;
-    font-size: 13px;
+  .admin-mobile-header h2 {
+    font-size: 16px !important;
+    margin: 0 !important;
+    color: var(--primary) !important;
   }
   
-  .glass-btn-lg {
-    min-height: 56px;
-    padding: 18px 36px;
-    font-size: 16px;
+  .admin-menu-toggle {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 44px !important;
+    height: 44px !important;
+    background: var(--dark-bg) !important;
+    border: 1px solid rgba(0, 212, 255, 0.2) !important;
+    border-radius: 8px !important;
+    color: var(--text-light) !important;
+    font-size: 20px !important;
+    cursor: pointer !important;
+    z-index: 1000 !important;
+    -webkit-tap-highlight-color: transparent !important;
   }
   
-  .glass-btn-xl {
-    min-height: 64px;
-    padding: 22px 44px;
-    font-size: 18px;
-  }
-  
-  /* Improve tap targets */
-  .glass-btn::after {
-    content: '';
-    position: absolute;
-    top: -10px;
-    left: -10px;
-    right: -10px;
-    bottom: -10px;
-  }
-  
-  /* Remove hover effects on touch devices */
-  @media (hover: none) {
-    .glass-btn:hover::before {
-      left: -100%;
-    }
-    
-    .glass-btn:hover {
-      transform: none;
-    }
-  }
-  
-  /* Active state for touch */
-  .glass-btn:active {
-    transform: scale(0.96);
-    box-shadow: 0 0 15px rgba(0, 212, 255, 0.3);
-  }
-}
-
-/* Add to Cart Button - Enhanced Glass Style */
-.add-to-cart-btn {
-  background: linear-gradient(135deg, rgba(0, 212, 255, 0.3) 0%, rgba(0, 102, 255, 0.3) 100%) !important;
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border: 1px solid rgba(0, 212, 255, 0.4) !important;
-  border-radius: 8px !important;
-  color: #00d4ff !important;
-  font-family: 'Rajdhani', sans-serif !important;
-  font-weight: 600 !important;
-  transition: all 0.3s ease !important;
-  position: relative;
-  overflow: hidden;
-}
-
-.add-to-cart-btn::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
-  transition: left 0.5s ease;
-}
-
-.add-to-cart-btn:hover::before {
-  left: 100%;
-}
-
-.add-to-cart-btn:hover {
-  background: linear-gradient(135deg, rgba(0, 212, 255, 0.5) 0%, rgba(0, 102, 255, 0.5) 100%) !important;
-  border-color: #00d4ff !important;
-  box-shadow: 0 0 25px rgba(0, 212, 255, 0.5) !important;
-  transform: translateY(-2px);
-  color: #fff !important;
-}
-
-.add-to-cart-btn:active {
-  transform: translateY(0) scale(0.98);
-}
-
-/* Mobile Add to Cart Button */
-@media (max-width: 480px) {
-  .add-to-cart-btn {
-    width: 100%;
-    padding: 14px 20px;
-    font-size: 14px;
-    min-height: 48px;
-  }
-  
-  .add-to-cart-btn:hover {
-    transform: translateY(-1px);
-  }
-  
-  .add-to-cart-btn:active {
-    transform: scale(0.98);
-  }
-}
-
-/* Confirm Add Button - Enhanced */
-.confirm-add-btn {
-  background: linear-gradient(135deg, rgba(0, 212, 255, 0.4) 0%, rgba(0, 102, 255, 0.4) 100%) !important;
-  backdrop-filter: blur(15px);
-  -webkit-backdrop-filter: blur(15px);
-  border: 2px solid rgba(0, 212, 255, 0.6) !important;
-  border-radius: 10px !important;
-  color: #00d4ff !important;
-  font-family: 'Orbitron', sans-serif !important;
-  font-weight: 700 !important;
-  padding: 16px 24px !important;
-  transition: all 0.3s ease !important;
-  position: relative;
-  overflow: hidden;
-}
-
-.confirm-add-btn::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
-  transition: left 0.5s ease;
-}
-
-.confirm-add-btn:hover::before {
-  left: 100%;
-}
-
-.confirm-add-btn:hover {
-  background: linear-gradient(135deg, rgba(0, 212, 255, 0.6) 0%, rgba(0, 102, 255, 0.6) 100%) !important;
-  box-shadow: 0 0 30px rgba(0, 212, 255, 0.6) !important;
-  transform: translateY(-2px);
-  color: #fff !important;
-}
-
-/* Mobile Confirm Add Button */
-@media (max-width: 480px) {
-  .confirm-add-btn {
-    width: 100%;
-    padding: 16px !important;
-    font-size: 15px !important;
-    min-height: 52px;
-  }
-}
-
-/* Quick View Button */
-.quick-view-btn {
-  background: rgba(255, 255, 255, 0.05) !important;
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.2) !important;
-  border-radius: 8px !important;
-  color: var(--text-light, #e0e6ed) !important;
-  transition: all 0.3s ease !important;
-}
-
-.quick-view-btn:hover {
-  background: rgba(0, 212, 255, 0.15) !important;
-  border-color: var(--primary, #00d4ff) !important;
-  color: var(--primary, #00d4ff) !important;
-}
-
-/* ========================================
-   ADD TO CART MODAL - MOBILE SCROLL FIX
-   ======================================== */
-
-/* Add to Cart Modal - Mobile Scroll Fix */
-@media (max-width: 480px) {
-  /* Modal Overlay - Base */
-  .modal-overlay {
+  /* Mobile Sidebar Overlay */
+  .admin-sidebar-overlay {
+    display: none !important;
     position: fixed !important;
     top: 0 !important;
     left: 0 !important;
     right: 0 !important;
     bottom: 0 !important;
-    width: 100% !important;
-    height: 100% !important;
-    max-width: 100% !important;
-    max-height: 100% !important;
-    padding: 10px !important;
-    display: flex !important;
-    align-items: flex-start !important;
-    justify-content: center !important;
-    overflow-y: auto !important;
-    overflow-x: hidden !important;
-    -webkit-overflow-scrolling: touch !important;
-    scroll-behavior: smooth !important;
-    z-index: 9999 !important;
+    background: rgba(0, 0, 0, 0.7) !important;
+    z-index: 998 !important;
+    animation: fadeIn 0.3s ease !important;
   }
-
-  /* Product Modal Container */
-  .product-modal {
-    width: 100% !important;
-    max-width: 95vw !important;
-    max-height: 90vh !important;
-    margin: 20px 0 !important;
-    padding: 0 !important;
-    border-radius: 16px !important;
-    overflow: hidden !important;
+  
+  .admin-sidebar-overlay.active {
+    display: block !important;
+  }
+  
+  /* Mobile Sidebar */
+  .dashboard-sidebar {
+    display: none !important;
+  }
+  
+  .dashboard-sidebar.mobile-open {
+    display: flex !important;
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 280px !important;
+    height: 100vh !important;
+    background: linear-gradient(180deg, #131a27 0%, #0d1117 100%) !important;
+    z-index: 999 !important;
+    flex-direction: column !important;
+    padding: 20px !important;
+    box-shadow: 4px 0 24px rgba(0, 0, 0, 0.5) !important;
+    animation: slideInLeft 0.3s ease !important;
+    overflow-y: auto !important;
+    padding-top: 80px !important;
+  }
+  
+  @keyframes slideInLeft {
+    from {
+      transform: translateX(-100%);
+    }
+    to {
+      transform: translateX(0);
+    }
+  }
+  
+  .dashboard-sidebar.mobile-open .sidebar-header {
+    display: block !important;
+    text-align: center !important;
+    padding: 20px 15px !important;
+    margin-bottom: 20px !important;
+    background: linear-gradient(135deg, rgba(0, 212, 255, 0.08) 0%, rgba(0, 102, 255, 0.05) 100%) !important;
+    border-radius: 12px !important;
+    border: 1px solid rgba(0, 212, 255, 0.1) !important;
+  }
+  
+  .dashboard-sidebar.mobile-open .sidebar-header h2 {
+    font-size: 16px !important;
+    margin-bottom: 5px !important;
+  }
+  
+  .dashboard-sidebar.mobile-open .welcome-text {
+    font-size: 12px !important;
+    color: var(--text-muted) !important;
+  }
+  
+  .dashboard-sidebar.mobile-open .sidebar-nav {
     display: flex !important;
     flex-direction: column !important;
-  }
-
-  /* Modal Content - Scrollable */
-  .product-modal .modal-content {
-    overflow-y: auto !important;
-    overflow-x: hidden !important;
-    -webkit-overflow-scrolling: touch !important;
-    scroll-behavior: smooth !important;
+    gap: 8px !important;
     flex: 1 !important;
-    max-height: calc(90vh - 60px) !important;
   }
-
-  /* Modal Close Button */
-  .product-modal .modal-close {
-    position: sticky !important;
-    top: 10px !important;
-    right: 10px !important;
-    z-index: 100 !important;
-    float: right !important;
-    margin: 10px !important;
-    background: rgba(0, 0, 0, 0.6) !important;
-    backdrop-filter: blur(5px) !important;
-  }
-
-  /* Modal Image */
-  .product-modal .modal-image {
+  
+  .dashboard-sidebar.mobile-open .sidebar-nav button {
+    display: flex !important;
+    align-items: center !important;
+    gap: 12px !important;
+    padding: 14px 18px !important;
+    background: transparent !important;
+    border: none !important;
+    border-radius: 10px !important;
+    color: var(--text-muted) !important;
+    font-family: 'Rajdhani', sans-serif !important;
+    font-size: 15px !important;
+    cursor: pointer !important;
+    transition: all 0.3s ease !important;
+    text-align: left !important;
     width: 100% !important;
-    height: auto !important;
-    max-height: 40vh !important;
-    object-fit: contain !important;
-    background: var(--dark-bg) !important;
-  }
-
-  /* Modal Details */
-  .product-modal .modal-details {
-    padding: 20px !important;
-    overflow-y: visible !important;
-  }
-
-  /* Modal Title */
-  .product-modal .modal-details h2 {
-    font-size: 20px !important;
-    margin-top: 0 !important;
-    margin-bottom: 10px !important;
-  }
-
-  /* Modal Description */
-  .product-modal .modal-details .modal-description {
-    font-size: 14px !important;
-    line-height: 1.5 !important;
-    margin-bottom: 15px !important;
-  }
-
-  /* Modal Price */
-  .product-modal .modal-details .modal-price {
-    font-size: 24px !important;
-    margin-bottom: 20px !important;
-  }
-
-  /* Option Groups */
-  .product-modal .option-group {
-    margin-bottom: 15px !important;
-  }
-
-  .product-modal .option-group label {
-    display: block !important;
-    font-size: 14px !important;
-    margin-bottom: 8px !important;
-  }
-
-  /* Color Options */
-  .product-modal .color-options {
-    display: flex !important;
-    flex-wrap: wrap !important;
-    gap: 8px !important;
-  }
-
-  .product-modal .color-option {
-    padding: 10px 16px !important;
-    font-size: 13px !important;
-    min-width: 70px !important;
-    text-align: center !important;
-  }
-
-  /* Size Options */
-  .product-modal .size-options {
-    display: flex !important;
-    flex-wrap: wrap !important;
-    gap: 8px !important;
-  }
-
-  .product-modal .size-option {
-    padding: 10px 14px !important;
-    font-size: 13px !important;
-    min-width: 50px !important;
-    text-align: center !important;
-  }
-
-  /* Confirm Add Button */
-  .product-modal .confirm-add-btn {
-    width: 100% !important;
-    padding: 16px !important;
-    font-size: 16px !important;
-    margin-top: 20px !important;
-    position: sticky !important;
-    bottom: 0 !important;
-  }
-
-  /* Image Navigation */
-  .product-modal .image-nav {
-    display: flex !important;
-    justify-content: center !important;
-    gap: 10px !important;
-    padding: 10px !important;
-    background: var(--card-bg) !important;
-  }
-
-  .product-modal .image-nav-btn {
-    padding: 8px 16px !important;
-    font-size: 12px !important;
-    border-radius: 20px !important;
-  }
-
-  /* Ensure touch events work */
-  .product-modal,
-  .product-modal .modal-content,
-  .product-modal .option-group,
-  .product-modal .color-options,
-  .product-modal .size-options {
-    touch-action: manipulation !important;
+    min-height: 48px !important;
     -webkit-tap-highlight-color: transparent !important;
   }
-
-  /* Prevent text selection on modal */
-  .product-modal {
-    -webkit-user-select: none !important;
-    user-select: none !important;
+  
+  .dashboard-sidebar.mobile-open .sidebar-nav button:hover,
+  .dashboard-sidebar.mobile-open .sidebar-nav button.active {
+    background: var(--gradient-primary) !important;
+    color: #000 !important;
+    font-weight: 600 !important;
   }
-
-  /* Improve scroll performance */
-  .product-modal * {
-    -webkit-overflow-scrolling: touch !important;
+  
+  .dashboard-sidebar.mobile-open .sidebar-nav button .badge {
+    margin-left: auto !important;
+    background: #ff4444 !important;
+    color: white !important;
+    padding: 2px 8px !important;
+    border-radius: 10px !important;
+    font-size: 11px !important;
+    font-weight: 700 !important;
   }
-}
-
-/* Body scroll lock when modal is open */
-/* This class should be added to body when modal opens */
-body.modal-open {
-  overflow: hidden !important;
-  position: fixed !important;
-  width: 100% !important;
-  height: 100% !important;
-}
-
-/* iOS Safari specific fixes */
-@supports (-webkit-touch-callout: none) {
-  @media (max-width: 480px) {
-    .modal-overlay {
-      position: fixed !important;
-      overscroll-behavior: contain !important;
-    }
-
-    .product-modal {
-      max-height: -webkit-fill-available !important;
-      height: auto !important;
-      min-height: auto !important;
-    }
-
-    .product-modal .modal-content {
-      max-height: -webkit-fill-available !important;
-      height: auto !important;
-    }
-
-    /* Fix for iOS Safari bounce scroll */
-    .product-modal .modal-content {
-      overflow-y: scroll !important;
-      -webkit-overflow-scrolling: touch !important;
-      contain: strict !important;
-    }
+  
+  .dashboard-sidebar.mobile-open .sidebar-footer {
+    margin-top: auto !important;
+    padding-top: 20px !important;
+    border-top: 1px solid rgba(0, 212, 255, 0.1) !important;
   }
-}
-
-/* Android specific fixes */
-@media (max-width: 480px) and (pointer: coarse) {
-  .product-modal .confirm-add-btn,
-  .product-modal .color-option,
-  .product-modal .size-option {
-    min-height: 52px !important;
+  
+  .dashboard-sidebar.mobile-open .logout-btn {
+    width: 100% !important;
+    padding: 14px !important;
+    background: rgba(255, 68, 68, 0.1) !important;
+    border: 1px solid rgba(255, 68, 68, 0.3) !important;
+    border-radius: 8px !important;
+    color: #ff4444 !important;
+    font-family: 'Rajdhani', sans-serif !important;
+    font-size: 15px !important;
+    cursor: pointer !important;
+    transition: all 0.3s ease !important;
+    min-height: 48px !important;
+  }
+  
+  .dashboard-sidebar.mobile-open .logout-btn:hover {
+    background: #ff4444 !important;
+    color: white !important;
+  }
+  
+  /* Close button for mobile sidebar */
+  .sidebar-close-btn {
+    display: flex !important;
+    position: absolute !important;
+    top: 20px !important;
+    right: 15px !important;
+    width: 36px !important;
+    height: 36px !important;
+    background: var(--dark-bg) !important;
+    border: 1px solid rgba(0, 212, 255, 0.2) !important;
+    border-radius: 50% !important;
+    color: var(--text-light) !important;
+    font-size: 20px !important;
+    cursor: pointer !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+  
+  /* Dashboard Content Mobile */
+  .dashboard-content {
+    margin-left: 0 !important;
+    padding: 20px 15px !important;
+    min-height: calc(100vh - 60px) !important;
+    padding-top: 90px !important;
+  }
+  
+  .dashboard-content h1 {
+    font-size: 22px !important;
+    margin-bottom: 20px !important;
+  }
+  
+  /* Panel Header Mobile */
+  .panel-header {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 15px !important;
+  }
+  
+  .panel-header h1 {
+    font-size: 20px !important;
+  }
+  
+  .header-actions {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 10px !important;
+  }
+  
+  /* Search Box Mobile */
+  .search-box {
+    width: 100% !important;
+  }
+  
+  .search-box input {
+    width: 100% !important;
+    min-width: unset !important;
+    padding: 14px 16px !important;
+    font-size: 15px !important;
+  }
+  
+  /* Add Button Mobile */
+  .add-btn {
+    width: 100% !important;
     padding: 14px 20px !important;
+    font-size: 14px !important;
+    min-height: 48px !important;
+    text-align: center !important;
   }
-
-  .product-modal .modal-close {
+  
+  /* Stats Grid Mobile */
+  .stats-grid {
+    grid-template-columns: 1fr 1fr !important;
+    gap: 12px !important;
+  }
+  
+  .stats-grid .stat-card {
+    padding: 15px !important;
+    flex-direction: column !important;
+    text-align: center !important;
+    gap: 10px !important;
+  }
+  
+  .stats-grid .stat-icon {
     width: 40px !important;
     height: 40px !important;
-    font-size: 24px !important;
-  }
-}
-
-/* Ensure proper z-index layering */
-.modal-overlay {
-  z-index: 10000 !important;
-}
-
-.product-modal {
-  z-index: 10001 !important;
-}
-
-/* ========================================
-   ADDITIONAL MOBILE FIXES
-   ======================================== */
-
-/* Ensure product cards are scrollable on mobile */
-@media (max-width: 480px) {
-  /* Enable proper scrolling in shop */
-  .shop-products {
-    overflow-x: hidden;
-    -webkit-overflow-scrolling: touch;
+    font-size: 20px !important;
   }
   
-  /* Product grid scroll fix */
-  .products-grid {
-    contain: layout style;
-    transform: translateZ(0);
-  }
-  
-  /* Ensure modal doesn't overflow */
-  .product-modal {
-    max-height: 90vh;
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
-  }
-  
-  /* Fix for iOS Safari viewport issues */
-  @supports (-webkit-touch-callout: none) {
-    .page-container {
-      min-height: -webkit-fill-available;
-    }
-  }
-  
-  /* Proper touch handling */
-  .product-card,
-  .add-to-cart-btn,
-  .quick-view-btn,
-  .confirm-add-btn {
-    touch-action: manipulation;
-    -webkit-tap-highlight-color: transparent;
-  }
-  
-  /* Prevent double-tap zoom on buttons */
-  button,
-  .btn {
-    touch-action: manipulation;
-  }
-  
-  /* Improve scroll performance */
-  * {
-    -webkit-overflow-scrolling: touch;
-  }
-  
-  /* Fix for sticky elements */
-  .navbar {
-    -webkit-position: sticky;
-    position: sticky;
-  }
-  
-  /* Ensure cart items scroll properly */
-  .cart-items {
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
-  }
-}
-
-/* Fix for horizontal scroll issues */
-@media (max-width: 768px) {
-  body {
-    overflow-x: hidden;
-    max-width: 100vw;
-  }
-  
-  /* Prevent horizontal scroll */
-  html, 
-  body {
-    overflow-x: hidden;
-  }
-  
-  /* Ensure containers don't overflow */
-  .container,
-  .shop-products .container,
-  .shop-filters .container {
-    max-width: 100vw;
-    overflow-x: hidden;
-    padding-left: 10px;
-    padding-right: 10px;
-  }
-}
-
-/* iOS specific fixes */
-@supports (-webkit-touch-callout: none) {
-  @media (max-width: 480px) {
-    /* iOS Safari safe area */
-    .page-container {
-      padding-top: calc(70px + env(safe-area-inset-top, 0px));
-      padding-bottom: env(safe-area-inset-bottom, 0px);
-    }
-    
-    /* iOS Safari modal fix */
-    .modal-overlay {
-      position: fixed;
-      overscroll-behavior: contain;
-    }
-    
-    /* iOS Safari button fix */
-    .add-to-cart-btn,
-    .confirm-add-btn,
-    .quick-view-btn {
-      -webkit-appearance: none;
-      appearance: none;
-    }
-  }
-}
-
-/* Android specific fixes */
-@media (max-width: 480px) and (pointer: coarse) {
-  /* Larger touch targets on Android */
-  .add-to-cart-btn,
-  .confirm-add-btn,
-  .quick-view-btn {
-    min-height: 52px;
-    padding: 16px 24px;
-  }
-  
-  /* Improve scrolling on Android */
-  .shop-products,
-  .modal-overlay {
-    -webkit-overflow-scrolling: touch;
-  }
-}
-
-/* ========================================
-   FAMILY TREE MOBILE STYLES
-   ======================================== */
-
-/* Mobile Family Tree Container */
-.team-tree {
-  padding: 80px 10px 40px !important;
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
-}
-
-.team-tree .container {
-  display: flex;
-  justify-content: center;
-  min-width: fit-content;
-}
-
-/* Family Tree Header - Mobile */
-.team-tree > div:first-child {
-  margin-bottom: 20px !important;
-}
-
-.team-tree h2 {
-  font-size: 24px !important;
-  padding: 0 10px;
-}
-
-.team-tree > div:first-child p {
-  font-size: 11px !important;
-  padding: 0 10px;
-}
-
-/* Filter Buttons - Mobile */
-.team-tree [style*="display: flex"][style*="justify-content: center"] {
-  gap: 6px !important;
-  padding: 0 10px;
-}
-
-.team-tree [style*="display: flex"][style*="justify-content: center"] button {
-  padding: 6px 12px !important;
-  font-size: 10px !important;
-  min-height: 32px;
-  border-radius: 15px !important;
-}
-
-/* Tree Node Cards - Mobile */
-.team-tree .tree-node,
-.team-tree [style*="background: rgba(17, 24, 39"] {
-  min-width: 80px !important;
-  max-width: 100px !important;
-  padding: 8px 10px !important;
-  border-radius: 8px !important;
-}
-
-/* Root Node - Mobile */
-.team-tree .tree-node:first-child,
-.team-tree [style*="border-radius: 20"] {
-  min-width: 120px !important;
-  max-width: 160px !important;
-  padding: 12px 15px !important;
-  border-radius: 12px !important;
-}
-
-/* Node Icons - Mobile */
-.team-tree [style*="font-size: 42px"],
-.team-tree [style*="font-size: 30px"],
-.team-tree [style*="font-size: 26px"] {
-  font-size: 24px !important;
-  margin-bottom: 4px !important;
-}
-
-.team-tree img {
-  width: 35px !important;
-  height: 35px !important;
-}
-
-.team-tree .tree-node:first-child img {
-  width: 45px !important;
-  height: 45px !important;
-}
-
-/* Node Text - Mobile */
-.team-tree h4 {
-  font-size: 10px !important;
-  margin-bottom: 2px !important;
-  letter-spacing: 0.5px !important;
-}
-
-.team-tree .tree-node:first-child h4 {
-  font-size: 12px !important;
-}
-
-.team-tree p {
-  font-size: 8px !important;
-  line-height: 1.2 !important;
-}
-
-.team-tree .tree-node:first-child p {
-  font-size: 10px !important;
-}
-
-/* Connector Lines - Mobile */
-.team-tree [style*="height: 25"],
-.team-tree [style*="height: 20"] {
-  height: 12px !important;
-}
-
-.team-tree [style*="width: 2"] {
-  width: 1px !important;
-}
-
-/* Children Container - Mobile */
-.team-tree [style*="gap: 30"],
-.team-tree [style*="gap: 15"],
-.team-tree [style*="paddingTop: 25"] {
-  gap: 10px !important;
-  padding-top: 15px !important;
-}
-
-/* Horizontal Connector Bar - Mobile */
-.team-tree [style*="width: calc"],
-.team-tree [style*="maxWidth:"] {
-  width: 90% !important;
-  max-width: none !important;
-}
-
-/* Selected Node Popup - Mobile */
-.team-tree [style*="position: fixed"],
-.team-tree [style*="bottom: 30"] {
-  bottom: 20px !important;
-  left: 10px !important;
-  right: 10px !important;
-  transform: none !important;
-  max-width: none !important;
-  width: auto !important;
-  padding: 15px 20px !important;
-  border-radius: 12px !important;
-  gap: 12px !important;
-}
-
-/* Popup Icon - Mobile */
-.team-tree [style*="position: fixed"] > div:first-child {
-  font-size: 28px !important;
-}
-
-.team-tree [style*="position: fixed"] img {
-  width: 45px !important;
-  height: 45px !important;
-}
-
-/* Popup Text - Mobile */
-.team-tree [style*="position: fixed"] h3 {
-  font-size: 16px !important;
-  margin-bottom: 3px !important;
-}
-
-.team-tree [style*="position: fixed"] p {
-  font-size: 11px !important;
-}
-
-/* Popup Close Button - Mobile */
-.team-tree [style*="position: fixed"] button {
-  width: 24px !important;
-  height: 24px !important;
-  font-size: 16px !important;
-  top: -8px !important;
-  right: -8px !important;
-  min-height: 24px !important;
-  padding: 0 !important;
-}
-
-/* Scrollbar - Mobile */
-.team-tree::-webkit-scrollbar {
-  height: 4px;
-}
-
-.team-tree::-webkit-scrollbar-track {
-  background: rgba(0, 0, 0, 0.2);
-  border-radius: 2px;
-}
-
-.team-tree::-webkit-scrollbar-thumb {
-  background: var(--primary);
-  border-radius: 2px;
-}
-
-/* Animation improvements - Mobile */
-@media (max-width: 480px) {
-  @keyframes pulse {
-    0%, 100% { opacity: 0.6; }
-    50% { opacity: 1; }
-  }
-  
-  .tree-node {
-    transition: all 0.2s ease !important;
-  }
-  
-  .tree-node[style*="scale: 1.05"] {
-    transform: scale(1.02) !important;
-  }
-}
-
-/* Prevent zoom on double tap */
-.team-tree .tree-node {
-  touch-action: manipulation;
-  -webkit-tap-highlight-color: transparent;
-}
-
-/* Better spacing for nested children on mobile */
-.team-tree [style*="position: relative"] {
-  margin: 0 3px;
-}
-
-/* Tree Popup Modal - Mobile Optimized */
-.tree-popup {
-  /* Ensure popup is always centered and above everything */
-  position: fixed !important;
-  top: 50% !important;
-  left: 50% !important;
-  transform: translate(-50%, -50%) !important;
-  z-index: 9999 !important;
-}
-
-/* Tree Popup Backdrop */
-.team-tree > div[style*="position: fixed"][style*="z-index: 99"],
-.team-tree [style*="zIndex: 99"] {
-  position: fixed !important;
-  z-index: 9998 !important;
-}
-
-/* Mobile popup adjustments */
-@media (max-width: 480px) {
-  .tree-popup {
-    width: 85% !important;
-    max-width: 320px !important;
-    padding: 20px !important;
-    border-radius: 16px !important;
-  }
-  
-  .tree-popup > div:first-child {
-    font-size: 36px !important;
-  }
-  
-  .tree-popup img {
-    width: 60px !important;
-    height: 60px !important;
-  }
-  
-  .tree-popup h3 {
+  .stats-grid .stat-info h3 {
     font-size: 18px !important;
   }
   
-  .tree-popup p {
+  .stats-grid .stat-info p {
     font-size: 11px !important;
   }
   
-  .tree-popup button {
-    width: 28px !important;
-    height: 28px !important;
-    font-size: 18px !important;
-    top: 8px !important;
-    right: 8px !important;
+  /* Table Container Mobile */
+  .table-container {
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    border-radius: 12px !important;
   }
   
-  /* Ensure touch events work on popup */
-  .tree-popup {
-    touch-action: manipulation;
-    -webkit-tap-highlight-color: transparent;
+  .table-container table {
+    min-width: 600px !important;
+    font-size: 13px !important;
   }
   
-  /* Backdrop click to close */
-  .team-tree > div[style*="zIndex: 99"] {
-    cursor: pointer;
+  .table-container th,
+  .table-container td {
+    padding: 12px 10px !important;
+    white-space: nowrap !important;
   }
-}
-
-/* Extra small devices */
-@media (max-width: 320px) {
-  .tree-popup {
-    width: 90% !important;
+  
+  .table-container th {
+    font-size: 11px !important;
+    text-transform: uppercase !important;
+  }
+  
+  /* Orders List Mobile */
+  .orders-list {
+    gap: 15px !important;
+  }
+  
+  .order-card-admin {
     padding: 15px !important;
-  }
-}
-
-/* ========================================
-   FAMILY TREE MODAL MOBILE STYLES (NEW)
-   ======================================== */
-
-/* Overlay */
-.tree-modal-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.65);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 16px;
-  z-index: 9999;
-}
-
-/* Modal container */
-.tree-modal {
-  display: flex;
-  flex-direction: column;
-  background: #0a0f18;
-  border-radius: 16px;
-  max-width: 400px;
-  width: 100%;
-  max-height: 85vh;
-  overflow: hidden;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
-}
-
-/* Modal content - scrollable */
-.tree-modal > div {
-  padding: 24px;
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
-}
-
-/* Mobile layout */
-@media (max-width: 768px) {
-  .tree-modal {
-    flex-direction: column;
-    width: 100%;
-    max-height: 95vh;
-    position: fixed;
-    inset: 0;
-    margin: auto;
-    border-radius: 12px;
+    border-radius: 10px !important;
   }
   
-  .tree-modal > div {
-    padding: 20px;
-    overflow-y: auto;
+  .order-card-admin .order-header {
+    flex-direction: row !important;
+    justify-content: space-between !important;
+    margin-bottom: 12px !important;
   }
   
-  .tree-modal > div > div:first-child {
-    font-size: 48px !important;
-  }
-  
-  .tree-modal img {
-    width: 70px !important;
-    height: 70px !important;
-  }
-  
-  .tree-modal h3 {
-    font-size: 20px !important;
-  }
-  
-  .tree-modal p {
+  .order-card-admin .order-id {
     font-size: 12px !important;
   }
-}
-
-/* Extra small devices */
-@media (max-width: 320px) {
-  .tree-modal {
-    max-height: 90vh;
+  
+  .order-card-admin .order-body {
+    grid-template-columns: 1fr !important;
+    gap: 12px !important;
+    margin-bottom: 12px !important;
   }
   
-  .tree-modal > div {
-    padding: 15px;
+  .order-card-admin .order-info p,
+  .order-card-admin .order-items p,
+  .order-card-admin .order-total p {
+    font-size: 12px !important;
+    margin-bottom: 4px !important;
+  }
+  
+  .order-card-admin .order-actions {
+    flex-direction: column !important;
+    gap: 10px !important;
+  }
+  
+  .order-card-admin .status-select {
+    width: 100% !important;
+    padding: 12px !important;
+    min-height: 44px !important;
+  }
+  
+  /* Products Grid Mobile */
+  .products-grid-admin {
+    grid-template-columns: 1fr 1fr !important;
+    gap: 12px !important;
+  }
+  
+  .product-card-admin {
+    border-radius: 10px !important;
+  }
+  
+  .product-card-admin .product-image {
+    height: 100px !important;
+  }
+  
+  .product-card-admin .product-details {
+    padding: 10px !important;
+  }
+  
+  .product-card-admin .product-details h3 {
+    font-size: 13px !important;
+    margin-bottom: 5px !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+  }
+  
+  .product-card-admin .product-price {
+    font-size: 14px !important;
+    margin-bottom: 3px !important;
+  }
+  
+  .product-card-admin .product-stock,
+  .product-card-admin .product-category {
+    font-size: 10px !important;
+  }
+  
+  .product-card-admin .product-actions {
+    flex-direction: column !important;
+    padding: 10px !important;
+    gap: 8px !important;
+  }
+  
+  .product-card-admin .edit-btn,
+  .product-card-admin .delete-btn {
+    width: 100% !important;
+    padding: 10px !important;
+    font-size: 12px !important;
+    min-height: 40px !important;
+  }
+  
+  /* Tournament Cards Mobile */
+  .tournaments-list {
+    gap: 15px !important;
+  }
+  
+  .tournament-card-admin {
+    flex-direction: column !important;
+    gap: 15px !important;
+    padding: 15px !important;
+    border-radius: 10px !important;
+  }
+  
+  .tournament-card-admin .tournament-info h3 {
+    font-size: 16px !important;
+    margin-bottom: 8px !important;
+  }
+  
+  .tournament-card-admin .tournament-info p {
+    font-size: 12px !important;
+    margin-bottom: 5px !important;
+  }
+  
+  .tournament-card-admin .tournament-actions {
+    flex-direction: row !important;
+    width: 100% !important;
+  }
+  
+  .tournament-card-admin .edit-btn,
+  .tournament-card-admin .delete-btn {
+    flex: 1 !important;
+    padding: 12px !important;
+    font-size: 13px !important;
+    min-height: 44px !important;
+  }
+  
+  /* News Cards Mobile */
+  .news-list {
+    gap: 15px !important;
+  }
+  
+  .news-card-admin {
+    flex-direction: column !important;
+    gap: 15px !important;
+    padding: 15px !important;
+    border-radius: 10px !important;
+  }
+  
+  .news-card-admin .news-info h3 {
+    font-size: 15px !important;
+    margin-bottom: 8px !important;
+  }
+  
+  .news-card-admin .news-info p {
+    font-size: 12px !important;
+  }
+  
+  .news-card-admin .news-actions {
+    flex-direction: row !important;
+    width: 100% !important;
+  }
+  
+  /* Discount Cards Mobile */
+  .discounts-list {
+    gap: 15px !important;
+  }
+  
+  .discount-card-admin {
+    flex-direction: column !important;
+    gap: 15px !important;
+    padding: 15px !important;
+    border-radius: 10px !important;
+  }
+  
+  .discount-card-admin .discount-info h3 {
+    font-size: 16px !important;
+  }
+  
+  .discount-card-admin .discount-info p {
+    font-size: 12px !important;
+  }
+  
+  .discount-card-admin .discount-actions {
+    flex-direction: row !important;
+    width: 100% !important;
+    gap: 10px !important;
+  }
+  
+  /* Finance Section Mobile */
+  .finance-summary {
+    grid-template-columns: 1fr 1fr !important;
+    gap: 12px !important;
+  }
+  
+  .summary-card {
+    padding: 15px !important;
+    border-radius: 10px !important;
+  }
+  
+  .summary-card .summary-icon {
+    font-size: 20px !important;
+    margin-bottom: 8px !important;
+  }
+  
+  .summary-card .summary-info h3 {
+    font-size: 16px !important;
+  }
+  
+  .summary-card .summary-info p {
+    font-size: 11px !important;
+  }
+  
+  .finance-filters {
+    gap: 10px !important;
+    padding: 15px !important;
+    border-radius: 10px !important;
+  }
+  
+  .finance-filters .filter-group {
+    margin-bottom: 0 !important;
+  }
+  
+  .finance-filters .filter-group label {
+    font-size: 12px !important;
+    margin-bottom: 5px !important;
+  }
+  
+  .finance-filters .filter-group input,
+  .finance-filters .filter-group select {
+    padding: 10px 12px !important;
+    font-size: 14px !important;
+    min-height: 40px !important;
+  }
+  
+  .finance-filters .clear-filters-btn {
+    width: 100% !important;
+    padding: 12px !important;
+    font-size: 13px !important;
+    min-height: 44px !important;
+  }
+  
+  /* Settings Section Mobile */
+  .settings-section {
+    padding: 20px !important;
+    border-radius: 12px !important;
+  }
+  
+  .settings-section h2 {
+    font-size: 18px !important;
+    margin-bottom: 15px !important;
+  }
+  
+  .settings-section .form-group {
+    margin-bottom: 15px !important;
+  }
+  
+  .settings-section .form-group label {
+    font-size: 13px !important;
+    margin-bottom: 6px !important;
+  }
+  
+  .settings-section .form-group input,
+  .settings-section .form-group select {
+    width: 100% !important;
+    padding: 12px 14px !important;
+    font-size: 15px !important;
+    min-height: 44px !important;
+  }
+  
+  /* Admin Modal Mobile */
+  .admin-modal {
+    width: 95% !important;
+    max-width: 95% !important;
+    margin: 20px auto !important;
+    border-radius: 16px !important;
+    max-height: 85vh !important;
+  }
+  
+  .admin-modal .modal-close {
+    top: 10px !important;
+    right: 10px !important;
+    width: 32px !important;
+    height: 32px !important;
+    font-size: 18px !important;
+  }
+  
+  .admin-form {
+    padding: 20px !important;
+  }
+  
+  .admin-form h2 {
+    font-size: 18px !important;
+    margin-bottom: 20px !important;
+  }
+  
+  .admin-form .form-group {
+    margin-bottom: 15px !important;
+  }
+  
+  .admin-form .form-group label {
+    font-size: 13px !important;
+    margin-bottom: 6px !important;
+  }
+  
+  .admin-form .form-group input,
+  .admin-form .form-group select,
+  .admin-form .form-group textarea {
+    padding: 12px 14px !important;
+    font-size: 15px !important;
+    min-height: 44px !important;
+  }
+  
+  .admin-form .form-row {
+    grid-template-columns: 1fr !important;
+    gap: 15px !important;
+  }
+  
+  .admin-form .form-actions {
+    flex-direction: column !important;
+    gap: 10px !important;
+    margin-top: 20px !important;
+  }
+  
+  .admin-form .cancel-btn,
+  .admin-form .save-btn {
+    width: 100% !important;
+    padding: 14px !important;
+    font-size: 15px !important;
+    min-height: 48px !important;
+  }
+  
+  /* Toast Notification Mobile */
+  .admin-toast {
+    left: 15px !important;
+    right: 15px !important;
+    transform: none !important;
+    width: auto !important;
+    padding: 14px 20px !important;
+    font-size: 14px !important;
+    border-radius: 8px !important;
+    top: 100px !important;
+  }
+  
+  /* Recent Section Mobile */
+  .recent-section {
+    padding: 20px !important;
+    border-radius: 12px !important;
+  }
+  
+  .recent-section h2 {
+    font-size: 18px !important;
+    margin-bottom: 15px !important;
+  }
+  
+  /* Touch-friendly improvements */
+  .dashboard-content button,
+  .dashboard-content .btn,
+  .dashboard-content select,
+  .dashboard-content input[type="checkbox"],
+  .dashboard-content input[type="radio"] {
+    min-height: 44px !important;
+    min-width: 44px !important;
+    -webkit-tap-highlight-color: transparent !important;
+  }
+  
+  /* Better spacing for mobile */
+  .tab-panel {
+    padding-bottom: 40px !important;
+  }
+  
+  /* Modal overlay mobile */
+  .modal-overlay {
+    padding: 10px !important;
+    align-items: flex-start !important;
+    justify-content: center !important;
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+  }
+  
+  /* Filter inputs in finance */
+  .finance-filters {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+  }
+  
+  .finance-filters .filter-group.full-width {
+    grid-column: span 2 !important;
+  }
+  
+  .finance-filters .clear-filters-btn {
+    grid-column: span 2 !important;
+  }
+  
+  /* Ensure proper scrolling in dashboard */
+  .dashboard-content {
+    overflow-y: visible !important;
+    -webkit-overflow-scrolling: touch !important;
   }
 }
 
+/* Responsive adjustments for very small screens */
+@media (max-width: 380px) {
+  .stats-grid {
+    grid-template-columns: 1fr !important;
+  }
+  
+  .products-grid-admin {
+    grid-template-columns: 1fr !important;
+  }
+  
+  .finance-summary {
+    grid-template-columns: 1fr !important;
+  }
+  
+  .finance-filters {
+    grid-template-columns: 1fr !important;
+  }
+  
+  .finance-filters .filter-group.full-width {
+    grid-column: span 1 !important;
+  }
+  
+  .finance-filters .clear-filters-btn {
+    grid-column: span 1 !important;
+  }
+}
