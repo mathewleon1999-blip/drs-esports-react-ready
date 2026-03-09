@@ -1,7 +1,9 @@
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
+import { memo } from "react";
 
-function Footer() {
+// Memoized Footer component for performance optimization
+const Footer = memo(function Footer() {
   const socialLinks = [
     { name: "Instagram", icon: "📷", url: "https://www.instagram.com/ig.dikkaris_esports?utm_source=qr&igsh=MWFncHlsZXI1c21mMw==" },
     { name: "YouTube", icon: "📺", url: "https://www.youtube.com/@dikkarisesports" },

@@ -1,10 +1,11 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, memo } from "react";
 import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import DarkModeToggle from "./DarkModeToggle";
 import { useWishlist } from "./WishlistContext";
 
-function Navbar() {
+// Memoized Navbar component for performance optimization
+const Navbar = memo(function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [player, setPlayer] = useState(null);
   const [showMobileMenu, setShowMobileMenu] = useState(false);

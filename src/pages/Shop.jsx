@@ -421,24 +421,14 @@ function Shop() {
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.3 }}
-            style={{
-              maxWidth: "90vw",
-              maxHeight: "85vh",
-              overflowY: "auto",
-            }}
           >
             <button className="modal-close" onClick={() => setSelectedJersey(null)}>×</button>
-            <div className="modal-content">
-              <div className="modal-image">
-                <img src={selectedJersey.images[selectedImageIndex]} alt={selectedJersey.name} />
+            <div className="modal-product">
+              <div className="modal-product-image">
+                <div className="product-placeholder large">
+                  <img src={selectedJersey.images[selectedImageIndex]} alt={selectedJersey.name} />
+                </div>
                 
-                {/* Image navigation for products with multiple images */}
-                {selectedJersey.images.length > 1 && (
-                  <div className="product-view-toggle">
-                    <button 
-                      className={selectedImageIndex === 0 ? 'active' : ''}
-                      style={{ width: '100%' }}
-                />
                 {/* Image navigation for products with multiple images */}
                 {selectedJersey.images.length > 1 && (
                   <div className="product-view-toggle">
@@ -462,11 +452,11 @@ function Shop() {
                     </button>
                   </div>
                 )}
-              </div> REPLACE
+              </div>
               <div className="modal-details">
                 <h2>{selectedJersey.name}</h2>
                 <p className="modal-description">{selectedJersey.description}</p>
-                <div className="modal-price">₹{selectedJersey.price}</div>
+                <div className="product-price large">₹{selectedJersey.price}</div>
                 
                 <div className="option-group">
                   <label>Color:</label>
