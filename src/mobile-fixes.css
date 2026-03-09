@@ -2200,8 +2200,43 @@
 }
 
 /* ========================================
-   ADMIN DASHBOARD MOBILE STYLES
+   ADMIN DASHBOARD MOBILE STYLES - ENHANCED
    ======================================== */
+
+/* Admin Dashboard Layout - Base */
+.admin-dashboard {
+  display: flex;
+  min-height: 100vh;
+  height: auto;
+  background: var(--dark-bg);
+  padding-top: 80px;
+  padding-bottom: 40px;
+  position: relative;
+}
+
+/* Desktop Sidebar */
+.dashboard-sidebar {
+  width: 280px;
+  background: linear-gradient(180deg, #131a27 0%, #0d1117 100%);
+  border-right: 1px solid rgba(0, 212, 255, 0.08);
+  padding: 20px;
+  position: fixed;
+  height: calc(100vh - 80px);
+  overflow-y: auto;
+  left: 0;
+  top: 80px;
+  z-index: 100;
+  box-shadow: 4px 0 24px rgba(0, 0, 0, 0.3);
+}
+
+/* Dashboard Content */
+.dashboard-content {
+  flex: 1;
+  margin-left: 280px;
+  padding: 30px;
+  min-height: calc(100vh - 80px);
+  padding-bottom: 60px;
+}
 
 /* Admin Dashboard - Mobile Navigation Toggle */
 .admin-mobile-header {
@@ -2219,6 +2254,20 @@
 
 /* Show mobile header on small screens */
 @media (max-width: 1024px) {
+  /* Fix admin-dashboard container */
+  .admin-dashboard {
+    padding-top: 130px !important;
+    padding-bottom: 40px !important;
+    min-height: 100vh !important;
+    height: auto !important;
+    display: block !important;
+  }
+  
+  /* Hide desktop sidebar */
+  .dashboard-sidebar {
+    display: none !important;
+  }
+  
   /* Mobile Header */
   .admin-mobile-header {
     display: flex !important;
@@ -2226,8 +2275,8 @@
     top: 60px !important;
     left: 0 !important;
     right: 0 !important;
-    z-index: 999 !important;
-    background: var(--card-bg) !important;
+    z-index: 998 !important;
+    background: linear-gradient(180deg, #131a27 0%, #0d1117 100%) !important;
     padding: 12px 15px !important;
     border-bottom: 1px solid rgba(0, 212, 255, 0.1) !important;
     justify-content: space-between !important;
@@ -2247,10 +2296,10 @@
     justify-content: center !important;
     width: 44px !important;
     height: 44px !important;
-    background: var(--dark-bg) !important;
+    background: rgba(0, 212, 255, 0.1) !important;
     border: 1px solid rgba(0, 212, 255, 0.2) !important;
     border-radius: 8px !important;
-    color: var(--text-light) !important;
+    color: var(--primary) !important;
     font-size: 20px !important;
     cursor: pointer !important;
     z-index: 1000 !important;
@@ -2266,7 +2315,7 @@
     right: 0 !important;
     bottom: 0 !important;
     background: rgba(0, 0, 0, 0.7) !important;
-    z-index: 998 !important;
+    z-index: 999 !important;
     animation: fadeIn 0.3s ease !important;
   }
   
@@ -2287,13 +2336,12 @@
     width: 280px !important;
     height: 100vh !important;
     background: linear-gradient(180deg, #131a27 0%, #0d1117 100%) !important;
-    z-index: 999 !important;
+    z-index: 1001 !important;
     flex-direction: column !important;
     padding: 20px !important;
     box-shadow: 4px 0 24px rgba(0, 0, 0, 0.5) !important;
     animation: slideInLeft 0.3s ease !important;
     overflow-y: auto !important;
-    padding-top: 80px !important;
   }
   
   @keyframes slideInLeft {
@@ -2401,22 +2449,25 @@
     right: 15px !important;
     width: 36px !important;
     height: 36px !important;
-    background: var(--dark-bg) !important;
+    background: rgba(0, 212, 255, 0.1) !important;
     border: 1px solid rgba(0, 212, 255, 0.2) !important;
     border-radius: 50% !important;
-    color: var(--text-light) !important;
+    color: var(--primary) !important;
     font-size: 20px !important;
     cursor: pointer !important;
     align-items: center !important;
     justify-content: center !important;
+    z-index: 1002 !important;
   }
   
   /* Dashboard Content Mobile */
   .dashboard-content {
     margin-left: 0 !important;
     padding: 20px 15px !important;
-    min-height: calc(100vh - 60px) !important;
-    padding-top: 90px !important;
+    min-height: calc(100vh - 130px) !important;
+    padding-bottom: 60px !important;
+    overflow-x: hidden !important;
+    overflow-y: visible !important;
   }
   
   .dashboard-content h1 {
@@ -2845,7 +2896,7 @@
     padding: 14px 20px !important;
     font-size: 14px !important;
     border-radius: 8px !important;
-    top: 100px !important;
+    top: 140px !important;
   }
   
   /* Recent Section Mobile */
@@ -2930,4 +2981,10 @@
   .finance-filters .clear-filters-btn {
     grid-column: span 1 !important;
   }
+}
+
+/* Hide admin footer on dashboard pages to prevent overlap */
+.admin-dashboard + footer,
+.admin-dashboard ~ footer {
+  display: none;
 }

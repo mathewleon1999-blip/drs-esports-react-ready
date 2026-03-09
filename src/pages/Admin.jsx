@@ -31,8 +31,12 @@ function Admin() {
 
     // Simulate API call delay
     setTimeout(() => {
+      const isValidUsername = 
+        formData.username.toLowerCase() === ADMIN_CREDENTIALS.username ||
+        formData.username.toLowerCase() === ADMIN_CREDENTIALS.email.toLowerCase();
+      
       if (
-        formData.username.toLowerCase() === ADMIN_CREDENTIALS.username &&
+        isValidUsername &&
         formData.password === ADMIN_CREDENTIALS.password
       ) {
         // Store admin session

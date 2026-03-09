@@ -9696,6 +9696,7 @@ select:focus {
 .admin-dashboard {
   display: flex;
   min-height: 100vh;
+  height: auto;
   background: var(--dark-bg);
   padding-top: 80px;
 }
