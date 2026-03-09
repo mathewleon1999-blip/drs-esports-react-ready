@@ -8279,6 +8279,71 @@ font-size: 40px;
   white-space: normal;
 }
 
+/* ========================================
+   PRODUCT MODAL FIXES
+   ======================================== */
+
+/* Product View Toggle - Front/Back Buttons */
+.product-view-toggle {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.product-view-toggle button {
+  background: #0f1724;
+  border: 1px solid #2ec7ff;
+  color: #e6f6ff;
+  padding: 6px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 13px;
+  transition: all 0.2s ease;
+}
+
+.product-view-toggle button:hover {
+  background: #2ec7ff;
+  color: #000;
+}
+
+.product-view-toggle button.active {
+  background: #2ec7ff;
+  color: #000;
+}
+
+/* Product Modal Scroll Fix */
+.product-modal {
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.product-modal-content {
+  overflow-y: auto;
+}
+
+/* Responsive Mobile Fixes */
+@media (max-width: 768px) {
+  .product-modal {
+    flex-direction: column;
+    max-height: 95vh;
+  }
+  
+  .product-modal .modal-image img {
+    width: 100%;
+    height: auto;
+  }
+  
+  .product-view-toggle {
+    margin-bottom: 10px;
+  }
+}
+
+/* Ensure page can scroll */
+html, body {
+  overflow-x: hidden;
+}
+
 /* Better Button Focus */
 button:focus,
 .btn:focus,
@@ -12863,7 +12928,6 @@ select:focus {
     animation: none !important;
     transition: none !important;
   }
-}
 }
 
 .finance-filters .filter-group input,

@@ -431,24 +431,38 @@ function Shop() {
             <div className="modal-content">
               <div className="modal-image">
                 <img src={selectedJersey.images[selectedImageIndex]} alt={selectedJersey.name} />
+                
                 {/* Image navigation for products with multiple images */}
                 {selectedJersey.images.length > 1 && (
-                  <div className="image-nav">
-                    {selectedJersey.images.map((img, idx) => (
-                      <button
-                        key={idx}
-                        className={`image-nav-btn ${selectedImageIndex === idx ? 'active' : ''}`}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setSelectedImageIndex(idx);
-                        }}
-                      >
-                        {idx === 0 ? "Front" : "Back"}
-                      </button>
-                    ))}
+                  <div className="product-view-toggle">
+                    <button 
+                      className={selectedImageIndex === 0 ? 'active' : ''}
+                      style={{ width: '100%' }}
+                />
+                {/* Image navigation for products with multiple images */}
+                {selectedJersey.images.length > 1 && (
+                  <div className="product-view-toggle">
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setSelectedImageIndex(0);
+                      }}
+                      className={selectedImageIndex === 0 ? 'active' : ''}
+                    >
+                      Front
+                    </button>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setSelectedImageIndex(1);
+                      }}
+                      className={selectedImageIndex === 1 ? 'active' : ''}
+                    >
+                      Back
+                    </button>
                   </div>
                 )}
-              </div>
+              </div> REPLACE
               <div className="modal-details">
                 <h2>{selectedJersey.name}</h2>
                 <p className="modal-description">{selectedJersey.description}</p>
