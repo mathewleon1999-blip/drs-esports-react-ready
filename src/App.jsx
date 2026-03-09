@@ -37,6 +37,7 @@ const Donation = lazy(() => import("./components/Donation"));
 const LoyaltyDashboard = lazy(() => import("./pages/LoyaltyDashboard"));
 const Predictions = lazy(() => import("./pages/Predictions"));
 const PrizePool = lazy(() => import("./pages/PrizePool"));
+const PUBGTracker = lazy(() => import("./pages/PUBGTracker"));
 
 function App() {
   // Service worker disabled for Vercel deployment - uncomment for local/PWA use
@@ -91,7 +92,8 @@ function App() {
                 {/* New Feature Routes */}
                 <Route path="/loyalty" element={<LoyaltyDashboard />} />
                 <Route path="/predictions" element={<Predictions />} />
-                <Route path="/prize-pool" element={<PrizePool />} />
+<Route path="/prize-pool" element={<PrizePool />} />
+                <Route path="/pubg-stats" element={<PUBGTracker />} />
               </Routes>
             </Suspense>
             <PWAInstall />

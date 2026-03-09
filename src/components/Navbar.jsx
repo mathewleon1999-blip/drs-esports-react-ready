@@ -99,10 +99,11 @@ const Navbar = memo(function Navbar() {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -10 }}
               >
-                <Link to="/achievements" onClick={() => setMoreOpen(false)}>Achievements</Link>
+<Link to="/achievements" onClick={() => setMoreOpen(false)}>Achievements</Link>
                 <Link to="/contact" onClick={() => setMoreOpen(false)}>Contact</Link>
                 <Link to="/order-tracking" onClick={() => setMoreOpen(false)}>Track Order</Link>
-                <Link to="/newsletter" onClick={() => setMoreOpen(false)}>Newsletter</Link>
+                <Link to="/pubg-stats" onClick={() => setMoreOpen(false)}>PUBG Stats</Link>
+                <Link to="/newsletter" onClick={() => setMoreOpen(false)}>Newsletter</Link> REPLACE
                 <Link to="/wishlist" onClick={() => setMoreOpen(false)} className="wishlist-link">
                   Wishlist {wishlist.length > 0 && <span className="wishlist-count">{wishlist.length}</span>}
                 </Link>
