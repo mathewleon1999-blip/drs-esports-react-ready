@@ -104,13 +104,15 @@ body {
 
 /* iOS Safari specific fixes */
 @supports (-webkit-touch-callout: none) {
-  html, body, #root {
-    height: -webkit-fill-available;
-    min-height: -webkit-fill-available;
+  /* Avoid forcing a fixed height on iOS; it can break scrolling */
+  html,
+  body,
+  #root {
+    height: auto;
+    min-height: 100%;
   }
-  
+
   .page-container {
-    min-height: calc(-webkit-fill-available - 80px);
     min-height: calc(100vh - 80px);
   }
 }
