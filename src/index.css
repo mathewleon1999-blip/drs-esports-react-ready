@@ -11132,7 +11132,6 @@ select:focus {
     grid-template-columns: 1fr !important;
   }
 }
-}
 
 .sidebar-nav button::before {
   content: '';

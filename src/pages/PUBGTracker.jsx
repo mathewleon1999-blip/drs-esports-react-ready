@@ -536,6 +536,13 @@ function PUBGTracker() {
                       <span className="stat-label">Kills</span>
                     </div>
                     <div className="stat-card">
+                      <span className="stat-icon">☠️</span>
+                      <span className="stat-value">
+                        {player.seasonStats.deaths.toLocaleString()}
+                      </span>
+                      <span className="stat-label">Deaths</span>
+                    </div>
+                    <div className="stat-card">
                       <span className="stat-icon">🏆</span>
                       <span className="stat-value">{player.seasonStats.wins}</span>
                       <span className="stat-label">Wins</span>
