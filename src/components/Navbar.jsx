@@ -4,6 +4,8 @@ import { motion, AnimatePresence } from "framer-motion";
 import DarkModeToggle from "./DarkModeToggle";
 import { useWishlist } from "./WishlistContext";
 
+const LOCK_SCROLL_CLASS = "scroll-locked";
+
 // Memoized Navbar component for performance optimization
 const Navbar = memo(function Navbar() {
   const [scrolled, setScrolled] = useState(false);
@@ -33,9 +35,22 @@ const Navbar = memo(function Navbar() {
       setTournamentsOpen(false);
       setMoreOpen(false);
     };
-    document.addEventListener('click', handleClickOutside);
-    return () => document.removeEventListener('click', handleClickOutside);
+    document.addEventListener("click", handleClickOutside);
+    return () => document.removeEventListener("click", handleClickOutside);
   }, []);
+
+  // Scroll-lock the document only while the mobile menu is open.
+  useEffect(() => {
+    const { classList } = document.body;
+
+    if (showMobileMenu) {
+      classList.add(LOCK_SCROLL_CLASS);
+    } else {
+      classList.remove(LOCK_SCROLL_CLASS);
+    }
+
+    return () => classList.remove(LOCK_SCROLL_CLASS);
+  }, [showMobileMenu]);
 
   const handleDropdownClick = (e, isOpen, setIsOpen) => {
     e.stopPropagation();
@@ -144,11 +159,13 @@ const Navbar = memo(function Navbar() {
       {/* Mobile Navigation */}
       <AnimatePresence>
         {showMobileMenu && (
-          <motion.div 
+          <motion.div
             className="mobile-nav"
             initial={{ opacity: 0, x: "100%" }}
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: "100%" }}
+            role="dialog"
+            aria-modal="true"
           >
             <Link to="/" onClick={() => setShowMobileMenu(false)}>Home</Link>
             <Link to="/about" onClick={() => setShowMobileMenu(false)}>About</Link>
