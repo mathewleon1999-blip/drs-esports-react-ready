@@ -2,11 +2,13 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
+import Meta from "../components/Meta";
 
 function Newsletter() {
   const [email, setEmail] = useState("");
   const [subscribed, setSubscribed] = useState(false);
   const [selectedInterests, setSelectedInterests] = useState([]);
+  const [consent, setConsent] = useState(false);
 
   const interests = [
     { id: "tournaments", label: "Tournament Updates", icon: "🏆" },
@@ -18,10 +20,17 @@ function Newsletter() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (email) {
+    if (email && consent) {
       // Save to localStorage for demo
-      const subscribers = JSON.parse(localStorage.getItem("drs-subscribers") || "[]");
-      subscribers.push({ email, interests: selectedInterests, date: new Date().toISOString() });
+      const subscribers = JSON.parse(
+        localStorage.getItem("drs-subscribers") || "[]"
+      );
+      subscribers.push({
+        email,
+        interests: selectedInterests,
+        date: new Date().toISOString(),
+        consent: true,
+      });
       localStorage.setItem("drs-subscribers", JSON.stringify(subscribers));
       setSubscribed(true);
     }
@@ -37,6 +46,11 @@ function Newsletter() {
 
   return (
     <>
+      <Meta
+        title="Newsletter | DRS ESPORTS"
+        description="Subscribe to DRS Esports for tournament updates, offers, streams, and announcements."
+        canonicalPath="/newsletter"
+      />
       <Navbar />
       <div className="page-container">
         {/* Hero Section */}
@@ -110,6 +124,9 @@ function Newsletter() {
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="your@email.com"
                     required
+                    autoComplete="email"
+                    inputMode="email"
+                    aria-label="Email address"
                   />
                 </div>
 
@@ -130,13 +147,28 @@ function Newsletter() {
                   </div>
                 </div>
 
-                <button type="submit" className="submit-btn">
+                <div className="form-group">
+                  <label style={{ display: "flex", gap: 8, alignItems: "center" }}>
+                    <input
+                      type="checkbox"
+                      checked={consent}
+                      onChange={(e) => setConsent(e.target.checked)}
+                      required
+                      aria-label="Consent to receive emails"
+                    />
+                    <span>
+                      I agree to receive emails from DRS Esports and accept the{" "}
+                      <a href="/privacy-policy">Privacy Policy</a>.
+                    </span>
+                  </label>
+                </div>
+
+                <button type="submit" className="submit-btn" disabled={!consent}>
                   Subscribe
                 </button>
 
                 <p className="privacy-note">
-                  By subscribing, you agree to receive emails from DRS Esports. 
-                  We respect your privacy and will never share your information.
+                  You can unsubscribe at any time.
                 </p>
               </form>
             </motion.div>
@@ -147,10 +179,38 @@ function Newsletter() {
             <h2>Follow Us</h2>
             <p>Connect with us on social media for instant updates</p>
             <div className="social-links">
-              <a href="#" className="social-btn">🐦 Twitter</a>
-              <a href="#" className="social-btn">📸 Instagram</a>
-              <a href="#" className="social-btn">📺 YouTube</a>
-              <a href="#" className="social-btn">💬 Discord</a>
+              <a
+                href="https://twitter.com"
+                target="_blank"
+                rel="noreferrer"
+                className="social-btn"
+              >
+                🐦 Twitter
+              </a>
+              <a
+                href="https://instagram.com"
+                target="_blank"
+                rel="noreferrer"
+                className="social-btn"
+              >
+                📸 Instagram
+              </a>
+              <a
+                href="https://youtube.com"
+                target="_blank"
+                rel="noreferrer"
+                className="social-btn"
+              >
+                📺 YouTube
+              </a>
+              <a
+                href="https://discord.com"
+                target="_blank"
+                rel="noreferrer"
+                className="social-btn"
+              >
+                💬 Discord
+              </a>
             </div>
           </div>
         </section>

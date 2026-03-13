@@ -1,8 +1,11 @@
-import { lazy, Suspense, useEffect } from "react";
+import { lazy, Suspense } from "react";
 import { Routes, Route } from "react-router-dom";
+import PageScope from "./components/PageScope";
 import LoadingSpinner from "./components/LoadingSpinner";
 import Meta from "./components/Meta";
 import PWAInstall from "./components/PWAInstall";
+import ErrorBoundary from "./components/ErrorBoundary";
+import NotFound from "./pages/NotFound";
 import { WishlistProvider } from "./components/WishlistContext";
 import { LoyaltyProvider } from "./context/LoyaltyContext";
 import { PredictionsProvider } from "./context/PredictionsContext";
@@ -40,66 +43,62 @@ const PrizePool = lazy(() => import("./pages/PrizePool"));
 const PUBGTracker = lazy(() => import("./pages/PUBGTracker"));
 
 function App() {
-  // Service worker disabled for Vercel deployment - uncomment for local/PWA use
-  /*
-  useEffect(() => {
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('/sw.js')
-        .then((registration) => {
-          console.log('SW registered:', registration.scope);
-        })
-        .catch((error) => {
-          console.log('SW registration failed:', error);
-        });
-    }
-  }, []);
-  */
-
   return (
     <>
       <Meta />
-      <WishlistProvider>
-        <LoyaltyProvider>
-          <PredictionsProvider>
-            <Suspense fallback={<LoadingSpinner />}>
-              <Routes>
-                <Route path="/" element={<Home />} />
-                <Route path="/about" element={<About />} />
-                <Route path="/shop" element={<Shop />} />
-                <Route path="/shop-enhanced" element={<ShopEnhanced />} />
-                <Route path="/cart" element={<Cart />} />
-                <Route path="/achievements" element={<Achievements />} />
-                <Route path="/login" element={<Login />} />
-                <Route path="/admin" element={<Admin />} />
-                <Route path="/contact" element={<Contact />} />
-                <Route path="/player-dashboard" element={<PlayerDashboard />} />
-                <Route path="/admin-dashboard" element={<AdminDashboard />} />
-                <Route path="/order-tracking" element={<OrderTracking />} />
-                <Route path="/tournaments" element={<Tournaments />} />
-                <Route path="/live" element={<LiveStream />} />
-                <Route path="/leaderboard" element={<Leaderboard />} />
-                <Route path="/teams" element={<Teams />} />
-                <Route path="/news" element={<News />} />
-                <Route path="/schedule" element={<Schedule />} />
-                <Route path="/newsletter" element={<Newsletter />} />
-                <Route path="/faq" element={<FAQ />} />
-                <Route path="/privacy-policy" element={<PrivacyPolicy />} />
-                <Route path="/terms-of-service" element={<TermsOfService />} />
-                <Route path="/wishlist" element={<Wishlist />} />
-                <Route path="/player/:playerId" element={<PlayerProfile />} />
-                <Route path="/password-reset" element={<PasswordReset />} />
-                <Route path="/donate" element={<Donation />} />
-                {/* New Feature Routes */}
-                <Route path="/loyalty" element={<LoyaltyDashboard />} />
-                <Route path="/predictions" element={<Predictions />} />
-<Route path="/prize-pool" element={<PrizePool />} />
-                <Route path="/pubg-stats" element={<PUBGTracker />} />
-              </Routes>
-            </Suspense>
-            <PWAInstall />
-          </PredictionsProvider>
-        </LoyaltyProvider>
-      </WishlistProvider>
+      <PageScope />
+
+      <ErrorBoundary>
+        <WishlistProvider>
+          <LoyaltyProvider>
+            <PredictionsProvider>
+              <main id="main-content" role="main">
+                <Suspense fallback={<LoadingSpinner />}>
+                  <Routes>
+                    <Route path="/" element={<Home />} />
+                    <Route path="/about" element={<About />} />
+                    <Route path="/shop" element={<Shop />} />
+                    <Route path="/shop-enhanced" element={<ShopEnhanced />} />
+                    <Route path="/cart" element={<Cart />} />
+                    <Route path="/achievements" element={<Achievements />} />
+                    <Route path="/login" element={<Login />} />
+                    <Route path="/admin" element={<Admin />} />
+                    <Route path="/contact" element={<Contact />} />
+                    <Route path="/player-dashboard" element={<PlayerDashboard />} />
+                    <Route path="/admin-dashboard" element={<AdminDashboard />} />
+                    <Route path="/order-tracking" element={<OrderTracking />} />
+                    <Route path="/tournaments" element={<Tournaments />} />
+                    <Route path="/live" element={<LiveStream />} />
+                    <Route path="/leaderboard" element={<Leaderboard />} />
+                    <Route path="/teams" element={<Teams />} />
+                    <Route path="/news" element={<News />} />
+                    <Route path="/schedule" element={<Schedule />} />
+                    <Route path="/newsletter" element={<Newsletter />} />
+                    <Route path="/faq" element={<FAQ />} />
+                    <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+                    <Route path="/terms-of-service" element={<TermsOfService />} />
+                    <Route path="/wishlist" element={<Wishlist />} />
+                    <Route path="/player/:playerId" element={<PlayerProfile />} />
+                    <Route path="/password-reset" element={<PasswordReset />} />
+                    <Route path="/donate" element={<Donation />} />
+
+                    {/* New Feature Routes */}
+                    <Route path="/loyalty" element={<LoyaltyDashboard />} />
+                    <Route path="/predictions" element={<Predictions />} />
+                    <Route path="/prize-pool" element={<PrizePool />} />
+                    <Route path="/pubg-stats" element={<PUBGTracker />} />
+
+                    {/* Catch-all */}
+                    <Route path="*" element={<NotFound />} />
+                  </Routes>
+                </Suspense>
+              </main>
+
+              <PWAInstall />
+            </PredictionsProvider>
+          </LoyaltyProvider>
+        </WishlistProvider>
+      </ErrorBoundary>
     </>
   );
 }

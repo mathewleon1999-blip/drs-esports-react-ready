@@ -1,13 +1,16 @@
 import { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 
-function LazyImage({ 
-  src, 
-  alt, 
-  className, 
+function LazyImage({
+  src,
+  alt = "",
+  className,
   style,
   placeholderColor = "#1a1f2e",
-  aspectRatio = "16/9"
+  aspectRatio = "16/9",
+  sizes,
+  srcSet,
+  decoding = "async",
 }) {
   const [isLoaded, setIsLoaded] = useState(false);
   const [isInView, setIsInView] = useState(false);
@@ -75,7 +78,10 @@ function LazyImage({
       {isInView && (
         <motion.img
           src={src}
+          srcSet={srcSet}
+          sizes={sizes}
           alt={alt}
+          decoding={decoding}
           initial={{ opacity: 0 }}
           animate={{ opacity: isLoaded ? 1 : 0 }}
           transition={{ duration: 0.3 }}

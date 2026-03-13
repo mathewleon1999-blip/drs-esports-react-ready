@@ -1,7 +1,7 @@
 // Service Worker for DRS Esports PWA
-const CACHE_NAME = 'drs-esports-v1';
-const STATIC_CACHE = 'drs-static-v1';
-const DYNAMIC_CACHE = 'drs-dynamic-v1';
+const VERSION = "v2";
+const STATIC_CACHE = `drs-static-${VERSION}`;
+const DYNAMIC_CACHE = `drs-dynamic-${VERSION}`;
 
 // Assets to cache immediately on install
 const STATIC_ASSETS = [
@@ -68,9 +68,10 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // Stale-while-revalidate for pages
-  if (request.mode === 'navigate') {
-    event.respondWith(staleWhileRevalidate(request));
+  // Navigation requests: network first with offline fallback.
+  // Important for SPAs so refresh works and offline renders a friendly page.
+  if (request.mode === "navigate") {
+    event.respondWith(navigateNetworkFirst(request));
     return;
   }
 
@@ -120,20 +121,32 @@ async function networkFirst(request) {
   }
 }
 
-// Stale-while-revalidate strategy
-async function staleWhileRevalidate(request) {
-  const cachedResponse = await caches.match(request);
-  const fetchPromise = fetch(request)
-    .then((networkResponse) => {
-      if (networkResponse.ok) {
-        const cache = caches.open(DYNAMIC_CACHE);
-        cache.then((c) => c.put(request, networkResponse.clone()));
-      }
-      return networkResponse;
-    })
-    .catch(() => cachedResponse || caches.match('/offline.html'));
+// Navigation strategy for SPA: try network, fallback to cached shell, then offline.
+async function navigateNetworkFirst(request) {
+  try {
+    const networkResponse = await fetch(request);
 
-  return cachedResponse || fetchPromise;
+    // Cache the app shell on successful navigations.
+    if (networkResponse && networkResponse.ok) {
+      const cache = await caches.open(DYNAMIC_CACHE);
+      cache.put("/", networkResponse.clone());
+    }
+
+    return networkResponse;
+  } catch (error) {
+    // For SPAs, fallback to cached index first.
+    const cachedIndex = await caches.match("/");
+    if (cachedIndex) return cachedIndex;
+
+    const offline = await caches.match("/offline.html");
+    if (offline) return offline;
+
+    // Last resort.
+    return new Response("Offline", {
+      status: 503,
+      headers: { "Content-Type": "text/plain" },
+    });
+  }
 }
 
 // Handle push notifications

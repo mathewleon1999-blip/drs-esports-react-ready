@@ -1,4 +1,5 @@
 import { useLocation } from "react-router-dom";
+import { Helmet } from "react-helmet-async";
 
 const pageMeta = {
   "/": {
@@ -75,11 +76,26 @@ const pageMeta = {
   }
 };
 
-function Meta() {
+function Meta({
+  title,
+  description,
+  keywords,
+  ogImage,
+  canonicalPath,
+  noIndex = false,
+}) {
   const location = useLocation();
-  const meta = pageMeta[location.pathname] || pageMeta["/"];
-  
-  const canonicalUrl = `https://drsesports.com${location.pathname}`;
+  const defaultMeta = pageMeta[location.pathname] || pageMeta["/"];
+
+  const resolved = {
+    title: title || defaultMeta.title,
+    description: description || defaultMeta.description,
+    keywords: keywords || defaultMeta.keywords,
+    ogImage: ogImage || defaultMeta.ogImage,
+  };
+
+  const path = canonicalPath || location.pathname;
+  const canonicalUrl = `https://drsesports.com${path}`;
   
   const breadcrumbList = {
     "@context": "https://schema.org",
@@ -91,54 +107,63 @@ function Meta() {
         "name": "Home",
         "item": "https://drsesports.com"
       },
-      ...(location.pathname !== "/" ? [{
-        "@type": "ListItem",
-        "position": 2,
-        "name": meta.title.split(" | ")[0],
-        "item": canonicalUrl
-      }] : [])
+      ...(location.pathname !== "/"
+        ? [
+            {
+              "@type": "ListItem",
+              "position": 2,
+              "name": resolved.title.split(" | ")[0],
+              "item": canonicalUrl,
+            },
+          ]
+        : [])
     ]
   };
 
   return (
     <>
-      {/* Primary Meta Tags */}
-      <title>{meta.title}</title>
-      <meta name="title" content={meta.title} />
-      <meta name="description" content={meta.description} />
-      <meta name="keywords" content={meta.keywords} />
-      
-      {/* Canonical URL */}
-      <link rel="canonical" href={canonicalUrl} />
-      
-      {/* Open Graph / Facebook */}
-      <meta property="og:type" content="website" />
-      <meta property="og:url" content={canonicalUrl} />
-      <meta property="og:title" content={meta.title} />
-      <meta property="og:description" content={meta.description} />
-      <meta property="og:image" content={meta.ogImage} />
-      <meta property="og:image:width" content="1200" />
-      <meta property="og:image:height" content="630" />
-      <meta property="og:site_name" content="DRS Esports" />
-      <meta property="og:locale" content="en_IN" />
-      
-      {/* Twitter */}
-      <meta name="twitter:card" content="summary_large_image" />
-      <meta name="twitter:url" content={canonicalUrl} />
-      <meta name="twitter:title" content={meta.title} />
-      <meta name="twitter:description" content={meta.description} />
-      <meta name="twitter:image" content={meta.ogImage} />
-      
-      {/* Breadcrumb Structured Data */}
-      {breadcrumbList.itemListElement.length > 1 && (
-        <script type="application/ld+json">
-          {JSON.stringify(breadcrumbList)}
-        </script>
-      )}
+      <Helmet>
+        {/* Primary Meta Tags */}
+        <title>{resolved.title}</title>
+        <meta name="title" content={resolved.title} />
+        <meta name="description" content={resolved.description} />
+        <meta name="keywords" content={resolved.keywords} />
+
+        {/* Indexing */}
+        {noIndex && <meta name="robots" content="noindex, nofollow" />}
+
+        {/* Canonical URL */}
+        <link rel="canonical" href={canonicalUrl} />
+
+        {/* Open Graph / Facebook */}
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content={canonicalUrl} />
+        <meta property="og:title" content={resolved.title} />
+        <meta property="og:description" content={resolved.description} />
+        <meta property="og:image" content={resolved.ogImage} />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+        <meta property="og:site_name" content="DRS Esports" />
+        <meta property="og:locale" content="en_IN" />
+
+        {/* Twitter */}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:url" content={canonicalUrl} />
+        <meta name="twitter:title" content={resolved.title} />
+        <meta name="twitter:description" content={resolved.description} />
+        <meta name="twitter:image" content={resolved.ogImage} />
+
+        {/* Breadcrumb Structured Data */}
+        {breadcrumbList.itemListElement.length > 1 && (
+          <script type="application/ld+json">
+            {JSON.stringify(breadcrumbList)}
+          </script>
+        )}
+      </Helmet>
       
       {/* Accessibility - Skip Links */}
-      <a 
-        href="#main-content" 
+      <a
+        href="#main-content"
         className="skip-link"
         style={{
           position: "absolute",
@@ -146,7 +171,7 @@ function Meta() {
           top: "auto",
           width: "1px",
           height: "1px",
-          overflow: "hidden"
+          overflow: "hidden",
         }}
       >
         Skip to main content

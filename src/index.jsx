@@ -3,6 +3,9 @@ import ReactDOM from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
 import App from './App';
 import './index.css';
+
+// Mobile responsive fixes are now scoped per-page via data-page on <body>.
+// This prevents one page's mobile overrides from impacting others.
 import './mobile-fixes.css';
 
 // Global error handler to catch runtime errors
