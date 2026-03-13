@@ -1,9 +1,0 @@
-# Netlify Redirects
-# SPA redirect for single-page application
-
-# Redirect all routes to index.html for SPA
-/*    /index.html   200
-
-# Clean URLs (remove .html extension)
-# /about      -> /about.html
-# /contact    -> /contact.html
