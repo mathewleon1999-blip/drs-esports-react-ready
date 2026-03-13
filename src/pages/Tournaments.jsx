@@ -1,7 +1,9 @@
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { motion } from "framer-motion";
+import { useSearchParams } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
+import Meta from "../components/Meta";
 
 // Demo tournament data
 const tournaments = [
@@ -230,15 +232,50 @@ function TournamentBracket({ tournament }) {
 }
 
 function Tournaments() {
+  const [searchParams, setSearchParams] = useSearchParams();
+
   const [activeTab, setActiveTab] = useState("upcoming");
   const [selectedTournament, setSelectedTournament] = useState(null);
   const [showRegistration, setShowRegistration] = useState(false);
   const [showBracket, setShowBracket] = useState(null);
   const [registrations, setRegistrations] = useState([]);
 
-  const filteredTournaments = tournaments.filter(t => 
-    activeTab === "all" ? true : t.status === activeTab
-  );
+  const pageSize = 6;
+
+  // keep page in URL (?page=2) so pagination is shareable
+  const pageFromUrl = Number(searchParams.get("page") || "1");
+  const [page, setPage] = useState(Number.isFinite(pageFromUrl) && pageFromUrl > 0 ? pageFromUrl : 1);
+
+  useEffect(() => {
+    const next = Number(searchParams.get("page") || "1");
+    const normalized = Number.isFinite(next) && next > 0 ? next : 1;
+    if (normalized !== page) setPage(normalized);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchParams]);
+
+  const filteredTournaments = useMemo(() => {
+    return tournaments.filter((t) => (activeTab === "all" ? true : t.status === activeTab));
+  }, [activeTab]);
+
+  const pageCount = Math.max(1, Math.ceil(filteredTournaments.length / pageSize));
+
+  // Clamp page if filters reduce total results
+  useEffect(() => {
+    if (page > pageCount) {
+      setSearchParams({ page: String(pageCount) }, { replace: true });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pageCount]);
+
+  const pagedTournaments = useMemo(() => {
+    const start = (page - 1) * pageSize;
+    return filteredTournaments.slice(start, start + pageSize);
+  }, [filteredTournaments, page]);
+
+  const goToPage = (nextPage) => {
+    const clamped = Math.min(Math.max(1, nextPage), pageCount);
+    setSearchParams({ page: String(clamped) }, { replace: false });
+  };
 
   const handleRegister = (tournament) => {
     setSelectedTournament(tournament);
@@ -263,8 +300,9 @@ function Tournaments() {
 
   return (
     <>
+      <Meta />
       <Navbar />
-      <div className="page-container">
+      <div className="page-container" id="main-content">
         {/* Hero Section */}
         <section className="tournaments-hero">
           <motion.div
@@ -282,25 +320,37 @@ function Tournaments() {
           <div className="tournament-tabs">
             <button 
               className={`tab-btn ${activeTab === "upcoming" ? "active" : ""}`}
-              onClick={() => setActiveTab("upcoming")}
+              onClick={() => {
+                setActiveTab("upcoming");
+                goToPage(1);
+              }}
             >
               Upcoming
             </button>
             <button 
               className={`tab-btn ${activeTab === "live" ? "active" : ""}`}
-              onClick={() => setActiveTab("live")}
+              onClick={() => {
+                setActiveTab("live");
+                goToPage(1);
+              }}
             >
               Live Now
             </button>
             <button 
               className={`tab-btn ${activeTab === "completed" ? "active" : ""}`}
-              onClick={() => setActiveTab("completed")}
+              onClick={() => {
+                setActiveTab("completed");
+                goToPage(1);
+              }}
             >
               Completed
             </button>
             <button 
               className={`tab-btn ${activeTab === "all" ? "active" : ""}`}
-              onClick={() => setActiveTab("all")}
+              onClick={() => {
+                setActiveTab("all");
+                goToPage(1);
+              }}
             >
               All
             </button>
@@ -308,7 +358,13 @@ function Tournaments() {
 
           {/* Tournament Cards */}
           <div className="tournaments-grid">
-            {filteredTournaments.map((tournament, index) => (
+            {pagedTournaments.length === 0 ? (
+              <div className="empty-state" style={{ gridColumn: "1 / -1", padding: "24px" }}>
+                <h3 style={{ marginBottom: 8 }}>No tournaments found</h3>
+                <p style={{ opacity: 0.8 }}>Try switching tabs to view other events.</p>
+              </div>
+            ) : (
+              pagedTournaments.map((tournament, index) => (
               <motion.div
                 key={tournament.id}
                 className="tournament-card"
@@ -360,8 +416,35 @@ function Tournaments() {
                   </div>
                 </div>
               </motion.div>
-            ))}
+            ))
+            )}
           </div>
+
+          {/* Pagination */}
+          {pageCount > 1 && (
+            <div className="pagination" style={{ display: "flex", gap: 8, justifyContent: "center", marginTop: 24, flexWrap: "wrap" }}>
+              <button className="tab-btn" onClick={() => goToPage(page - 1)} disabled={page <= 1}>
+                Prev
+              </button>
+              {Array.from({ length: pageCount }).map((_, i) => {
+                const p = i + 1;
+                const active = p === page;
+                return (
+                  <button
+                    key={p}
+                    className={`tab-btn ${active ? "active" : ""}`}
+                    onClick={() => goToPage(p)}
+                    aria-current={active ? "page" : undefined}
+                  >
+                    {p}
+                  </button>
+                );
+              })}
+              <button className="tab-btn" onClick={() => goToPage(page + 1)} disabled={page >= pageCount}>
+                Next
+              </button>
+            </div>
+          )}
 
           {/* Bracket Modal */}
           {showBracket && (

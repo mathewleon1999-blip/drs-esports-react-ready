@@ -1,20 +1,39 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 
+// Safe localStorage helpers
+const getLocalStorage = (key, defaultValue) => {
+  try {
+    if (typeof window === "undefined") return defaultValue;
+    const saved = localStorage.getItem(key);
+    return saved ? JSON.parse(saved) : defaultValue;
+  } catch {
+    return defaultValue;
+  }
+};
+
+const setLocalStorage = (key, value) => {
+  try {
+    if (typeof window === "undefined") return;
+    localStorage.setItem(key, JSON.stringify(value));
+  } catch {
+    // Silently fail
+  }
+};
+
 const getCart = () => {
-  const saved = localStorage.getItem("drs-cart");
-  return saved ? JSON.parse(saved) : [];
+  return getLocalStorage("drs-cart", []);
 };
 
 const saveCart = (cart) => {
-  localStorage.setItem("drs-cart", JSON.stringify(cart));
+  setLocalStorage("drs-cart", cart);
 };
 
 function Cart() {
-  const [cart, setCart] = useState(getCart());
+  const [cart, setCart] = useState(() => getCart());
   const [showCheckout, setShowCheckout] = useState(false);
   const [orderPlaced, setOrderPlaced] = useState(false);
   const [formData, setFormData] = useState({
@@ -27,7 +46,7 @@ function Cart() {
     paymentMethod: "cod",
   });
 
-  const subtotal = cart.reduce((sum, item) => sum + item.price, 0);
+  const subtotal = cart.reduce((sum, item) => sum + item.price * (item.quantity || 1), 0);
   const shipping = subtotal > 1000 ? 0 : 99;
   const total = subtotal + shipping;
 
@@ -38,12 +57,14 @@ function Cart() {
   };
 
   const updateQuantity = (cartId, change) => {
-    const newCart = cart.map((item) => {
-      if (item.cartId === cartId) {
-        return { ...item, quantity: (item.quantity || 1) + change };
-      }
-      return item;
-    });
+    const newCart = cart
+      .map((item) => {
+        if (item.cartId === cartId) {
+          return { ...item, quantity: Math.max(1, (item.quantity || 1) + change) };
+        }
+        return item;
+      })
+      .filter(Boolean);
     setCart(newCart);
     saveCart(newCart);
   };
@@ -98,12 +119,11 @@ function Cart() {
 
   // Get orders from localStorage
   const getOrders = () => {
-    const saved = localStorage.getItem("drs-orders");
-    return saved ? JSON.parse(saved) : [];
+    return getLocalStorage("drs-orders", []);
   };
 
   const saveOrders = (orders) => {
-    localStorage.setItem("drs-orders", JSON.stringify(orders));
+    setLocalStorage("drs-orders", orders);
   };
 
   const clearCart = () => {
@@ -201,6 +221,15 @@ function Cart() {
                         <p className="item-price">₹{item.price}</p>
                       </div>
                       <div className="item-actions">
+                        <div className="quantity-controls" style={{ display: "flex", gap: 8, alignItems: "center", justifyContent: "flex-end", marginBottom: 8 }}>
+                          <button className="tab-btn" type="button" onClick={() => updateQuantity(item.cartId, -1)}>
+                            -
+                          </button>
+                          <span style={{ minWidth: 24, textAlign: "center" }}>{item.quantity || 1}</span>
+                          <button className="tab-btn" type="button" onClick={() => updateQuantity(item.cartId, 1)}>
+                            +
+                          </button>
+                        </div>
                         <button 
                           className="remove-btn"
                           onClick={() => removeFromCart(item.cartId)}

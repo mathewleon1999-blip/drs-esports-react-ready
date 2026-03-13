@@ -103,7 +103,7 @@ const Navbar = memo(function Navbar() {
                 <Link to="/contact" onClick={() => setMoreOpen(false)}>Contact</Link>
                 <Link to="/order-tracking" onClick={() => setMoreOpen(false)}>Track Order</Link>
                 <Link to="/pubg-stats" onClick={() => setMoreOpen(false)}>PUBG Stats</Link>
-                <Link to="/newsletter" onClick={() => setMoreOpen(false)}>Newsletter</Link> REPLACE
+                <Link to="/newsletter" onClick={() => setMoreOpen(false)}>Newsletter</Link>
                 <Link to="/wishlist" onClick={() => setMoreOpen(false)} className="wishlist-link">
                   Wishlist {wishlist.length > 0 && <span className="wishlist-count">{wishlist.length}</span>}
                 </Link>
@@ -179,6 +179,6 @@ const Navbar = memo(function Navbar() {
       </AnimatePresence>
     </nav>
   );
-}
+});
 
 export default Navbar;

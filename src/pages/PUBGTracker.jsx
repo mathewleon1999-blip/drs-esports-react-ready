@@ -1,11 +1,17 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 
-// Mock player data for demonstration (since we don't have a real API key)
-const mockPlayers = {
-  "SHAKKIR": {
+/**
+ * Local, static PUBG player dataset used by the demo tracker.
+ *
+ * In production this would typically come from the official PUBG API (or a backend)
+ * and be keyed by a stable identifier; here we key by normalized player name for
+ * a simple offline experience.
+ */
+const PLAYERS = {
+  SHAKKIR: {
     id: "account.xxxxxx",
     name: "SHAKKIR",
     platform: "PC",
@@ -19,7 +25,7 @@ const mockPlayers = {
       avgDamage: 485,
       kdRatio: 2.78,
       winRate: 17.5,
-      top10Rate: 68.2
+      top10Rate: 68.2,
     },
     careerStats: {
       totalKills: 15420,
@@ -27,24 +33,69 @@ const mockPlayers = {
       totalMatches: 3240,
       highestKills: 28,
       longestKill: 1240,
-      avgSurvivalTime: "12:45"
+      avgSurvivalTime: "12:45",
     },
     recentMatches: [
-      { id: 1, mode: "Squad", map: "Erangel", kills: 12, deaths: 1, damage: 1850, rank: 1, date: "2026-03-08" },
-      { id: 2, mode: "Squad", map: "Sanhok", kills: 8, deaths: 0, damage: 1240, rank: 1, date: "2026-03-07" },
-      { id: 3, mode: "Duo", map: "Erangel", kills: 6, deaths: 2, damage: 890, rank: 3, date: "2026-03-07" },
-      { id: 4, mode: "Squad", map: "Vikendi", kills: 14, deaths: 1, damage: 2100, rank: 1, date: "2026-03-06" },
-      { id: 5, mode: "Squad", map: "Miramar", kills: 4, deaths: 3, damage: 620, rank: 8, date: "2026-03-06" }
+      {
+        id: 1,
+        mode: "Squad",
+        map: "Erangel",
+        kills: 12,
+        deaths: 1,
+        damage: 1850,
+        rank: 1,
+        date: "2026-03-08",
+      },
+      {
+        id: 2,
+        mode: "Squad",
+        map: "Sanhok",
+        kills: 8,
+        deaths: 0,
+        damage: 1240,
+        rank: 1,
+        date: "2026-03-07",
+      },
+      {
+        id: 3,
+        mode: "Duo",
+        map: "Erangel",
+        kills: 6,
+        deaths: 2,
+        damage: 890,
+        rank: 3,
+        date: "2026-03-07",
+      },
+      {
+        id: 4,
+        mode: "Squad",
+        map: "Vikendi",
+        kills: 14,
+        deaths: 1,
+        damage: 2100,
+        rank: 1,
+        date: "2026-03-06",
+      },
+      {
+        id: 5,
+        mode: "Squad",
+        map: "Miramar",
+        kills: 4,
+        deaths: 3,
+        damage: 620,
+        rank: 8,
+        date: "2026-03-06",
+      },
     ],
     weapons: {
-      "M416": { kills: 845, headshots: 380, avgDistance: 180 },
-      "AKM": { kills: 620, headshots: 245, avgDistance: 150 },
-      "Mini14": { kills: 480, headshots: 290, avgDistance: 320 },
-      "Kar98k": { kills: 380, headshots: 310, avgDistance: 450 },
-      "SKS": { kills: 290, headshots: 175, avgDistance: 380 }
-    }
+      M416: { kills: 845, headshots: 380, avgDistance: 180 },
+      AKM: { kills: 620, headshots: 245, avgDistance: 150 },
+      Mini14: { kills: 480, headshots: 290, avgDistance: 320 },
+      Kar98k: { kills: 380, headshots: 310, avgDistance: 450 },
+      SKS: { kills: 290, headshots: 175, avgDistance: 380 },
+    },
   },
-  "DREAM": {
+  DREAM: {
     id: "account.yyyyyy",
     name: "DREAM",
     platform: "PC",
@@ -58,7 +109,7 @@ const mockPlayers = {
       avgDamage: 420,
       kdRatio: 2.42,
       winRate: 15.0,
-      top10Rate: 58.5
+      top10Rate: 58.5,
     },
     careerStats: {
       totalKills: 12340,
@@ -66,24 +117,69 @@ const mockPlayers = {
       totalMatches: 2560,
       highestKills: 22,
       longestKill: 980,
-      avgSurvivalTime: "10:30"
+      avgSurvivalTime: "10:30",
     },
     recentMatches: [
-      { id: 1, mode: "Squad", map: "Erangel", kills: 9, deaths: 0, damage: 1450, rank: 1, date: "2026-03-08" },
-      { id: 2, mode: "Squad", map: "Sanhok", kills: 6, deaths: 2, damage: 920, rank: 4, date: "2026-03-07" },
-      { id: 3, mode: "Duo", map: "Erangel", kills: 8, deaths: 1, damage: 1100, rank: 2, date: "2026-03-07" },
-      { id: 4, mode: "Squad", map: "Vikendi", kills: 11, deaths: 2, damage: 1680, rank: 2, date: "2026-03-06" },
-      { id: 5, mode: "Squad", map: "Miramar", kills: 3, deaths: 4, damage: 480, rank: 12, date: "2026-03-06" }
+      {
+        id: 1,
+        mode: "Squad",
+        map: "Erangel",
+        kills: 9,
+        deaths: 0,
+        damage: 1450,
+        rank: 1,
+        date: "2026-03-08",
+      },
+      {
+        id: 2,
+        mode: "Squad",
+        map: "Sanhok",
+        kills: 6,
+        deaths: 2,
+        damage: 920,
+        rank: 4,
+        date: "2026-03-07",
+      },
+      {
+        id: 3,
+        mode: "Duo",
+        map: "Erangel",
+        kills: 8,
+        deaths: 1,
+        damage: 1100,
+        rank: 2,
+        date: "2026-03-07",
+      },
+      {
+        id: 4,
+        mode: "Squad",
+        map: "Vikendi",
+        kills: 11,
+        deaths: 2,
+        damage: 1680,
+        rank: 2,
+        date: "2026-03-06",
+      },
+      {
+        id: 5,
+        mode: "Squad",
+        map: "Miramar",
+        kills: 3,
+        deaths: 4,
+        damage: 480,
+        rank: 12,
+        date: "2026-03-06",
+      },
     ],
     weapons: {
-      "M416": { kills: 680, headshots: 245, avgDistance: 160 },
+      M416: { kills: 680, headshots: 245, avgDistance: 160 },
       "SCAR-L": { kills: 520, headshots: 180, avgDistance: 145 },
-      "M24": { kills: 340, headshots: 275, avgDistance: 420 },
-      "QBZ": { kills: 280, headshots: 95, avgDistance: 135 },
-      "UMP45": { kills: 220, headshots: 65, avgDistance: 85 }
-    }
+      M24: { kills: 340, headshots: 275, avgDistance: 420 },
+      QBZ: { kills: 280, headshots: 95, avgDistance: 135 },
+      UMP45: { kills: 220, headshots: 65, avgDistance: 85 },
+    },
   },
-  "SHYNO": {
+  SHYNO: {
     id: "account.zzzzz",
     name: "SHYNO",
     platform: "PC",
@@ -97,7 +193,7 @@ const mockPlayers = {
       avgDamage: 380,
       kdRatio: 1.79,
       winRate: 13.8,
-      top10Rate: 52.0
+      top10Rate: 52.0,
     },
     careerStats: {
       totalKills: 9870,
@@ -105,24 +201,69 @@ const mockPlayers = {
       totalMatches: 1890,
       highestKills: 16,
       longestKill: 720,
-      avgSurvivalTime: "11:15"
+      avgSurvivalTime: "11:15",
     },
     recentMatches: [
-      { id: 1, mode: "Squad", map: "Erangel", kills: 7, deaths: 1, damage: 980, rank: 2, date: "2026-03-08" },
-      { id: 2, mode: "Squad", map: "Sanhok", kills: 5, deaths: 0, damage: 720, rank: 1, date: "2026-03-07" },
-      { id: 3, mode: "Duo", map: "Erangel", kills: 4, deaths: 2, damage: 580, rank: 5, date: "2026-03-07" },
-      { id: 4, mode: "Squad", map: "Vikendi", kills: 8, deaths: 3, damage: 1120, rank: 3, date: "2026-03-06" },
-      { id: 5, mode: "Squad", map: "Miramar", kills: 2, deaths: 2, damage: 340, rank: 15, date: "2026-03-06" }
+      {
+        id: 1,
+        mode: "Squad",
+        map: "Erangel",
+        kills: 7,
+        deaths: 1,
+        damage: 980,
+        rank: 2,
+        date: "2026-03-08",
+      },
+      {
+        id: 2,
+        mode: "Squad",
+        map: "Sanhok",
+        kills: 5,
+        deaths: 0,
+        damage: 720,
+        rank: 1,
+        date: "2026-03-07",
+      },
+      {
+        id: 3,
+        mode: "Duo",
+        map: "Erangel",
+        kills: 4,
+        deaths: 2,
+        damage: 580,
+        rank: 5,
+        date: "2026-03-07",
+      },
+      {
+        id: 4,
+        mode: "Squad",
+        map: "Vikendi",
+        kills: 8,
+        deaths: 3,
+        damage: 1120,
+        rank: 3,
+        date: "2026-03-06",
+      },
+      {
+        id: 5,
+        mode: "Squad",
+        map: "Miramar",
+        kills: 2,
+        deaths: 2,
+        damage: 340,
+        rank: 15,
+        date: "2026-03-06",
+      },
     ],
     weapons: {
-      "M416": { kills: 580, headshots: 175, avgDistance: 155 },
-      "Beryl": { kills: 420, headshots: 120, avgDistance: 140 },
-      "M762": { kills: 380, headshots: 145, avgDistance: 130 },
-      "S12K": { kills: 245, headshots: 45, avgDistance: 45 },
-      "Crossbow": { kills: 85, headshots: 75, avgDistance: 120 }
-    }
+      M416: { kills: 580, headshots: 175, avgDistance: 155 },
+      Beryl: { kills: 420, headshots: 120, avgDistance: 140 },
+      M762: { kills: 380, headshots: 145, avgDistance: 130 },
+      S12K: { kills: 245, headshots: 45, avgDistance: 45 },
+      Crossbow: { kills: 85, headshots: 75, avgDistance: 120 },
+    },
   },
-  "XANDER": {
+  XANDER: {
     id: "account.aaaaa",
     name: "XANDER",
     platform: "PC",
@@ -136,7 +277,7 @@ const mockPlayers = {
       avgDamage: 520,
       kdRatio: 1.68,
       winRate: 13.0,
-      top10Rate: 48.5
+      top10Rate: 48.5,
     },
     careerStats: {
       totalKills: 8920,
@@ -144,78 +285,162 @@ const mockPlayers = {
       totalMatches: 1560,
       highestKills: 19,
       longestKill: 1450,
-      avgSurvivalTime: "9:45"
+      avgSurvivalTime: "9:45",
     },
     recentMatches: [
-      { id: 1, mode: "Squad", map: "Erangel", kills: 8, deaths: 2, damage: 1350, rank: 3, date: "2026-03-08" },
-      { id: 2, mode: "Squad", map: "Sanhok", kills: 5, deaths: 1, damage: 780, rank: 2, date: "2026-03-07" },
-      { id: 3, mode: "Duo", map: "Erangel", kills: 6, deaths: 3, damage: 920, rank: 4, date: "2026-03-07" },
-      { id: 4, mode: "Squad", map: "Vikendi", kills: 10, deaths: 2, damage: 1480, rank: 2, date: "2026-03-06" },
-      { id: 5, mode: "Squad", map: "Miramar", kills: 4, deaths: 4, damage: 620, rank: 10, date: "2026-03-06" }
+      {
+        id: 1,
+        mode: "Squad",
+        map: "Erangel",
+        kills: 8,
+        deaths: 2,
+        damage: 1350,
+        rank: 3,
+        date: "2026-03-08",
+      },
+      {
+        id: 2,
+        mode: "Squad",
+        map: "Sanhok",
+        kills: 5,
+        deaths: 1,
+        damage: 780,
+        rank: 2,
+        date: "2026-03-07",
+      },
+      {
+        id: 3,
+        mode: "Duo",
+        map: "Erangel",
+        kills: 6,
+        deaths: 3,
+        damage: 920,
+        rank: 4,
+        date: "2026-03-07",
+      },
+      {
+        id: 4,
+        mode: "Squad",
+        map: "Vikendi",
+        kills: 10,
+        deaths: 2,
+        damage: 1480,
+        rank: 2,
+        date: "2026-03-06",
+      },
+      {
+        id: 5,
+        mode: "Squad",
+        map: "Miramar",
+        kills: 4,
+        deaths: 4,
+        damage: 620,
+        rank: 10,
+        date: "2026-03-06",
+      },
     ],
     weapons: {
-      "Kar98k": { kills: 520, headshots: 420, avgDistance: 520 },
-      "M24": { kills: 380, headshots: 310, avgDistance: 480 },
-      "AWM": { kills: 245, headshots: 220, avgDistance: 680 },
-      "Mini14": { kills: 280, headshots: 165, avgDistance: 350 },
-      "Win94": { kills: 125, headshots: 95, avgDistance: 280 }
-    }
-  }
+      Kar98k: { kills: 520, headshots: 420, avgDistance: 520 },
+      M24: { kills: 380, headshots: 310, avgDistance: 480 },
+      AWM: { kills: 245, headshots: 220, avgDistance: 680 },
+      Mini14: { kills: 280, headshots: 165, avgDistance: 350 },
+      Win94: { kills: 125, headshots: 95, avgDistance: 280 },
+    },
+  },
 };
 
+/** Human-friendly hint shown under the search box and on lookup failures. */
+const PLAYER_HINTS = "Try: SHAKKIR, DREAM, SHYNO, or XANDER";
+
+/** Tab keys for the stats view. */
+const TAB = {
+  overview: "overview",
+  matches: "matches",
+  weapons: "weapons",
+};
+
+/**
+ * Map a finishing rank to a medal-like color for quick scanning.
+ *
+ * @param {number} rank - Finishing position (1 = winner).
+ * @returns {string} CSS color value.
+ */
+const getRankColor = (rank) => {
+  if (rank === 1) return "#ffd700";
+  if (rank === 2) return "#c0c0c0";
+  if (rank === 3) return "#cd7f32";
+  return "var(--text-muted)";
+};
+
+/**
+ * PUBG player stats tracker page.
+ *
+ * Provides a lightweight, offline demo of searching a player and browsing
+ * overview, match history, and weapon performance.
+ *
+ * @returns {import('react').JSX.Element}
+ */
 function PUBGTracker() {
   const [searchName, setSearchName] = useState("");
   const [player, setPlayer] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [activeTab, setActiveTab] = useState("overview");
+  const [activeTab, setActiveTab] = useState(TAB.overview);
 
+  /**
+   * Form submit handler that performs a local lookup.
+   *
+   * This intentionally simulates a network request so the UI can demonstrate a
+   * loading state without requiring an external API key.
+   */
   const handleSearch = async (e) => {
     e.preventDefault();
-    if (!searchName.trim()) return;
+
+    const normalized = searchName.trim().toUpperCase();
+    if (!normalized) return;
 
     setLoading(true);
     setError("");
     setPlayer(null);
 
-    // Simulate API call delay
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    // Simulated API latency.
+    await new Promise((resolve) => setTimeout(resolve, 1000));
 
-    const playerData = mockPlayers[searchName.toUpperCase()];
-    
+    const playerData = PLAYERS[normalized];
+
     if (playerData) {
       setPlayer(playerData);
+      setActiveTab(TAB.overview);
     } else {
-      setError("Player not found. Try: SHAKKIR, DREAM, SHYNO, or XANDER");
+      setError(`Player not found. ${PLAYER_HINTS}`);
     }
-    
+
     setLoading(false);
   };
 
-  const getRankColor = (rank) => {
-    if (rank === 1) return "#ffd700";
-    if (rank === 2) return "#c0c0c0";
-    if (rank === 3) return "#cd7f32";
-    return "var(--text-muted)";
-  };
+  // Used to normalize weapon progress bars relative to the player's top weapon.
+  const maxWeaponKills = useMemo(() => {
+    if (!player) return 0;
+    return Math.max(...Object.values(player.weapons).map((s) => s.kills));
+  }, [player]);
 
   return (
     <>
       <Navbar />
       <div className="page-container">
-        {/* Hero Section */}
         <section className="pubg-tracker-hero">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
           >
-            <h1>PUBG <span className="highlight">Stats</span></h1>
+            <h1>
+              PUBG <span className="highlight">Stats</span>
+            </h1>
             <p>Track player statistics and match history</p>
           </motion.div>
         </section>
 
-        {/* Search Section */}
         <section className="pubg-search-section">
           <div className="container">
             <form onSubmit={handleSearch} className="search-form">
@@ -232,11 +457,10 @@ function PUBGTracker() {
                 </button>
               </div>
             </form>
-            <p className="search-hint">Try: SHAKKIR, DREAM, SHYNO, or XANDER</p>
+            <p className="search-hint">{PLAYER_HINTS}</p>
           </div>
         </section>
 
-        {/* Error Message */}
         {error && (
           <section className="pubg-error">
             <div className="container">
@@ -244,15 +468,14 @@ function PUBGTracker() {
                 <span className="error-icon">⚠️</span>
                 <p>{error}</p>
               </div>
+            </div>
           </section>
         )}
 
-        {/* Player Stats */}
         {player && (
           <section className="pubg-stats-section">
             <div className="container">
-              {/* Player Header */}
-              <motion.div 
+              <motion.div
                 className="player-stats-header"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -266,6 +489,7 @@ function PUBGTracker() {
                       <span className="platform-badge">{player.platform}</span>
                       <span className="region-badge">{player.region}</span>
                     </div>
+                  </div>
                 </div>
                 <div className="player-kd-highlight">
                   <span className="kd-value">{player.seasonStats.kdRatio}</span>
@@ -273,40 +497,42 @@ function PUBGTracker() {
                 </div>
               </motion.div>
 
-              {/* Stats Tabs */}
               <div className="stats-tabs">
-                <button 
-                  className={`stats-tab-btn ${activeTab === 'overview' ? 'active' : ''}`}
-                  onClick={() => setActiveTab('overview')}
+                <button
+                  className={`stats-tab-btn ${activeTab === TAB.overview ? "active" : ""}`}
+                  onClick={() => setActiveTab(TAB.overview)}
+                  type="button"
                 >
                   Overview
                 </button>
-                <button 
-                  className={`stats-tab-btn ${activeTab === 'matches' ? 'active' : ''}`}
-                  onClick={() => setActiveTab('matches')}
+                <button
+                  className={`stats-tab-btn ${activeTab === TAB.matches ? "active" : ""}`}
+                  onClick={() => setActiveTab(TAB.matches)}
+                  type="button"
                 >
                   Match History
                 </button>
-                <button 
-                  className={`stats-tab-btn ${activeTab === 'weapons' ? 'active' : ''}`}
-                  onClick={() => setActiveTab('weapons')}
+                <button
+                  className={`stats-tab-btn ${activeTab === TAB.weapons ? "active" : ""}`}
+                  onClick={() => setActiveTab(TAB.weapons)}
+                  type="button"
                 >
                   Weapons
                 </button>
               </div>
 
-              {/* Tab Content */}
-              {activeTab === 'overview' && (
-                <motion.div 
+              {activeTab === TAB.overview && (
+                <motion.div
                   className="stats-tab-content"
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                 >
-                  {/* Season Stats Grid */}
                   <div className="stats-grid">
                     <div className="stat-card">
                       <span className="stat-icon">💀</span>
-                      <span className="stat-value">{player.seasonStats.kills.toLocaleString()}</span>
+                      <span className="stat-value">
+                        {player.seasonStats.kills.toLocaleString()}
+                      </span>
                       <span className="stat-label">Kills</span>
                     </div>
                     <div className="stat-card">
@@ -334,8 +560,8 @@ function PUBGTracker() {
                       <span className="stat-value">{player.seasonStats.matches}</span>
                       <span className="stat-label">Matches</span>
                     </div>
+                  </div>
 
-                  {/* Win Rate & Top 10 */}
                   <div className="rate-stats">
                     <div className="rate-card">
                       <div className="rate-header">
@@ -343,7 +569,11 @@ function PUBGTracker() {
                         <span className="rate-value">{player.seasonStats.winRate}%</span>
                       </div>
                       <div className="rate-bar">
-                        <div className="rate-fill" style={{ width: `${player.seasonStats.winRate}%` }}></div>
+                        <div
+                          className="rate-fill"
+                          style={{ width: `${player.seasonStats.winRate}%` }}
+                        ></div>
+                      </div>
                     </div>
                     <div className="rate-card">
                       <div className="rate-header">
@@ -351,16 +581,22 @@ function PUBGTracker() {
                         <span className="rate-value">{player.seasonStats.top10Rate}%</span>
                       </div>
                       <div className="rate-bar">
-                        <div className="rate-fill" style={{ width: `${player.seasonStats.top10Rate}%` }}></div>
+                        <div
+                          className="rate-fill"
+                          style={{ width: `${player.seasonStats.top10Rate}%` }}
+                        ></div>
+                      </div>
                     </div>
+                  </div>
 
-                  {/* Career Stats */}
                   <div className="career-stats">
                     <h3>Career Statistics</h3>
                     <div className="career-grid">
                       <div className="career-item">
                         <span className="career-label">Total Kills</span>
-                        <span className="career-value">{player.careerStats.totalKills.toLocaleString()}</span>
+                        <span className="career-value">
+                          {player.careerStats.totalKills.toLocaleString()}
+                        </span>
                       </div>
                       <div className="career-item">
                         <span className="career-label">Total Wins</span>
@@ -368,11 +604,15 @@ function PUBGTracker() {
                       </div>
                       <div className="career-item">
                         <span className="career-label">Total Matches</span>
-                        <span className="career-value">{player.careerStats.totalMatches.toLocaleString()}</span>
+                        <span className="career-value">
+                          {player.careerStats.totalMatches.toLocaleString()}
+                        </span>
                       </div>
                       <div className="career-item">
                         <span className="career-label">Highest Kills</span>
-                        <span className="career-value">{player.careerStats.highestKills}</span>
+                        <span className="career-value">
+                          {player.careerStats.highestKills}
+                        </span>
                       </div>
                       <div className="career-item">
                         <span className="career-label">Longest Kill</span>
@@ -380,20 +620,23 @@ function PUBGTracker() {
                       </div>
                       <div className="career-item">
                         <span className="career-label">Avg Survival</span>
-                        <span className="career-value">{player.careerStats.avgSurvivalTime}</span>
+                        <span className="career-value">
+                          {player.careerStats.avgSurvivalTime}
+                        </span>
                       </div>
+                    </div>
                   </div>
                 </motion.div>
               )}
 
-              {activeTab === 'matches' && (
-                <motion.div 
+              {activeTab === TAB.matches && (
+                <motion.div
                   className="stats-tab-content"
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                 >
                   <div className="matches-list">
-                    {player.recentMatches.map(match => (
+                    {player.recentMatches.map((match) => (
                       <div key={match.id} className="match-card">
                         <div className="match-rank" style={{ color: getRankColor(match.rank) }}>
                           #{match.rank}
@@ -417,14 +660,16 @@ function PUBGTracker() {
                               <span className="stat-num">{match.damage}</span>
                               <span className="stat-lbl">Damage</span>
                             </div>
+                          </div>
                         </div>
+                      </div>
                     ))}
                   </div>
                 </motion.div>
               )}
 
-              {activeTab === 'weapons' && (
-                <motion.div 
+              {activeTab === TAB.weapons && (
+                <motion.div
                   className="stats-tab-content"
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
@@ -440,11 +685,15 @@ function PUBGTracker() {
                             <span>{stats.headshots} headshots</span>
                             <span>~{stats.avgDistance}m avg</span>
                           </div>
-                        <div className="weapon-bar">
-                          <div 
-                            className="weapon-fill" 
-                            style={{ width: `${(stats.kills / 845) * 100}%` }}
-                          ></div>
+                          <div className="weapon-bar">
+                            <div
+                              className="weapon-fill"
+                              style={{
+                                width: `${maxWeaponKills ? (stats.kills / maxWeaponKills) * 100 : 0}%`,
+                              }}
+                            ></div>
+                          </div>
+                        </div>
                       </div>
                     ))}
                   </div>
@@ -460,8 +709,12 @@ function PUBGTracker() {
         .pubg-tracker-hero {
           padding: 100px 20px 60px;
           text-align: center;
-          background: radial-gradient(ellipse at 50% 50%, rgba(0, 212, 255, 0.1) 0%, transparent 50%),
-                      var(--gradient-dark);
+          background: radial-gradient(
+              ellipse at 50% 50%,
+              rgba(0, 212, 255, 0.1) 0%,
+              transparent 50%
+            ),
+            var(--gradient-dark);
         }
 
         .pubg-tracker-hero h1 {
@@ -497,7 +750,7 @@ function PUBGTracker() {
           border-radius: 12px;
           color: var(--text-light);
           font-size: 18px;
-          font-family: 'Rajdhani', sans-serif;
+          font-family: "Rajdhani", sans-serif;
         }
 
         .pubg-search-input:focus {
@@ -511,7 +764,7 @@ function PUBGTracker() {
           border: none;
           border-radius: 12px;
           color: #000;
-          font-family: 'Orbitron', sans-serif;
+          font-family: "Orbitron", sans-serif;
           font-size: 16px;
           font-weight: 600;
           cursor: pointer;
@@ -599,7 +852,8 @@ function PUBGTracker() {
           gap: 10px;
         }
 
-        .platform-badge, .region-badge {
+        .platform-badge,
+        .region-badge {
           padding: 4px 12px;
           background: rgba(0, 212, 255, 0.1);
           border: 1px solid var(--primary);
@@ -614,7 +868,7 @@ function PUBGTracker() {
 
         .kd-value {
           display: block;
-          font-family: 'Orbitron', sans-serif;
+          font-family: "Orbitron", sans-serif;
           font-size: 48px;
           color: var(--primary);
           font-weight: 700;
@@ -638,7 +892,7 @@ function PUBGTracker() {
           background: transparent;
           border: none;
           color: var(--text-muted);
-          font-family: 'Orbitron', sans-serif;
+          font-family: "Orbitron", sans-serif;
           font-size: 14px;
           cursor: pointer;
           transition: all 0.3s ease;
@@ -673,7 +927,7 @@ function PUBGTracker() {
 
         .stat-card .stat-value {
           display: block;
-          font-family: 'Orbitron', sans-serif;
+          font-family: "Orbitron", sans-serif;
           font-size: 28px;
           color: var(--primary);
           font-weight: 700;
@@ -706,7 +960,7 @@ function PUBGTracker() {
         }
 
         .rate-value {
-          font-family: 'Orbitron', sans-serif;
+          font-family: "Orbitron", sans-serif;
           color: var(--primary);
         }
 
@@ -755,7 +1009,7 @@ function PUBGTracker() {
         }
 
         .career-value {
-          font-family: 'Orbitron', sans-serif;
+          font-family: "Orbitron", sans-serif;
           color: var(--primary);
         }
 
@@ -775,7 +1029,7 @@ function PUBGTracker() {
         }
 
         .match-rank {
-          font-family: 'Orbitron', sans-serif;
+          font-family: "Orbitron", sans-serif;
           font-size: 24px;
           font-weight: 700;
           min-width: 60px;
@@ -811,7 +1065,7 @@ function PUBGTracker() {
 
         .match-stat .stat-num {
           display: block;
-          font-family: 'Orbitron', sans-serif;
+          font-family: "Orbitron", sans-serif;
           font-size: 20px;
           color: var(--text-light);
         }
@@ -838,7 +1092,7 @@ function PUBGTracker() {
         }
 
         .weapon-rank {
-          font-family: 'Orbitron', sans-serif;
+          font-family: "Orbitron", sans-serif;
           font-size: 20px;
           color: var(--primary);
           min-width: 40px;
