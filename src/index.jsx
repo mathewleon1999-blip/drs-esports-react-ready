@@ -1,12 +1,15 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
+import { HelmetProvider } from 'react-helmet-async';
 import App from './App';
 import './index.css';
 
 // Mobile responsive fixes are now scoped per-page via data-page on <body>.
 // This prevents one page's mobile overrides from impacting others.
 import './mobile-fixes.css';
+
+import { registerServiceWorker } from './registerServiceWorker';
 
 // Global error handler to catch runtime errors
 window.addEventListener('error', (e) => {
@@ -66,12 +69,17 @@ const initApp = async () => {
   }
 };
 
-// Render app with BrowserRouter
+// Register service worker for PWA support
+registerServiceWorker();
+
+// Render app with BrowserRouter and HelmetProvider
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
-    <BrowserRouter>
-      <App />
-    </BrowserRouter>
+    <HelmetProvider>
+      <BrowserRouter>
+        <App />
+      </BrowserRouter>
+    </HelmetProvider>
   </React.StrictMode>
 );
 
