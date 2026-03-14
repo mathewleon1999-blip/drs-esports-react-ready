@@ -13125,12 +13125,14 @@ select:focus {
   }
   
   .finance-filters {
-    grid-template-columns: 1fr;
+  grid-template-columns: 1fr;
   }
   
   .header-actions {
-    flex-direction: column;
+  flex-direction: column;
   }
-}
-
-/*
+  }
+  
+  /*
+  (blank)
+  */
