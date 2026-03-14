@@ -66,6 +66,7 @@ function App() {
                     <Route path="/contact" element={<Contact />} />
                     <Route path="/player-dashboard" element={<PlayerDashboard />} />
                     <Route path="/admin-dashboard" element={<AdminDashboard />} />
+                    <Route path="/admin-dashboard/*" element={<AdminDashboard />} />
                     <Route path="/order-tracking" element={<OrderTracking />} />
                     <Route path="/tournaments" element={<Tournaments />} />
                     <Route path="/live" element={<LiveStream />} />
