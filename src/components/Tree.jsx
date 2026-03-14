@@ -286,6 +286,7 @@ function TreeNode({ node, level = 0, onNodeClick, selectedNode }) {
                 height: isRoot ? 60 : 50,
                 borderRadius: "50%",
                 objectFit: "cover",
+                objectPosition: "center 20%",
                 border: `2px solid ${node.color}`,
               }}
             />
@@ -622,6 +623,7 @@ function Tree() {
                         height: "80px",
                         borderRadius: "50%",
                         objectFit: "cover",
+                        objectPosition: "center 20%",
                         border: `3px solid ${selectedNode.color}`,
                       }}
                     />
