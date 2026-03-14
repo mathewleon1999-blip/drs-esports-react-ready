@@ -179,7 +179,7 @@ function News() {
           onClick={() => setSelectedArticle(null)}
         >
           <motion.div 
-            className="modal-content article-modal"
+            className="article-modal"
             initial={{ scale: 0.9 }}
             animate={{ scale: 1 }}
             onClick={(e) => e.stopPropagation()}

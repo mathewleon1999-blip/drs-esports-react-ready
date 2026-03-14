@@ -1,9 +1,33 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 
-// Demo stream data
+const toYouTubeEmbedUrl = (urlOrId) => {
+  if (!urlOrId) return null;
+
+  // If it's already an embed URL
+  if (/youtube\.com\/embed\//.test(urlOrId)) return urlOrId;
+
+  // Extract ID from common YouTube formats
+  // - https://www.youtube.com/watch?v=VIDEO_ID
+  // - https://youtu.be/VIDEO_ID
+  // - VIDEO_ID
+  let id = urlOrId;
+
+  const watchMatch = urlOrId.match(/[?&]v=([^&]+)/);
+  if (watchMatch?.[1]) id = watchMatch[1];
+
+  const shortMatch = urlOrId.match(/youtu\.be\/([^?&/]+)/);
+  if (shortMatch?.[1]) id = shortMatch[1];
+
+  // Basic sanity
+  if (!/^[a-zA-Z0-9_-]{6,}$/.test(id)) return null;
+
+  return `https://www.youtube.com/embed/${id}`;
+};
+
+// Demo stream data (YouTube items include a playable videoId/url)
 const streams = [
   {
     id: 1,
@@ -13,7 +37,7 @@ const streams = [
     viewers: 12500,
     thumbnail: "/stream-1.jpg",
     live: true,
-    platform: "twitch"
+    platform: "twitch",
   },
   {
     id: 2,
@@ -23,7 +47,11 @@ const streams = [
     viewers: 3200,
     thumbnail: "/stream-2.jpg",
     live: true,
-    platform: "youtube"
+    platform: "youtube",
+    // Replace this with your real YouTube Live / Video ID or URL
+    youtube: {
+      url: "https://www.youtube.com/live/PQxomB2-C34?si=MvfCgQpPSPkHJ4vp",
+    },
   },
   {
     id: 3,
@@ -34,8 +62,8 @@ const streams = [
     thumbnail: "/stream-3.jpg",
     live: false,
     scheduled: "2025-01-25 18:00",
-    platform: "twitch"
-  }
+    platform: "twitch",
+  },
 ];
 
 const upcomingStreams = [
@@ -69,7 +97,17 @@ function LiveStream() {
   const [activeTab, setActiveTab] = useState("live");
   const [selectedStream, setSelectedStream] = useState(null);
 
-  const liveStreams = streams.filter(s => s.live);
+  const liveStreams = useMemo(() => streams.filter((s) => s.live), []);
+
+  const featuredStream = useMemo(() => {
+    // Prefer a YouTube stream as featured so it actually plays on-site.
+    return liveStreams.find((s) => s.platform === "youtube") || liveStreams[0] || null;
+  }, [liveStreams]);
+
+  const featuredEmbedUrl = useMemo(() => {
+    if (!featuredStream || featuredStream.platform !== "youtube") return null;
+    return toYouTubeEmbedUrl(featuredStream.youtube?.videoId || featuredStream.youtube?.url);
+  }, [featuredStream]);
 
   return (
     <>
@@ -122,20 +160,116 @@ function LiveStream() {
                     animate={{ opacity: 1 }}
                   >
                     <div className="featured-player">
-                      <div className="stream-placeholder large">
-                        <div className="stream-embed">
-                          <div className="live-indicator">🔴 LIVE</div>
-                          <div className="stream-title">{liveStreams[0].title}</div>
-                          <div className="streamer-info">
-                            <span>🎮 {liveStreams[0].streamer}</span>
-                            <span>👁️ {liveStreams[0].viewers.toLocaleString()} viewers</span>
-                          </div>
-                          <div className="stream-placeholder-content">
-                            <span>📺</span>
-                            <p>Stream Embed Area</p>
-                            <p className="stream-platform">{liveStreams[0].platform.toUpperCase()}</p>
+                      <div
+                        style={{
+                          width: "100%",
+                          maxWidth: 1100,
+                          margin: "0 auto",
+                          borderRadius: 16,
+                          overflow: "hidden",
+                          border: "1px solid rgba(0, 212, 255, 0.18)",
+                          background: "rgba(10, 14, 20, 0.6)",
+                          boxShadow: "0 20px 60px rgba(0,0,0,0.45)",
+                        }}
+                      >
+                        {/* 16:9 responsive player */}
+                        <div style={{ position: "relative", paddingTop: "56.25%" }}>
+                          {featuredEmbedUrl ? (
+                            <iframe
+                              title={featuredStream?.title || "YouTube Live"}
+                              src={featuredEmbedUrl}
+                              style={{
+                                position: "absolute",
+                                top: 0,
+                                left: 0,
+                                width: "100%",
+                                height: "100%",
+                                border: 0,
+                              }}
+                              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                              allowFullScreen
+                            />
+                          ) : (
+                            <div
+                              style={{
+                                position: "absolute",
+                                inset: 0,
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                flexDirection: "column",
+                                gap: 10,
+                                color: "var(--text-muted)",
+                                padding: 20,
+                                textAlign: "center",
+                              }}
+                            >
+                              <div style={{ fontSize: 42 }}>📺</div>
+                              <div style={{ fontFamily: "'Orbitron', sans-serif", color: "var(--text-light)" }}>
+                                {featuredStream?.title}
+                              </div>
+                              <div>
+                                This featured stream is on {featuredStream?.platform?.toUpperCase()}. Only YouTube streams can be embedded and played directly on this page.
+                              </div>
+                            </div>
+                          )}
+
+                          {/* Live badge */}
+                          <div
+                            style={{
+                              position: "absolute",
+                              top: 12,
+                              left: 12,
+                              background: "rgba(255, 0, 110, 0.9)",
+                              color: "#fff",
+                              padding: "6px 10px",
+                              borderRadius: 10,
+                              fontFamily: "'Orbitron', sans-serif",
+                              fontSize: 12,
+                              letterSpacing: 1,
+                              display: "inline-flex",
+                              alignItems: "center",
+                              gap: 8,
+                              boxShadow: "0 10px 25px rgba(255,0,110,0.25)",
+                            }}
+                          >
+                            🔴 LIVE
                           </div>
                         </div>
+
+                        {/* Meta */}
+                        {featuredStream && (
+                          <div style={{ padding: "14px 16px" }}>
+                            <div
+                              style={{
+                                display: "flex",
+                                flexWrap: "wrap",
+                                justifyContent: "space-between",
+                                gap: 10,
+                                alignItems: "center",
+                              }}
+                            >
+                              <div>
+                                <div
+                                  style={{
+                                    fontFamily: "'Orbitron', sans-serif",
+                                    color: "var(--text-light)",
+                                    fontSize: 14,
+                                    marginBottom: 4,
+                                  }}
+                                >
+                                  {featuredStream.title}
+                                </div>
+                                <div style={{ color: "var(--text-muted)", fontSize: 13 }}>
+                                  🎮 {featuredStream.streamer} • {featuredStream.game}
+                                </div>
+                              </div>
+                              <div style={{ color: "var(--text-muted)", fontSize: 13 }}>
+                                👁️ {featuredStream.viewers.toLocaleString()} watching
+                              </div>
+                            </div>
+                          </div>
+                        )}
                       </div>
                     </div>
                   </motion.div>
@@ -143,7 +277,9 @@ function LiveStream() {
                   {/* Other Live Streams */}
                   <h2 className="section-title">Other Live Streams</h2>
                   <div className="streams-grid">
-                    {liveStreams.slice(1).map((stream, index) => (
+                    {liveStreams
+                      .filter((s) => s.id !== featuredStream?.id)
+                      .map((stream, index) => (
                       <motion.div
                         key={stream.id}
                         className="stream-card"
