@@ -7940,7 +7940,7 @@ font-size: 40px;
 }
 
 .tab-panel {
-  display: none;
+  display: block;
 }
 
 .tab-panel.active {
