@@ -9,7 +9,7 @@ const teamHierarchy = {
   description: "DRS Esports is a competitive gaming organization featuring leadership, PUBG Mobile roster, and support staff.",
   instagram: {
     label: "DRS Esports",
-    url: "https://www.instagram.com/",
+    url: "https://www.instagram.com/ig.dikkaris_esports?igsh=MWFncHlsZXI1c21mMw%3D%3D",
   },
   children: [
     {
@@ -53,7 +53,7 @@ const teamHierarchy = {
           description: "Head of content for DRS. Hotpillow manages the team’s media presence, highlights, and community engagement. He ensures the clan stays visible across platforms while showcasing the team’s best moments and achievements.",
           instagram: {
             label: "DRS HOTPILOW",
-            url: "https://www.instagram.com/",
+            url: "https://www.instagram.com/hottpilow?igsh=eGh2OGpjZWh0Yjk2",
           },
         },
       ],
@@ -79,7 +79,7 @@ const teamHierarchy = {
               description: "In game leader of DRS. Shakiir controls the team’s movement, rotations, and decision making during matches. His leadership and game awareness guide the squad through intense situations.",
               instagram: {
                 label: "SHAKIIR",
-                url: "https://www.instagram.com/",
+                url: "https://www.instagram.com/sh4kkir?igsh=OGxwZ2ZvOHNqNGJh",
               },
             },
             {
@@ -103,7 +103,7 @@ const teamHierarchy = {
               description: "Entry fragger who opens fights for the team. Noisy is known for fast reactions and fearless engagements, creating early advantages during battles.",
               instagram: {
                 label: "NOISY",
-                url: "https://www.instagram.com/",
+                url: "https://www.instagram.com/noisyy99?igsh=Z3I0NWlyc3RzaWEz",
               },
             },
             {
@@ -115,7 +115,7 @@ const teamHierarchy = {
               description: "Support role player who keeps the team stable during fights. Akoji assists with cover fire, utility usage, and team coordination to ensure the squad stays organised.",
               instagram: {
                 label: "AKOJI",
-                url: "https://www.instagram.com/",
+                url: "https://www.instagram.com/jgan.__?igsh=eGFxczhic29qbmd1",
               },
             },
             {
@@ -127,7 +127,7 @@ const teamHierarchy = {
               description: "Substitute player who specialises in entry fragging. Zen is ready to step in whenever needed and brings high energy and aggressive play to maintain the team’s momentum.",
               instagram: {
                 label: "DRS ZEN",
-                url: "https://www.instagram.com/",
+                url: "https://www.instagram.com/ig.zenn?igsh=aWthNXowN3pjN2Y0",
               },
             },
           ],
@@ -142,7 +142,7 @@ const teamHierarchy = {
       description: "Team support head who ensures players have everything they need to perform at their best. Kind helps maintain team morale, supports player development, and assists with internal coordination.",
       instagram: {
         label: "DRS KIND",
-        url: "https://www.instagram.com/",
+        url: "https://www.instagram.com/alex.raju.16?igsh=YjU2Y2ZjY2p4Znlk",
       },
       children: [
         {
@@ -161,9 +161,10 @@ const teamHierarchy = {
           role: "Data",
           icon: "📊",
           color: "#9b59b6",
+          description: "Analyses match data, player performance, and opponent strategies to provide insights that improve team strategy, decision making, and overall competitive performance in PUBG tournaments.",
           instagram: {
             label: "DRS KAOSPY",
-            url: "https://www.instagram.com/",
+            url: "https://www.instagram.com/tmr_kaos_spy_?igsh=YzdlcW9ha2I2NDB3",
           },
         },
         {
@@ -174,7 +175,7 @@ const teamHierarchy = {
           description: "Fitness and wellbeing coach for the team. Sharath focuses on keeping players mentally sharp and physically balanced so they can maintain high performance during long competitive sessions.",
           instagram: {
             label: "DRS SHARATH",
-            url: "https://www.instagram.com/",
+            url: "https://www.instagram.com/sarathprini123?igsh=eTZlc2g1emJuNWh4",
           },
         },
         {
@@ -185,7 +186,7 @@ const teamHierarchy = {
           description: "Mental performance coach for the players. Brits works on focus, confidence, and competitive mindset, helping the team stay calm under pressure and perform consistently in high stakes matches.",
           instagram: {
             label: "DRS BRITS",
-            url: "https://www.instagram.com/",
+            url: "https://www.instagram.com/brits.here?igsh=aDlxOHEyNTkyc2U2",
           },
         },
       ],
