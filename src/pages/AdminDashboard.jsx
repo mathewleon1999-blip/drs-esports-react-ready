@@ -82,20 +82,26 @@ function AdminDashboard() {
   const navigate = useNavigate();
 
   async function fetchTransactionsFromSupabase() {
-    const { data, error } = await supabase
-      .from("transactions")
-      .select("*")
-      .order("created_at", { ascending: false });
+    try {
+      const { data, error } = await supabase
+        .from("transactions")
+        .select("*")
+        .order("created_at", { ascending: false });
 
-    if (error) {
-      console.error("Supabase transactions fetch failed:", error);
-      // fall back to local data if any exists
+      if (error) {
+        console.error("Supabase transactions fetch failed:", error);
+        // fall back to local data if any exists
+        setTransactions(getStoredData("drs-transactions", []));
+        showToast("Transactions sync failed (Supabase)", "error");
+        return;
+      }
+
+      setTransactions(data || []);
+    } catch (err) {
+      console.error("Supabase transactions fetch crashed:", err);
       setTransactions(getStoredData("drs-transactions", []));
-      showToast("Transactions sync failed (Supabase)", "error");
-      return;
+      showToast("Transactions sync error (Supabase)", "error");
     }
-
-    setTransactions(data || []);
   }
 
   // Initialize data
@@ -273,55 +279,70 @@ const deleteDiscount = (discountId) => {
 
   // Transaction functions (Supabase-backed)
   const addTransaction = async (transaction) => {
-    const payload = {
-      ...transaction,
-      created_by: admin?.username || "admin",
-    };
+    try {
+      const payload = {
+        ...transaction,
+        created_by: admin?.username || "admin",
+      };
 
-    const { data, error } = await supabase.from("transactions").insert(payload).select().single();
+      const { data, error } = await supabase.from("transactions").insert(payload).select().single();
 
-    if (error) {
-      console.error("Supabase insert failed:", error);
+      if (error) {
+        console.error("Supabase insert failed:", error);
+        showToast("Failed to add transaction (Supabase)", "error");
+        return;
+      }
+
+      setTransactions((prev) => [data, ...prev]);
+      showToast("Transaction added successfully!");
+      setShowModal(false);
+    } catch (err) {
+      console.error("Supabase insert crashed:", err);
       showToast("Failed to add transaction (Supabase)", "error");
-      return;
     }
-
-    setTransactions((prev) => [data, ...prev]);
-    showToast("Transaction added successfully!");
-    setShowModal(false);
   };
 
   const updateTransaction = async (transactionId, updates) => {
-    const { data, error } = await supabase
-      .from("transactions")
-      .update({ ...updates, updated_at: new Date().toISOString() })
-      .eq("id", transactionId)
-      .select()
-      .single();
+    try {
+      const { data, error } = await supabase
+        .from("transactions")
+        .update({ ...updates, updated_at: new Date().toISOString() })
+        .eq("id", transactionId)
+        .select()
+        .single();
 
-    if (error) {
-      console.error("Supabase update failed:", error);
+      if (error) {
+        console.error("Supabase update failed:", error);
+        showToast("Failed to update transaction (Supabase)", "error");
+        return;
+      }
+
+      setTransactions((prev) => prev.map((t) => (t.id === transactionId ? data : t)));
+      showToast("Transaction updated successfully!");
+      setShowModal(false);
+      setEditingItem(null);
+    } catch (err) {
+      console.error("Supabase update crashed:", err);
       showToast("Failed to update transaction (Supabase)", "error");
-      return;
     }
-
-    setTransactions((prev) => prev.map((t) => (t.id === transactionId ? data : t)));
-    showToast("Transaction updated successfully!");
-    setShowModal(false);
-    setEditingItem(null);
   };
 
   const deleteTransaction = async (transactionId) => {
-    const { error } = await supabase.from("transactions").delete().eq("id", transactionId);
+    try {
+      const { error } = await supabase.from("transactions").delete().eq("id", transactionId);
 
-    if (error) {
-      console.error("Supabase delete failed:", error);
+      if (error) {
+        console.error("Supabase delete failed:", error);
+        showToast("Failed to delete transaction (Supabase)", "error");
+        return;
+      }
+
+      setTransactions((prev) => prev.filter((t) => t.id !== transactionId));
+      showToast("Transaction deleted!");
+    } catch (err) {
+      console.error("Supabase delete crashed:", err);
       showToast("Failed to delete transaction (Supabase)", "error");
-      return;
     }
-
-    setTransactions((prev) => prev.filter((t) => t.id !== transactionId));
-    showToast("Transaction deleted!");
   };
 
   // Excel export function
