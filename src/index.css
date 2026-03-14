@@ -38,6 +38,7 @@ html {
   scroll-behavior: smooth;
   -webkit-overflow-scrolling: touch;
   overflow-x: hidden;
+  overflow-y: auto;
 }
 
 /* Body - allow vertical scroll, prevent horizontal */
@@ -52,19 +53,18 @@ body {
   background-attachment: scroll;
   color: var(--text-light);
   overflow-x: hidden;
-  overflow-y: auto;
+  overflow-y: visible;
   height: auto;
   min-height: 100vh;
   line-height: 1.6;
   -webkit-overflow-scrolling: touch;
-  overscroll-behavior: contain;
+  overscroll-behavior-y: none;
 }
 
 /* React Root - ensure proper scroll behavior */
 #root {
   min-height: 100vh;
   overflow-x: hidden;
-  overflow-y: visible;
 }
 
 /* Page container - base for all pages */
@@ -118,17 +118,9 @@ body {
   }
 }
 
-/* Prevent pull-to-refresh on mobile (optional - remove if not wanted) */
+/* Overscroll behavior: allow normal scrolling */
 body {
-  overscroll-behavior-y: contain;
-}
-
-/* Scroll lock disabled (not needed) */
-body.scroll-locked {
-  overflow: auto !important;
-  position: static;
-  width: auto;
-  touch-action: auto;
+  overscroll-behavior-y: auto;
 }
 
 /* Glassmorphism Base Classes */
