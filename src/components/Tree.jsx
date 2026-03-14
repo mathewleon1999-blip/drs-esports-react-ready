@@ -28,6 +28,7 @@ const teamHierarchy = {
           role: "CO-LEADER",
           icon: "👤",
           color: "#ffd700",
+          image: "/DRS ESPORTS/DRS MECHANIC.jpeg",
           description: "Co leader of DRS and one of the most trusted decision makers in the clan. Mechanic works closely with Blind to manage the team, maintain discipline, and help guide players during both practice and competitive matches.",
           instagram: {
             label: "DRS MECHANIC",
