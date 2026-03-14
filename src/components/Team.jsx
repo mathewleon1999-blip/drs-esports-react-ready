@@ -21,10 +21,11 @@ function PlayerCard({ name, role, image }) {
 
 function Team() {
   const players = [
-    { name: "SHAKKIR", role: "IGL / Captain", image: "/DRS ESPORTS/SHAKKIR).jpg" },
-    { name: "DREAM", role: "Duelist", image: "/DRS ESPORTS/Dream.jpg" },
-    { name: "SHYNO", role: "Controller", image: "/DRS ESPORTS/SHYNO.jpg" },
-    { name: "XANDER", role: "Sentinel", image: "/DRS ESPORTS/XANDER-WA0043.jpg" },
+    { name: "SHAKIIR", role: "IGL", image: "/DRS ESPORTS/SHAKKIR).jpg" },
+    { name: "DREAM", role: "Assaulter", image: "/DRS ESPORTS/Dream.jpg" },
+    { name: "NOISY", role: "Entry Fragger", image: "/DRS ESPORTS/noisy n (3).png" },
+    { name: "AKOJI", role: "Support", image: "/DRS ESPORTS/AKOS (3).png" },
+    { name: "DRS ZEN", role: "Sub", image: "/DRS ESPORTS/DRS ZEN (1).jpg" },
   ];
 
   return (
@@ -44,7 +45,7 @@ function Team() {
         viewport={{ once: true }}
         transition={{ duration: 0.6, delay: 0.2 }}
       >
-        Elite players dominating the arena
+        DRS ESPORTS PUBG lineup
       </motion.p>
       <div className="team-grid">
         {players.map((player, index) => (

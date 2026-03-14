@@ -6,17 +6,17 @@ import Footer from "../components/Footer";
 
 // Player data - in production this would come from an API
 const playersData = {
-  "shakkir": {
-    ign: "Shakkir",
-    realName: "Shakkir",
+  "shakiir": {
+    ign: "Shakiir",
+    realName: "Shakiir",
     age: 20,
     country: "🇮🇳",
-    role: "Captain/IGL",
+    role: "IGL",
     mainRole: "In-Game Leader",
     avatar: "⚔️",
     image: "/DRS ESPORTS/SHAKKIR).jpg",
     joinDate: "2023-02-20",
-    bio: "Team captain and primary IGL. Known for exceptional strategic thinking and shot-calling abilities.",
+    bio: "Team IGL and shot-caller. Known for strong leadership and rotation calls.",
     stats: {
       kda: "2.8",
       headshot: "45%",
@@ -41,10 +41,10 @@ const playersData = {
       { title: "100+ Tournament Wins", subtitle: "Career Achievement", icon: "⭐" }
     ],
     social: {
-      twitter: "@shakkir",
-      instagram: "@shakkir_drs",
-      discord: "Shakkir#5678",
-      youtube: "ShakkirTV"
+      twitter: "@shakiir",
+      instagram: "@shakiir_drs",
+      discord: "Shakiir#5678",
+      youtube: "ShakiirTV"
     },
     equipment: {
       phone: "iPhone 15 Pro Max",
@@ -58,12 +58,12 @@ const playersData = {
     realName: "Dream",
     age: 22,
     country: "🇮🇳",
-    role: "Fragger",
-    mainRole: "Entry Fragger",
+    role: "Assaulter",
+    mainRole: "Assaulter",
     avatar: "🎯",
     image: "/DRS ESPORTS/Dream.jpg",
     joinDate: "2023-01-15",
-    bio: "Aggressive entry fragger known for clutch plays and high-impact engagements.",
+    bio: "Aggressive assaulter known for clutch plays and high-impact engagements.",
     stats: {
       kda: "2.4",
       headshot: "32%",
@@ -97,24 +97,24 @@ const playersData = {
       emulator: "Gameloop"
     }
   },
-  "shyno": {
-    ign: "Shyno",
-    realName: "Shyno",
+  "noisy": {
+    ign: "Noisy",
+    realName: "Noisy",
     age: 21,
     country: "🇮🇳",
-    role: "Support",
-    mainRole: "Support/IGL",
-    avatar: "🛡️",
-    image: "/DRS ESPORTS/SHYNO.jpg",
+    role: "Entry Fragger",
+    mainRole: "Entry Fragger",
+    avatar: "⚡",
+    image: "/DRS ESPORTS/noisy n (3).png",
     joinDate: "2023-03-10",
-    bio: "Reliable support player with excellent game sense and utility usage.",
+    bio: "Explosive entry fragger focused on opening picks and creating space for the team.",
     stats: {
-      kda: "1.9",
-      headshot: "28%",
+      kda: "2.1",
+      headshot: "30%",
       matches: 138,
       wins: 48,
       top10: 82,
-      avgDamage: 380,
+      avgDamage: 430,
       longestKill: 650,
       gamesPlayed: 420
     },
@@ -127,10 +127,10 @@ const playersData = {
       { title: "DRS Championship", subtitle: "Champion", icon: "🥇" }
     ],
     social: {
-      twitter: "@shyno",
-      instagram: "@shyno_drs",
-      discord: "Shyno#9012",
-      youtube: "ShynoGaming"
+      twitter: "@noisy",
+      instagram: "@noisy_drs",
+      discord: "Noisy#9012",
+      youtube: "NoisyGaming"
     },
     equipment: {
       phone: "Asus ROG Phone 8",
@@ -139,25 +139,25 @@ const playersData = {
       emulator: "Gameloop"
     }
   },
-  "xander": {
-    ign: "Xander",
-    realName: "Xander",
-    age: 23,
+  "akoji": {
+    ign: "Akoji",
+    realName: "Akoji",
+    age: 22,
     country: "🇮🇳",
-    role: "Sniper",
-    mainRole: "Long Range",
-    avatar: "👁️",
-    image: "/DRS ESPORTS/XANDER-WA0043.jpg",
+    role: "Support",
+    mainRole: "Support",
+    avatar: "🛡️",
+    image: "/DRS ESPORTS/AKOS (3).png",
     joinDate: "2023-04-05",
-    bio: "Elite long-range specialist with exceptional sniping skills and patience.",
+    bio: "Reliable support player focused on utility, revives, and setting up team plays.",
     stats: {
-      kda: "1.7",
+      kda: "1.9",
       headshot: "25%",
       matches: 125,
       wins: 42,
       top10: 75,
-      avgDamage: 420,
-      longestKill: 1200,
+      avgDamage: 380,
+      longestKill: 500,
       gamesPlayed: 380
     },
     tournamentHistory: [
@@ -166,14 +166,53 @@ const playersData = {
     ],
     achievements: [
       { title: "PMNC UAE 2025", subtitle: "4th Place", icon: "🏆" },
-      { title: "Winter Cup", subtitle: "Runner-up", icon: "🥈" },
-      { title: "Longest Kill Record", subtitle: "1200m", icon: "🎯" }
+      { title: "Winter Cup", subtitle: "Runner-up", icon: "🥈" }
     ],
     social: {
-      twitter: "@xander",
-      instagram: "@xander_drs",
-      discord: "Xander#3456",
-      youtube: "XanderSnipes"
+      twitter: "@akoji",
+      instagram: "@akoji_drs",
+      discord: "Akoji#3456",
+      youtube: "AkojiGaming"
+    },
+    equipment: {
+      phone: "iPhone 15 Pro",
+      earphones: "AirPods Pro 2",
+      controller: "Mobile Controller",
+      emulator: "Gameloop"
+    }
+  },
+  "zen": {
+    ign: "DRS ZEN",
+    realName: "DRS ZEN",
+    age: 21,
+    country: "🇮🇳",
+    role: "Sub",
+    mainRole: "Sub",
+    avatar: "🧩",
+    image: "/DRS ESPORTS/DRS ZEN (1).jpg",
+    joinDate: "2023-05-01",
+    bio: "Substitute player ready to step in when needed.",
+    stats: {
+      kda: "1.8",
+      headshot: "26%",
+      matches: 80,
+      wins: 28,
+      top10: 45,
+      avgDamage: 360,
+      longestKill: 520,
+      gamesPlayed: 200
+    },
+    tournamentHistory: [
+      { tournament: "PMNC UAE 2025", position: "#4", prize: "₹2,00,000", date: "2025-01" }
+    ],
+    achievements: [
+      { title: "PMNC UAE 2025", subtitle: "4th Place", icon: "🏆" }
+    ],
+    social: {
+      twitter: "@drszen",
+      instagram: "@drszen_drs",
+      discord: "DRS ZEN#0001",
+      youtube: "DRSZen"
     },
     equipment: {
       phone: "iPhone 15 Pro",

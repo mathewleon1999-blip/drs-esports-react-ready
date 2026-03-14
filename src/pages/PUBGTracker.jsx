@@ -11,9 +11,9 @@ import Footer from "../components/Footer";
  * a simple offline experience.
  */
 const PLAYERS = {
-  SHAKKIR: {
+  SHAKIIR: {
     id: "account.xxxxxx",
-    name: "SHAKKIR",
+    name: "SHAKIIR",
     platform: "PC",
     region: "AS",
     seasonStats: {
@@ -179,9 +179,9 @@ const PLAYERS = {
       UMP45: { kills: 220, headshots: 65, avgDistance: 85 },
     },
   },
-  SHYNO: {
+  NOISY: {
     id: "account.zzzzz",
-    name: "SHYNO",
+    name: "NOISY",
     platform: "PC",
     region: "AS",
     seasonStats: {
@@ -263,9 +263,9 @@ const PLAYERS = {
       Crossbow: { kills: 85, headshots: 75, avgDistance: 120 },
     },
   },
-  XANDER: {
+  AKOJI: {
     id: "account.aaaaa",
-    name: "XANDER",
+    name: "AKOJI",
     platform: "PC",
     region: "AS",
     seasonStats: {
@@ -350,7 +350,7 @@ const PLAYERS = {
 };
 
 /** Human-friendly hint shown under the search box and on lookup failures. */
-const PLAYER_HINTS = "Try: SHAKKIR, DREAM, SHYNO, or XANDER";
+const PLAYER_HINTS = "Try: SHAKIIR, DREAM, NOISY, or AKOJI";
 
 /** Tab keys for the stats view. */
 const TAB = {

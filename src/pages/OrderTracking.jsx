@@ -32,7 +32,7 @@ const demoOrders = [
     customer: "Jane Smith",
     email: "jane@example.com",
     items: [
-      { name: "DRS Elite Jersey", size: "S", color: "Red", price: 1599, quantity: 1 }
+      { name: "DRS Pro Jersey", size: "S", color: "Red", price: 1599, quantity: 1 }
     ],
     total: 1299,
     status: "shipped",

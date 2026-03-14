@@ -19,33 +19,22 @@ const teamHierarchy = {
       ],
     },
     {
-      name: "DRS ELITE",
-      role: "Main Squad",
-      icon: "⚔️",
-      color: "#ff006e",
+      name: "DRS ESPORTS",
+      role: "PUBG Lineup",
+      icon: "🎮",
+      color: "#00ff88",
       children: [
         {
-          name: "Main Roster",
-          role: "Pro Players",
-          icon: "⭐",
-          color: "#00d4ff",
-          children: [
-            { name: "AKOS", role: "IGL/Entry", icon: "🎯", color: "#ff006e", image: "/DRS ELITE/AKOS (3).png" },
-            { name: "DRS ZEN", role: "Support", icon: "🛡️", color: "#ff006e", image: "/DRS ELITE/DRS ZEN (1).jpg" },
-            { name: "Hawk GT", role: "Sniper", icon: "🔫", color: "#ff006e", image: "/DRS ELITE/Hawk GT (1).jpg" },
-            { name: "Noisy N", role: "Lurker", icon: "👻", color: "#ff006e", image: "/DRS ELITE/noisy n (3).png" },
-          ],
-        },
-        {
           name: "DRS ESPORTS",
-          role: "Developing",
-          icon: "🌱",
+          role: "Main Roster",
+          icon: "⭐",
           color: "#00ff88",
           children: [
-            { name: "Dream", role: "Developing Player", icon: "🌟", color: "#00ff88", image: "/DRS ESPORTS/Dream.jpg" },
-            { name: "SHAKKIR", role: "Developing Player", icon: "🌟", color: "#00ff88", image: "/DRS ESPORTS/SHAKKIR).jpg" },
-            { name: "SHYNO", role: "Developing Player", icon: "🌟", color: "#00ff88", image: "/DRS ESPORTS/SHYNO.jpg" },
-            { name: "XANDER", role: "Developing Player", icon: "🌟", color: "#00ff88", image: "/DRS ESPORTS/XANDER-WA0043.jpg" },
+            { name: "SHAKIIR", role: "IGL", icon: "🎯", color: "#00ff88", image: "/DRS ESPORTS/SHAKKIR).jpg" },
+            { name: "DREAM", role: "Assaulter", icon: "🔫", color: "#00ff88", image: "/DRS ESPORTS/Dream.jpg" },
+            { name: "NOISY", role: "Entry Fragger", icon: "⚡", color: "#00ff88", image: "/DRS ESPORTS/noisy n (3).png" },
+            { name: "AKOJI", role: "Support", icon: "🛡️", color: "#00ff88", image: "/DRS ESPORTS/AKOS (3).png" },
+            { name: "DRS ZEN", role: "Sub", icon: "🧩", color: "#00ff88", image: "/DRS ESPORTS/DRS ZEN (1).jpg" },
           ],
         },
       ],
@@ -341,7 +330,6 @@ function Tree() {
         }}>
           {[
             { id: "all", label: "All Teams", color: "#00d4ff" },
-            { id: "elite", label: "DRS ELITE", color: "#ff006e" },
             { id: "esports", label: "DRS ESPORTS", color: "#00ff88" },
             { id: "support", label: "Support", color: "#9b59b6" },
           ].map((filterBtn) => (

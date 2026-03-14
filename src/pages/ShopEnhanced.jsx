@@ -16,7 +16,7 @@ const categories = [
 const products = [
   { id: 1, name: "DRS Pro Edition Jersey", price: 1299, category: "jersey", rating: 4.8, reviews: 120, featured: true },
   { id: 2, name: "DRS Classic Jersey", price: 899, category: "jersey", rating: 4.5, reviews: 85, featured: false },
-  { id: 3, name: "DRS Elite Jersey", price: 1599, category: "jersey", rating: 4.9, reviews: 200, featured: true },
+  { id: 3, name: "DRS Pro Jersey", price: 1599, category: "jersey", rating: 4.9, reviews: 200, featured: true },
   { id: 4, name: "DRS Training Jersey", price: 699, category: "jersey", rating: 4.3, reviews: 50, featured: false },
   { id: 5, name: "DRS Championship Jersey 2025", price: 1899, category: "jersey", rating: 5.0, reviews: 300, featured: true },
   { id: 6, name: "DRS Fan Jersey", price: 549, category: "jersey", rating: 4.2, reviews: 75, featured: false },
