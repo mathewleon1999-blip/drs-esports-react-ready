@@ -2,91 +2,7 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
-
-// Demo teams data with real images
-const teams = [
-  {
-    id: 1,
-    name: "Team DRS",
-    game: "PUBG Mobile",
-    logo: "🎮",
-    members: [
-      { 
-        name: "Shakiir", 
-        role: "IGL", 
-        avatar: "⚔️",
-        image: "/DRS ESPORTS/SHAKKIR).jpg",
-        ign: "Shakiir",
-        realName: "Shakiir",
-        age: 20,
-        country: "🇮🇳",
-        mainRole: "IGL",
-        joinDate: "2023-02-20",
-        stats: { kda: "2.8", hs: "45%", matches: 142 },
-        social: { twitter: "@shakiir", discord: "Shakiir#5678" }
-      },
-      { 
-        name: "Dream", 
-        role: "Assaulter", 
-        avatar: "🎯",
-        image: "/DRS ESPORTS/Dream.jpg",
-        ign: "Dream",
-        realName: "Dream",
-        age: 22,
-        country: "🇮🇳",
-        mainRole: "Assaulter",
-        joinDate: "2023-01-15",
-        stats: { kda: "2.4", hs: "32%", matches: 156 },
-        social: { twitter: "@dream", discord: "Dream#1234" }
-      },
-      { 
-        name: "Noisy", 
-        role: "Entry Fragger", 
-        avatar: "⚡",
-        image: "/DRS ESPORTS/noisy n (3).png",
-        ign: "Noisy",
-        realName: "Noisy",
-        age: 21,
-        country: "🇮🇳",
-        mainRole: "Entry Fragger",
-        joinDate: "2023-03-10",
-        stats: { kda: "2.1", hs: "30%", matches: 138 },
-        social: { twitter: "@noisy", discord: "Noisy#9012" }
-      },
-      { 
-        name: "Akoji", 
-        role: "Support", 
-        avatar: "🛡️",
-        image: "/DRS ESPORTS/AKOS (3).png",
-        ign: "Akoji",
-        realName: "Akoji",
-        age: 22,
-        country: "🇮🇳",
-        mainRole: "Support",
-        joinDate: "2023-04-05",
-        stats: { kda: "1.9", hs: "25%", matches: 125 },
-        social: { twitter: "@akoji", discord: "Akoji#3456" }
-      },
-      { 
-        name: "DRS ZEN", 
-        role: "Sub", 
-        avatar: "🧩",
-        image: "/DRS ESPORTS/DRS ZEN (1).jpg",
-        ign: "DRS ZEN",
-        realName: "DRS ZEN",
-        age: 21,
-        country: "🇮🇳",
-        mainRole: "Sub",
-        joinDate: "2023-05-01",
-        stats: { kda: "1.8", hs: "26%", matches: 80 },
-        social: { twitter: "@drszen", discord: "DRS ZEN#0001" }
-      }
-    ],
-    stats: { wins: 45, losses: 20, tournaments: 50 },
-    achievements: ["PMNC UAE 2025 - #4 Position"],
-    recruiting: false
-  }
-];
+import { teams } from "../data/teams";
 
 function Teams() {
   const [activeTab, setActiveTab] = useState("all");
@@ -264,12 +180,22 @@ function Teams() {
               </div>
 
               <div className="player-social-links">
-                <a href={`https://twitter.com/${selectedMember.social.twitter.replace('@', '')}`} target="_blank" rel="noopener noreferrer" className="social-link">
-                  <span>🐦</span> {selectedMember.social.twitter}
-                </a>
-                <span className="social-link discord">
-                  <span>💬</span> {selectedMember.social.discord}
-                </span>
+                {selectedMember?.social?.instagramUrl ? (
+                  <a
+                    href={selectedMember.social.instagramUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="social-link"
+                  >
+                    <span>📷</span> Instagram
+                  </a>
+                ) : null}
+
+                {selectedMember?.social?.discord ? (
+                  <span className="social-link discord">
+                    <span>💬</span> {selectedMember.social.discord}
+                  </span>
+                ) : null}
               </div>
 
               <div className="player-profile-actions">
