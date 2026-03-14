@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import * as XLSX from "xlsx";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
+import { supabase } from "../lib/supabaseClient";
 
 // Transaction categories
 const TRANSACTION_CATEGORIES = [
@@ -80,20 +81,39 @@ function AdminDashboard() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const navigate = useNavigate();
 
-  // Initialize data from localStorage
+  async function fetchTransactionsFromSupabase() {
+    const { data, error } = await supabase
+      .from("transactions")
+      .select("*")
+      .order("created_at", { ascending: false });
+
+    if (error) {
+      console.error("Supabase transactions fetch failed:", error);
+      // fall back to local data if any exists
+      setTransactions(getStoredData("drs-transactions", []));
+      showToast("Transactions sync failed (Supabase)", "error");
+      return;
+    }
+
+    setTransactions(data || []);
+  }
+
+  // Initialize data
   useEffect(() => {
     // Auth is enforced by route guard (RequireAdmin). We only read session for display.
     const session = JSON.parse(localStorage.getItem("drs-admin-session") || "{}");
     setAdmin(session?.loggedIn ? session : { username: "Admin" });
 
-    // Load all data
+    // Load all other data (still local for now)
     setOrders(getStoredData("drs-orders", []));
     setProducts(getStoredData("drs-products", defaultProducts));
     setUsers(getStoredData("drs-users", defaultUsers));
     setTournaments(getStoredData("drs-tournaments-admin", defaultTournaments));
     setNews(getStoredData("drs-news-admin", defaultNews));
     setDiscounts(getStoredData("drs-discounts", defaultDiscounts));
-    setTransactions(getStoredData("drs-transactions", []));
+
+    // Transactions: Supabase (sync across devices)
+    fetchTransactionsFromSupabase();
   }, []);
 
   // Show toast notification
@@ -251,36 +271,56 @@ const deleteDiscount = (discountId) => {
     showToast("Discount code deleted!");
   };
 
-  // Transaction functions
-  const addTransaction = (transaction) => {
-    const newTransaction = { 
-      ...transaction, 
-      id: Date.now(),
-      created_at: new Date().toISOString(),
-      created_by: admin.username
+  // Transaction functions (Supabase-backed)
+  const addTransaction = async (transaction) => {
+    const payload = {
+      ...transaction,
+      created_by: admin?.username || "admin",
     };
-    const updatedTransactions = [...transactions, newTransaction];
-    setTransactions(updatedTransactions);
-    setStoredData("drs-transactions", updatedTransactions);
+
+    const { data, error } = await supabase.from("transactions").insert(payload).select().single();
+
+    if (error) {
+      console.error("Supabase insert failed:", error);
+      showToast("Failed to add transaction (Supabase)", "error");
+      return;
+    }
+
+    setTransactions((prev) => [data, ...prev]);
     showToast("Transaction added successfully!");
     setShowModal(false);
   };
 
-  const updateTransaction = (transactionId, updates) => {
-    const updatedTransactions = transactions.map(t => 
-      t.id === transactionId ? { ...t, ...updates, updated_at: new Date().toISOString() } : t
-    );
-    setTransactions(updatedTransactions);
-    setStoredData("drs-transactions", updatedTransactions);
+  const updateTransaction = async (transactionId, updates) => {
+    const { data, error } = await supabase
+      .from("transactions")
+      .update({ ...updates, updated_at: new Date().toISOString() })
+      .eq("id", transactionId)
+      .select()
+      .single();
+
+    if (error) {
+      console.error("Supabase update failed:", error);
+      showToast("Failed to update transaction (Supabase)", "error");
+      return;
+    }
+
+    setTransactions((prev) => prev.map((t) => (t.id === transactionId ? data : t)));
     showToast("Transaction updated successfully!");
     setShowModal(false);
     setEditingItem(null);
   };
 
-  const deleteTransaction = (transactionId) => {
-    const updatedTransactions = transactions.filter(t => t.id !== transactionId);
-    setTransactions(updatedTransactions);
-    setStoredData("drs-transactions", updatedTransactions);
+  const deleteTransaction = async (transactionId) => {
+    const { error } = await supabase.from("transactions").delete().eq("id", transactionId);
+
+    if (error) {
+      console.error("Supabase delete failed:", error);
+      showToast("Failed to delete transaction (Supabase)", "error");
+      return;
+    }
+
+    setTransactions((prev) => prev.filter((t) => t.id !== transactionId));
     showToast("Transaction deleted!");
   };
 
