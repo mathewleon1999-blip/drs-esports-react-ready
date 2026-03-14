@@ -83,6 +83,18 @@ body {
     min-height: 100vh;
     -webkit-overflow-scrolling: touch;
   }
+
+  /* Admin login page: ensure the page scrolls and isn't clipped */
+  body[data-page='Admin'] {
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  body[data-page='Admin'] .page-container {
+    height: auto;
+    min-height: 100vh;
+    overflow: visible;
+  }
   
   #root {
     min-height: 100vh;
@@ -2774,6 +2786,8 @@ footer {
   padding: 60px 20px;
   background: var(--dark-bg);
   min-height: 60vh;
+  /* Prevent accidental scroll locking caused by parent overflow rules */
+  overflow: visible;
 }
 
 .admin-section .container {
