@@ -634,6 +634,24 @@ body[data-page='AdminDashboard'] .admin-sidebar-overlay {
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3) !important;
   }
 
+  /* Keep content visible below the fixed headers (Navbar + Admin header) */
+  body[data-page='AdminDashboard'] .dashboard-content {
+    padding-top: 10px !important;
+  }
+
+  /* Ensure the overlay is above the fixed admin header */
+  body[data-page='AdminDashboard'] .admin-sidebar-overlay {
+    z-index: 1000 !important;
+  }
+
+  body[data-page='AdminDashboard'] .dashboard-sidebar.mobile-open {
+    z-index: 1001 !important;
+  }
+
+  body[data-page='AdminDashboard'] .admin-mobile-header {
+    z-index: 999 !important;
+  }
+
   body[data-page='AdminDashboard'] .admin-mobile-header h2 {
     font-size: 16px !important;
     margin: 0 !important;
