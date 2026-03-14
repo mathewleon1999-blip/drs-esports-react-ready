@@ -4,62 +4,7 @@ import { useSearchParams } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import Meta from "../components/Meta";
-
-// Demo tournament data
-const tournaments = [
-  {
-    id: 1,
-    name: "DRS Pro League Season 5",
-    game: "Valorant",
-    prizePool: "₹5,00,000",
-    date: "2025-02-15",
-    endDate: "2025-02-28",
-    status: "upcoming",
-    teams: 16,
-    registered: 12,
-    image: "/tournament-pro.jpg",
-    description: "The premier Valorant tournament featuring top teams from across India."
-  },
-  {
-    id: 2,
-    name: "DRS Championship 2025",
-    game: "CS2",
-    prizePool: "₹10,00,000",
-    date: "2025-03-01",
-    endDate: "2025-03-15",
-    status: "upcoming",
-    teams: 32,
-    registered: 24,
-    image: "/tournament-championship.jpg",
-    description: "The biggest CS2 tournament of the year with teams from Asia."
-  },
-  {
-    id: 3,
-    name: "DRS Weekly Showdown",
-    game: "PUBG",
-    prizePool: "₹50,000",
-    date: "2025-01-20",
-    endDate: "2025-01-21",
-    status: "live",
-    teams: 20,
-    registered: 20,
-    image: "/tournament-weekly.jpg",
-    description: "Weekly PUBG tournament open to all players."
-  },
-  {
-    id: 4,
-    name: "DRS Winter Cup",
-    game: "Valorant",
-    prizePool: "₹2,00,000",
-    date: "2024-12-15",
-    endDate: "2024-12-20",
-    status: "completed",
-    teams: 16,
-    registered: 16,
-    image: "/tournament-winter.jpg",
-    description: "Winter special Valorant tournament."
-  }
-];
+import { tournaments } from "../data/tournaments";
 
 // Registration form component
 function RegistrationForm({ tournament, onClose, onSubmit }) {
