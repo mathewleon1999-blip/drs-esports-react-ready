@@ -7,8 +7,8 @@ import Footer from "../components/Footer";
 // Demo admin credentials
 const ADMIN_CREDENTIALS = {
   username: "admin",
-  password: "drsadmin@123",
-  email: "drsesports@.com"
+  password: "admin",
+  email: "drsesports@gmail.com"
 };
 
 function Admin() {
@@ -167,7 +167,7 @@ function Admin() {
                   <div className="demo-credentials">
                     <p><strong>Demo Credentials:</strong></p>
                     <p>Username: admin</p>
-                    <p>Password: drsadmin@123</p>
+                    <p>Password: admin</p>
                   </div>
                 </>
               )}

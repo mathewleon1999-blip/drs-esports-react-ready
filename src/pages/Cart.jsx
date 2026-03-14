@@ -210,7 +210,11 @@ function Cart() {
                     >
                       <div className="item-image">
                         <div className="jersey-placeholder small">
-                          <span>👕</span>
+                          {item.images?.[0] ? (
+                            <img src={item.images[0]} alt={item.name} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                          ) : (
+                            <span>👕</span>
+                          )}
                         </div>
                       </div>
                       <div className="item-details">
