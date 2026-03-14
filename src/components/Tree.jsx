@@ -6,16 +6,56 @@ const teamHierarchy = {
   role: "Organization",
   icon: "🏆",
   color: "#00d4ff",
+  description: "DRS Esports is a competitive gaming organization featuring leadership, PUBG Mobile roster, and support staff.",
+  instagram: {
+    label: "DRS Esports",
+    url: "https://www.instagram.com/",
+  },
   children: [
     {
       name: "DRS BLIND",
       role: "Leadership",
       icon: "👑",
       color: "#ffd700",
+      description: "Founder and owner of the DRS clan. Blind built the team with a clear vision of creating a disciplined and competitive PUBG roster. He oversees the overall direction of the organisation, supports the team structure, and ensures every player and staff member works toward the same goal of achieving success in tournaments.",
+      instagram: {
+        label: "DRS BLIND",
+        url: "https://www.instagram.com/blindkrishh?igsh=czY3ZXh2aWQ1MW82",
+      },
       children: [
-        { name: "DRS MECHANIC", role: "CO-LEADER", icon: "👤", color: "#ffd700" },
-        { name: "DRS LEON", role: "Team Manager", icon: "👤", color: "#ffd700" },
-        { name: "DRS HOTPILOW", role: "Media Head", icon: "🎬", color: "#ffd700" },
+        {
+          name: "DRS MECHANIC",
+          role: "CO-LEADER",
+          icon: "👤",
+          color: "#ffd700",
+          description: "Co leader of DRS and one of the most trusted decision makers in the clan. Mechanic works closely with Blind to manage the team, maintain discipline, and help guide players during both practice and competitive matches.",
+          instagram: {
+            label: "DRS MECHANIC",
+            url: "https://www.instagram.com/vish_akh_s?igsh=MTd2ZDNseXVtaG5tMQ==",
+          },
+        },
+        {
+          name: "DRS LEON",
+          role: "Team Manager",
+          icon: "👤",
+          color: "#ffd700",
+          description: "Team manager responsible for operations and coordination. Leon handles scheduling, communication, and team management so that the players and coaching staff can focus fully on performance and improvement.",
+          instagram: {
+            label: "DRS LEON",
+            url: "https://www.instagram.com/_._.le.on._._?igsh=OHhwa2E4NXA1amlj",
+          },
+        },
+        {
+          name: "DRS HOTPILOW",
+          role: "Media Head",
+          icon: "🎬",
+          color: "#ffd700",
+          description: "Head of content for DRS. Hotpillow manages the team’s media presence, highlights, and community engagement. He ensures the clan stays visible across platforms while showcasing the team’s best moments and achievements.",
+          instagram: {
+            label: "DRS HOTPILOW",
+            url: "https://www.instagram.com/",
+          },
+        },
       ],
     },
     {
@@ -30,11 +70,66 @@ const teamHierarchy = {
           icon: "⭐",
           color: "#00ff88",
           children: [
-            { name: "SHAKIIR", role: "IGL", icon: "🎯", color: "#00ff88", image: "/DRS ESPORTS/SHAKKIR).jpg" },
-            { name: "DREAM", role: "Assaulter", icon: "🔫", color: "#00ff88", image: "/DRS ESPORTS/Dream.jpg" },
-            { name: "NOISY", role: "Entry Fragger", icon: "⚡", color: "#00ff88", image: "/DRS ESPORTS/noisy n (3).png" },
-            { name: "AKOJI", role: "Support", icon: "🛡️", color: "#00ff88", image: "/DRS ESPORTS/AKOS (3).png" },
-            { name: "DRS ZEN", role: "Sub", icon: "🧩", color: "#00ff88", image: "/DRS ESPORTS/DRS ZEN (1).jpg" },
+            {
+              name: "SHAKIIR",
+              role: "IGL",
+              icon: "🎯",
+              color: "#00ff88",
+              image: "/DRS ESPORTS/SHAKKIR).jpg",
+              description: "In game leader of DRS. Shakiir controls the team’s movement, rotations, and decision making during matches. His leadership and game awareness guide the squad through intense situations.",
+              instagram: {
+                label: "SHAKIIR",
+                url: "https://www.instagram.com/",
+              },
+            },
+            {
+              name: "DREAM",
+              role: "Assaulter",
+              icon: "🔫",
+              color: "#00ff88",
+              image: "/DRS ESPORTS/Dream.jpg",
+              description: "Primary assaulter of the team. Dream specialises in aggressive combat and close range engagements, often leading pushes that break enemy defenses.",
+              instagram: {
+                label: "DREAM",
+                url: "https://www.instagram.com/dreamm.drs?igsh=dTd4ejhzNXV2eDN4",
+              },
+            },
+            {
+              name: "NOISY",
+              role: "Entry Fragger",
+              icon: "⚡",
+              color: "#00ff88",
+              image: "/DRS ESPORTS/noisy n (3).png",
+              description: "Entry fragger who opens fights for the team. Noisy is known for fast reactions and fearless engagements, creating early advantages during battles.",
+              instagram: {
+                label: "NOISY",
+                url: "https://www.instagram.com/",
+              },
+            },
+            {
+              name: "AKOJI",
+              role: "Support",
+              icon: "🛡️",
+              color: "#00ff88",
+              image: "/DRS ESPORTS/AKOS (3).png",
+              description: "Support role player who keeps the team stable during fights. Akoji assists with cover fire, utility usage, and team coordination to ensure the squad stays organised.",
+              instagram: {
+                label: "AKOJI",
+                url: "https://www.instagram.com/",
+              },
+            },
+            {
+              name: "DRS ZEN",
+              role: "Sub",
+              icon: "🧩",
+              color: "#00ff88",
+              image: "/DRS ESPORTS/DRS ZEN (1).jpg",
+              description: "Substitute player who specialises in entry fragging. Zen is ready to step in whenever needed and brings high energy and aggressive play to maintain the team’s momentum.",
+              instagram: {
+                label: "DRS ZEN",
+                url: "https://www.instagram.com/",
+              },
+            },
           ],
         },
       ],
@@ -44,11 +139,55 @@ const teamHierarchy = {
       role: "Team Support",
       icon: "🤝",
       color: "#9b59b6",
+      description: "Team support head who ensures players have everything they need to perform at their best. Kind helps maintain team morale, supports player development, and assists with internal coordination.",
+      instagram: {
+        label: "DRS KIND",
+        url: "https://www.instagram.com/",
+      },
       children: [
-        { name: "DRS ASHI", role: "Strategy", icon: "📋", color: "#9b59b6" },
-        { name: "DRS KAOSPY", role: "Data", icon: "📊", color: "#9b59b6" },
-        { name: "DRS SHARATH", role: "Fitness", icon: "💪", color: "#9b59b6" },
-        { name: "DRS BRITS", role: "Mental Coach", icon: "🧠", color: "#9b59b6" },
+        {
+          name: "DRS ASHI",
+          role: "Strategy",
+          icon: "📋",
+          color: "#9b59b6",
+          description: "Strategy head of the team. Ashi studies gameplay, analyses opponents, and develops tactical approaches that give DRS a competitive edge during tournaments and scrims.",
+          instagram: {
+            label: "DRS ASHI",
+            url: "https://www.instagram.com/kochu_thoma_?igsh=ZG05MTQ2ajl1Z2Vh",
+          },
+        },
+        {
+          name: "DRS KAOSPY",
+          role: "Data",
+          icon: "📊",
+          color: "#9b59b6",
+          instagram: {
+            label: "DRS KAOSPY",
+            url: "https://www.instagram.com/",
+          },
+        },
+        {
+          name: "DRS SHARATH",
+          role: "Fitness",
+          icon: "💪",
+          color: "#9b59b6",
+          description: "Fitness and wellbeing coach for the team. Sharath focuses on keeping players mentally sharp and physically balanced so they can maintain high performance during long competitive sessions.",
+          instagram: {
+            label: "DRS SHARATH",
+            url: "https://www.instagram.com/",
+          },
+        },
+        {
+          name: "DRS BRITS",
+          role: "Mental Coach",
+          icon: "🧠",
+          color: "#9b59b6",
+          description: "Mental performance coach for the players. Brits works on focus, confidence, and competitive mindset, helping the team stay calm under pressure and perform consistently in high stakes matches.",
+          instagram: {
+            label: "DRS BRITS",
+            url: "https://www.instagram.com/",
+          },
+        },
       ],
     },
   ],
@@ -510,14 +649,58 @@ function Tree() {
                   {selectedNode.role}
                 </p>
                 
+                {/* Description */}
+                {selectedNode.description && (
+                  <p style={{
+                    color: "var(--text-light)",
+                    fontSize: "13px",
+                    lineHeight: 1.6,
+                    marginTop: 10,
+                    opacity: 0.95,
+                  }}>
+                    {selectedNode.description}
+                  </p>
+                )}
+
                 {/* Additional Info */}
                 {selectedNode.children && (
                   <p style={{
-                    color: "var(--text-light)",
+                    color: "var(--text-muted)",
                     fontSize: "12px",
+                    marginTop: 10,
                   }}>
                     {selectedNode.children.length} team members
                   </p>
+                )}
+
+                {/* Instagram Follow */}
+                {selectedNode.instagram?.url && (
+                  <a
+                    href={selectedNode.instagram.url}
+                    target="_blank"
+                    rel="noreferrer"
+                    style={{
+                      marginTop: 16,
+                      display: "inline-flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      gap: 10,
+                      padding: "12px 16px",
+                      borderRadius: 12,
+                      textDecoration: "none",
+                      fontFamily: "'Orbitron', sans-serif",
+                      letterSpacing: 1,
+                      fontSize: 12,
+                      textTransform: "uppercase",
+                      color: "#fff",
+                      background: "linear-gradient(135deg, #fd1d1d 0%, #f56040 35%, #f77737 55%, #fcaf45 75%, #833ab4 100%)",
+                      boxShadow: "0 12px 30px rgba(253, 29, 29, 0.15)",
+                      border: "1px solid rgba(255,255,255,0.12)",
+                    }}
+                  >
+                    <span style={{ fontSize: 16, lineHeight: 1 }}>📷</span>
+                    Follow on Instagram
+                  </a>
                 )}
                 
                 {/* Close Button */}

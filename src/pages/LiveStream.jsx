@@ -21,6 +21,14 @@ const toYouTubeEmbedUrl = (urlOrId) => {
   const shortMatch = urlOrId.match(/youtu\.be\/([^?&/]+)/);
   if (shortMatch?.[1]) id = shortMatch[1];
 
+  // https://www.youtube.com/live/VIDEO_ID
+  const liveMatch = urlOrId.match(/youtube\.com\/live\/([^?&/]+)/);
+  if (liveMatch?.[1]) id = liveMatch[1];
+
+  // https://www.youtube.com/shorts/VIDEO_ID
+  const shortsMatch = urlOrId.match(/youtube\.com\/shorts\/([^?&/]+)/);
+  if (shortsMatch?.[1]) id = shortsMatch[1];
+
   // Basic sanity
   if (!/^[a-zA-Z0-9_-]{6,}$/.test(id)) return null;
 
