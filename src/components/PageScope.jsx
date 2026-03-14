@@ -44,6 +44,9 @@ const routeToPage = (pathname) => {
   // Dynamic routes
   if (/^\/player\//.test(path)) return 'PlayerProfile';
 
+  // Admin dashboard path typo (some deployments use /admin-dashboard)
+  if (/^\/admin-dashboard/.test(path)) return 'AdminDashboard';
+
   // Fallback (keeps CSS from leaking)
   return 'Unknown';
 };
