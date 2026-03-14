@@ -9,6 +9,8 @@ import NotFound from "./pages/NotFound";
 import { WishlistProvider } from "./components/WishlistContext";
 import { LoyaltyProvider } from "./context/LoyaltyContext";
 import { PredictionsProvider } from "./context/PredictionsContext";
+import { AdminAuthProvider } from "./context/AdminAuthContext";
+import RequireAdmin from "./components/RequireAdmin";
 
 // Lazy load all pages for better performance (code splitting)
 const Home = lazy(() => import("./pages/Home"));
@@ -52,9 +54,10 @@ function App() {
         <WishlistProvider>
           <LoyaltyProvider>
             <PredictionsProvider>
-              <main id="main-content" role="main">
-                <Suspense fallback={<LoadingSpinner />}>
-                  <Routes>
+              <AdminAuthProvider>
+                <main id="main-content" role="main">
+                  <Suspense fallback={<LoadingSpinner />}>
+                    <Routes>
                     <Route path="/" element={<Home />} />
                     <Route path="/about" element={<About />} />
                     <Route path="/shop" element={<Shop />} />
@@ -65,8 +68,22 @@ function App() {
                     <Route path="/admin" element={<Admin />} />
                     <Route path="/contact" element={<Contact />} />
                     <Route path="/player-dashboard" element={<PlayerDashboard />} />
-                    <Route path="/admin-dashboard" element={<AdminDashboard />} />
-                    <Route path="/admin-dashboard/*" element={<AdminDashboard />} />
+                    <Route
+                      path="/admin-dashboard"
+                      element={
+                        <RequireAdmin>
+                          <AdminDashboard />
+                        </RequireAdmin>
+                      }
+                    />
+                    <Route
+                      path="/admin-dashboard/*"
+                      element={
+                        <RequireAdmin>
+                          <AdminDashboard />
+                        </RequireAdmin>
+                      }
+                    />
                     <Route path="/order-tracking" element={<OrderTracking />} />
                     <Route path="/tournaments" element={<Tournaments />} />
                     <Route path="/live" element={<LiveStream />} />
@@ -93,9 +110,10 @@ function App() {
                     <Route path="*" element={<NotFound />} />
                   </Routes>
                 </Suspense>
-              </main>
+                </main>
 
-              <PWAInstall />
+                <PWAInstall />
+              </AdminAuthProvider>
             </PredictionsProvider>
           </LoyaltyProvider>
         </WishlistProvider>

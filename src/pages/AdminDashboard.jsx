@@ -82,14 +82,11 @@ function AdminDashboard() {
 
   // Initialize data from localStorage
   useEffect(() => {
-    const adminData = JSON.parse(localStorage.getItem("drs-admin") || "{}");
-    if (!adminData.loggedIn) {
-      navigate("/admin");
-    } else {
-      setAdmin(adminData);
-    }
-    
-// Load all data
+    // Auth is enforced by route guard (RequireAdmin). We only read session for display.
+    const session = JSON.parse(localStorage.getItem("drs-admin-session") || "{}");
+    setAdmin(session?.loggedIn ? session : { username: "Admin" });
+
+    // Load all data
     setOrders(getStoredData("drs-orders", []));
     setProducts(getStoredData("drs-products", defaultProducts));
     setUsers(getStoredData("drs-users", defaultUsers));
@@ -97,7 +94,7 @@ function AdminDashboard() {
     setNews(getStoredData("drs-news-admin", defaultNews));
     setDiscounts(getStoredData("drs-discounts", defaultDiscounts));
     setTransactions(getStoredData("drs-transactions", []));
-  }, [navigate]);
+  }, []);
 
   // Show toast notification
   const showToast = (message, type = "success") => {
@@ -106,7 +103,7 @@ function AdminDashboard() {
   };
 
   const handleLogout = () => {
-    localStorage.removeItem("drs-admin");
+    localStorage.removeItem("drs-admin-session");
     navigate("/admin");
   };
 

@@ -1,14 +1,19 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
+import { useAdminAuth } from "../context/AdminAuthContext";
 
-// Demo admin credentials
-const ADMIN_CREDENTIALS = {
+// Local, client-side auth configuration.
+// IMPORTANT: This is not secure like a backend; it’s a practical step before adding Firebase/Supabase.
+// Change these in production and move to server-side auth.
+const ADMIN_AUTH = {
+  // Allow logging in with username OR email.
   username: "admin",
+  email: "drsesports@gmail.com",
+  // Password is checked on the client only.
   password: "admin",
-  email: "drsesports@gmail.com"
 };
 
 function Admin() {
@@ -19,6 +24,8 @@ function Admin() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
+  const { admin, isAuthenticated, login, logout } = useAdminAuth();
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -29,36 +36,28 @@ function Admin() {
     e.preventDefault();
     setLoading(true);
 
-    // Simulate API call delay
+    // Client-side check (upgrade later to real backend auth)
     setTimeout(() => {
-      const isValidUsername = 
-        formData.username.toLowerCase() === ADMIN_CREDENTIALS.username ||
-        formData.username.toLowerCase() === ADMIN_CREDENTIALS.email.toLowerCase();
-      
-      if (
-        isValidUsername &&
-        formData.password === ADMIN_CREDENTIALS.password
-      ) {
-        // Store admin session
-        localStorage.setItem("drs-admin", JSON.stringify({
-          username: formData.username,
-          email: ADMIN_CREDENTIALS.email,
-          loggedIn: true,
-          loginTime: new Date().toISOString(),
-        }));
+      const input = formData.username.trim().toLowerCase();
+      const isValidIdentity =
+        input === ADMIN_AUTH.username.toLowerCase() || input === ADMIN_AUTH.email.toLowerCase();
+
+      const isValidPassword = formData.password === ADMIN_AUTH.password;
+
+      if (isValidIdentity && isValidPassword) {
+        login({ username: formData.username.trim() || "admin", email: ADMIN_AUTH.email });
         setLoading(false);
-        navigate("/admin-dashboard");
+        const redirectTo = location.state?.from || "/admin-dashboard";
+        navigate(redirectTo);
       } else {
         setError("Invalid username or password");
         setLoading(false);
       }
-    }, 1000);
+    }, 400);
   };
 
-  const admin = JSON.parse(localStorage.getItem("drs-admin") || "{}");
-
   const handleLogout = () => {
-    localStorage.removeItem("drs-admin");
+    logout();
   };
 
   return (
@@ -86,16 +85,16 @@ function Admin() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6 }}
             >
-              {admin.loggedIn ? (
+              {isAuthenticated ? (
                 <div className="admin-dashboard-preview">
                   <div className="admin-welcome">
                     <div className="admin-avatar">⚙️</div>
                     <h2>Welcome, Admin!</h2>
                     <p>You have access to the admin dashboard</p>
                     <div className="admin-info">
-                      <p><strong>Username:</strong> {admin.username}</p>
-                      <p><strong>Email:</strong> {admin.email}</p>
-                      <p><strong>Login Time:</strong> {new Date(admin.loginTime).toLocaleString()}</p>
+                      <p><strong>Username:</strong> {admin?.username}</p>
+                      <p><strong>Email:</strong> {admin?.email}</p>
+                      <p><strong>Login Time:</strong> {admin?.loginTime ? new Date(admin.loginTime).toLocaleString() : "-"}</p>
                     </div>
                     <div className="admin-actions">
                       <Link to="/admin-dashboard" className="admin-btn primary">
@@ -165,9 +164,12 @@ function Admin() {
                   </div>
 
                   <div className="demo-credentials">
-                    <p><strong>Demo Credentials:</strong></p>
-                    <p>Username: admin</p>
+                    <p><strong>Admin Credentials:</strong></p>
+                    <p>Username: admin (or {ADMIN_AUTH.email})</p>
                     <p>Password: admin</p>
+                    <p style={{ opacity: 0.8, marginTop: 6 }}>
+                      Note: this is client-side auth. For real security, we will move this to Firebase/Supabase.
+                    </p>
                   </div>
                 </>
               )}
