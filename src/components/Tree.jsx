@@ -8,14 +8,14 @@ const teamHierarchy = {
   color: "#00d4ff",
   children: [
     {
-      name: "Leadership",
-      role: "Management",
+      name: "DRS BLIND",
+      role: "Leadership",
       icon: "👑",
       color: "#ffd700",
       children: [
-        { name: "Boss", role: "Team Owner", icon: "👤", color: "#ffd700" },
-        { name: "Manager", role: "Team Manager", icon: "👤", color: "#ffd700" },
-        { name: "Content Lead", role: "Media Head", icon: "🎬", color: "#ffd700" },
+        { name: "DRS MECHANIC", role: "CO-LEADER", icon: "👤", color: "#ffd700" },
+        { name: "DRS LEON", role: "Team Manager", icon: "👤", color: "#ffd700" },
+        { name: "DRS HOTPILOW", role: "Media Head", icon: "🎬", color: "#ffd700" },
       ],
     },
     {
@@ -40,15 +40,15 @@ const teamHierarchy = {
       ],
     },
     {
-      name: "Support Staff",
+      name: "DRS KIND",
       role: "Team Support",
       icon: "🤝",
       color: "#9b59b6",
       children: [
-        { name: "Head Coach", role: "Strategy", icon: "📋", color: "#9b59b6" },
-        { name: "Analyst", role: "Data", icon: "📊", color: "#9b59b6" },
-        { name: "Trainer", role: "Fitness", icon: "💪", color: "#9b59b6" },
-        { name: "Psychologist", role: "Mental Coach", icon: "🧠", color: "#9b59b6" },
+        { name: "DRS ASHI", role: "Strategy", icon: "📋", color: "#9b59b6" },
+        { name: "DRS KAOSPY", role: "Data", icon: "📊", color: "#9b59b6" },
+        { name: "DRS SHARATH", role: "Fitness", icon: "💪", color: "#9b59b6" },
+        { name: "DRS BRITS", role: "Mental Coach", icon: "🧠", color: "#9b59b6" },
       ],
     },
   ],
@@ -56,7 +56,7 @@ const teamHierarchy = {
 
 function TreeNode({ node, level = 0, onNodeClick, selectedNode }) {
   const hasChildren = node.children && node.children.length > 0;
-  const isSelected = selectedNode?.name === node.name;
+  const isSelected = selectedNode?.name === node.name && selectedNode?.role === node.role;
   const isRoot = level === 0;
 
   return (
@@ -270,6 +270,46 @@ function Tree() {
     setSelectedNode(selectedNode?.name === node.name ? null : node);
   };
 
+  const getFilteredHierarchy = () => {
+    if (filter === "all") return teamHierarchy;
+
+    const byName = (n) => (n?.name || "").toLowerCase();
+
+    const keepNode = (node) => {
+      if (!node) return false;
+      const name = byName(node);
+
+      if (filter === "esports") {
+        return name.includes("drs esports") || name.includes("pubg");
+      }
+
+      if (filter === "support") {
+        return name.includes("leadership") || name.includes("support staff") || name.includes("support");
+      }
+
+      return true;
+    };
+
+    const cloneFiltered = (node) => {
+      if (!node) return null;
+      const children = (node.children || [])
+        .map(cloneFiltered)
+        .filter(Boolean);
+
+      // keep node if it matches OR it has any kept children
+      if (!keepNode(node) && children.length === 0) return null;
+
+      return { ...node, children };
+    };
+
+    // Always keep root, but filter its children
+    const filteredChildren = (teamHierarchy.children || [])
+      .map(cloneFiltered)
+      .filter(Boolean);
+
+    return { ...teamHierarchy, children: filteredChildren };
+  };
+
   return (
     <section className="team-tree" style={{ 
       padding: "80px 10px 40px", 
@@ -366,7 +406,7 @@ function Tree() {
         padding: "40px 20px",
       }}>
         <TreeNode 
-          node={teamHierarchy} 
+          node={getFilteredHierarchy()} 
           onNodeClick={handleNodeClick}
           selectedNode={selectedNode}
         />
