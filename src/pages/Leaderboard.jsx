@@ -1,37 +1,46 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
-
-// Demo leaderboard data
-const playerRankings = [
-  { rank: 1, username: "ShadowStrike", team: "Team DRS", points: 2500, wins: 45, kills: 1250, games: 52 },
-  { rank: 2, username: "PhantomX", team: "Team DRS", points: 2350, wins: 42, kills: 1180, games: 50 },
-  { rank: 3, username: "ViperPro", team: "Team Venom", points: 2200, wins: 38, kills: 1100, games: 48 },
-  { rank: 4, username: "StormRider", team: "Team Thunder", points: 2100, wins: 36, kills: 1050, games: 46 },
-  { rank: 5, username: "NightHawk", team: "Team Shadow", points: 2000, wins: 34, kills: 980, games: 44 },
-  { rank: 6, username: "DragonSlayer", team: "Team Dragon", points: 1900, wins: 32, kills: 950, games: 42 },
-  { rank: 7, username: "CyberWolf", team: "Team Wolf", points: 1850, wins: 30, kills: 920, games: 40 },
-  { rank: 8, username: "BlazeFury", team: "Team Blaze", points: 1800, wins: 28, kills: 880, games: 38 },
-  { rank: 9, username: "IceBreaker", team: "Team Frost", points: 1750, wins: 26, kills: 850, games: 36 },
-  { rank: 10, username: "ThunderBolt", team: "Team Thunder", points: 1700, wins: 24, kills: 820, games: 34 },
-];
-
-const teamRankings = [
-  { rank: 1, name: "Team DRS", wins: 45, losses: 5, points: 135, kd: 1.45 },
-  { rank: 2, name: "Team Venom", wins: 40, losses: 10, points: 120, kd: 1.35 },
-  { rank: 3, name: "Team Thunder", wins: 38, losses: 12, points: 114, kd: 1.28 },
-  { rank: 4, name: "Team Shadow", wins: 35, losses: 15, points: 105, kd: 1.22 },
-  { rank: 5, name: "Team Dragon", wins: 32, losses: 18, points: 96, kd: 1.18 },
-  { rank: 6, name: "Team Wolf", wins: 30, losses: 20, points: 90, kd: 1.12 },
-  { rank: 7, name: "Team Blaze", wins: 28, losses: 22, points: 84, kd: 1.08 },
-  { rank: 8, name: "Team Frost", wins: 25, losses: 25, points: 75, kd: 1.02 },
-];
+import { fetchPlayerLeaderboard, fetchTeamLeaderboard } from "../lib/leaderboardRepo";
 
 function Leaderboard() {
   const [activeTab, setActiveTab] = useState("players");
   const [gameFilter, setGameFilter] = useState("all");
   const [regionFilter, setRegionFilter] = useState("all");
+
+  const [playerRankings, setPlayerRankings] = useState([]);
+  const [teamRankings, setTeamRankings] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    (async () => {
+      try {
+        setLoading(true);
+        setError(null);
+
+        const [players, teams] = await Promise.all([
+          fetchPlayerLeaderboard({ game: gameFilter, region: regionFilter }),
+          fetchTeamLeaderboard({ game: gameFilter, region: regionFilter }),
+        ]);
+
+        if (cancelled) return;
+        setPlayerRankings(players);
+        setTeamRankings(teams);
+      } catch (e) {
+        if (!cancelled) setError(e?.message || "Failed to load leaderboard");
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [gameFilter, regionFilter]);
 
   return (
     <>
@@ -89,8 +98,20 @@ function Leaderboard() {
             </button>
           </div>
 
+          {loading && (
+            <div className="loading-state" style={{ textAlign: "center", padding: 30, color: "var(--text-muted)" }}>
+              Loading leaderboard...
+            </div>
+          )}
+
+          {error && (
+            <div className="error-state" style={{ textAlign: "center", padding: 30, color: "#ff4444" }}>
+              {error}
+            </div>
+          )}
+
           {/* Player Rankings */}
-          {activeTab === "players" && (
+          {!loading && !error && activeTab === "players" && (
             <motion.div 
               className="rankings-table"
               initial={{ opacity: 0 }}
@@ -138,7 +159,7 @@ function Leaderboard() {
           )}
 
           {/* Team Rankings */}
-          {activeTab === "teams" && (
+          {!loading && !error && activeTab === "teams" && (
             <motion.div 
               className="rankings-table"
               initial={{ opacity: 0 }}

@@ -1,89 +1,66 @@
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
-
-// Demo matches data
-const matches = [
-  {
-    id: 1,
-    team1: "Team DRS",
-    team2: "Team Venom",
-    game: "PUBG Mobile",
-    date: "2025-01-25",
-    time: "18:00",
-    tournament: "DRS Pro League",
-    status: "upcoming",
-    stream: true
-  },
-  {
-    id: 2,
-    team1: "Team DRS",
-    team2: "Team Dragon",
-    game: "PUBG Mobile",
-    date: "2025-01-26",
-    time: "15:00",
-    tournament: "DRS Championship",
-    status: "upcoming",
-    stream: true
-  },
-  {
-    id: 3,
-    team1: "Team Wolf",
-    team2: "Team Frost",
-    game: "PUBG Mobile",
-    date: "2025-01-24",
-    time: "20:00",
-    tournament: "Weekly Showdown",
-    status: "completed",
-    result: "Team Wolf won 2-1",
-    stream: false
-  },
-  {
-    id: 4,
-    team1: "Team DRS",
-    team2: "Team Shadow",
-    game: "PUBG Mobile",
-    date: "2025-01-23",
-    time: "17:00",
-    tournament: "PMNC UAE 2025",
-    status: "completed",
-    result: "Team DRS achieved #4 Position",
-    stream: true
-  },
-  {
-    id: 5,
-    team1: "Team DRS",
-    team2: "Team Blaze",
-    game: "PUBG Mobile",
-    date: "2025-01-27",
-    time: "19:00",
-    tournament: "DRS Championship Qualifiers",
-    status: "upcoming",
-    stream: false
-  },
-  {
-    id: 6,
-    team1: "Team DRS",
-    team2: "Team Storm",
-    game: "PUBG Mobile",
-    date: "2025-01-28",
-    time: "16:00",
-    tournament: "DRS Pro League",
-    status: "upcoming",
-    stream: true
-  }
-];
+import { fetchMatches } from "../lib/matchesRepo";
 
 function Schedule() {
   const [activeTab, setActiveTab] = useState("upcoming");
   const [selectedDate, setSelectedDate] = useState(null);
+  const [matches, setMatches] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  const upcomingMatches = matches.filter(m => m.status === "upcoming");
-  const completedMatches = matches.filter(m => m.status === "completed");
+  useEffect(() => {
+    let cancelled = false;
+
+    (async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        const rows = await fetchMatches();
+        if (cancelled) return;
+
+        const normalized = (rows ?? []).map((m) => {
+          const start = m.start_time ? new Date(m.start_time) : null;
+          const date = start ? start.toISOString().slice(0, 10) : (m.date ?? "");
+          const time = start
+            ? start.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", hour12: false })
+            : (m.time ?? "00:00");
+
+          return {
+            id: m.id,
+            team1: m.team1,
+            team2: m.team2,
+            game: m.game ?? "PUBG Mobile",
+            date,
+            time,
+            tournament: m.tournament ?? "",
+            status: m.status ?? "upcoming", // upcoming | live | completed
+            stream: Boolean(m.stream_url),
+            stream_url: m.stream_url ?? null,
+            result: m.result ?? null,
+          };
+        });
+
+        setMatches(normalized);
+      } catch (e) {
+        if (!cancelled) setError(e?.message || "Failed to load schedule");
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const upcomingMatches = useMemo(() => matches.filter((m) => m.status === "upcoming" || m.status === "live"), [matches]);
+  const completedMatches = useMemo(() => matches.filter((m) => m.status === "completed"), [matches]);
 
   // Get unique dates for calendar
-  const dates = [...new Set(matches.map(m => m.date))].sort();
+  const dates = useMemo(() => [...new Set(matches.map((m) => m.date).filter(Boolean))].sort(), [matches]);
 
   const formatDate = (dateStr) => {
     const date = new Date(dateStr);
@@ -159,10 +136,23 @@ function Schedule() {
           </div>
 
           {/* Matches List */}
-          <div className="matches-list">
-            {(activeTab === "upcoming" ? upcomingMatches : completedMatches)
-              .filter(m => !selectedDate || m.date === selectedDate)
-              .map((match, index) => (
+          {loading && (
+            <div className="loading-state" style={{ textAlign: "center", padding: 30, color: "var(--text-muted)" }}>
+              Loading schedule...
+            </div>
+          )}
+
+          {error && (
+            <div className="error-state" style={{ textAlign: "center", padding: 30, color: "#ff4444" }}>
+              {error}
+            </div>
+          )}
+
+          {!loading && !error && (
+            <div className="matches-list">
+              {(activeTab === "upcoming" ? upcomingMatches : completedMatches)
+                .filter((m) => !selectedDate || m.date === selectedDate)
+                .map((match, index) => (
               <motion.div
                 key={match.id}
                 className="match-card"
@@ -194,12 +184,12 @@ function Schedule() {
                       <span className="match-time">🕐 {formatTime(match.time)}</span>
                     </div>
                     <div className="match-actions">
-                      {match.stream && (
-                        <button className="stream-btn">
+                      {match.stream && match.stream_url && (
+                        <a className="stream-btn" href={match.stream_url} target="_blank" rel="noreferrer">
                           🔴 Watch Live
-                        </button>
+                        </a>
                       )}
-                      <button className="remind-btn">
+                      <button className="remind-btn" disabled>
                         🔔 Remind Me
                       </button>
                     </div>
@@ -216,7 +206,8 @@ function Schedule() {
                 )}
               </motion.div>
             ))}
-          </div>
+            </div>
+          )}
         </section>
       </div>
       <Footer />
