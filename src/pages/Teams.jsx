@@ -1,18 +1,44 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
-import { teams } from "../data/teams";
+import { fetchTeamsWithMembers } from "../lib/teamsRepo";
 
 function Teams() {
   const [activeTab, setActiveTab] = useState("all");
   const [selectedTeam, setSelectedTeam] = useState(null);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [selectedMember, setSelectedMember] = useState(null);
+  const [teams, setTeams] = useState([]);
+  const [loadingTeams, setLoadingTeams] = useState(false);
+
+  useEffect(() => {
+    let mounted = true;
+    (async () => {
+      try {
+        setLoadingTeams(true);
+        const { data, error } = await fetchTeamsWithMembers();
+        if (!mounted) return;
+        if (error) {
+          console.error("Supabase teams fetch failed:", error);
+          setTeams([]);
+          return;
+        }
+        setTeams(data || []);
+      } finally {
+        if (!mounted) return;
+        setLoadingTeams(false);
+      }
+    })();
+
+    return () => {
+      mounted = false;
+    };
+  }, []);
 
   const filteredTeams = activeTab === "all" 
     ? teams 
-    : teams.filter(t => t.game.toLowerCase() === activeTab);
+    : teams.filter(t => (t.game || "").toLowerCase() === activeTab);
 
   return (
     <>
@@ -32,6 +58,20 @@ function Teams() {
 
         {/* Teams Content */}
         <section className="teams-content">
+          {loadingTeams ? (
+            <div className="no-streams" style={{ textAlign: "center", padding: "60px 20px" }}>
+              <span>⏳</span>
+              <h3>Loading teams…</h3>
+              <p style={{ color: "var(--text-muted)" }}>Please wait</p>
+            </div>
+          ) : filteredTeams.length === 0 ? (
+            <div className="no-streams" style={{ textAlign: "center", padding: "60px 20px" }}>
+              <span>👥</span>
+              <h3>No teams found</h3>
+              <p style={{ color: "var(--text-muted)" }}>Add teams and members from Supabase to show them here.</p>
+            </div>
+          ) : null}
+
           {/* Teams Grid */}
           <div className="teams-grid">
             {filteredTeams.map((team, index) => (
