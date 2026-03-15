@@ -176,7 +176,7 @@ function Admin() {
             </motion.div>
 
             {/* Admin Features */}
-            {!admin.loggedIn && (
+            {!isAuthenticated && (
               <motion.div
                 className="admin-features"
                 initial={{ opacity: 0, y: 30 }}
