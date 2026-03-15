@@ -37,6 +37,7 @@ function Cart() {
   const [cart, setCart] = useState(() => getCart());
   const [showCheckout, setShowCheckout] = useState(false);
   const [orderPlaced, setOrderPlaced] = useState(false);
+  const [syncError, setSyncError] = useState("");
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -116,10 +117,11 @@ function Cart() {
       const { error } = await createOrder(newOrder);
       if (error) {
         console.error("Supabase order insert failed:", error);
-        // keep local order even if sync fails
+        setSyncError(error.message || "Supabase order sync failed");
       }
     } catch (err) {
       console.error("Supabase order insert crashed:", err);
+      setSyncError("Supabase order sync crashed");
     }
 
     setOrderPlaced(true);
@@ -155,6 +157,13 @@ function Cart() {
             <div className="success-icon">✅</div>
             <h1>Order Placed Successfully!</h1>
             <p>Thank you for your order. You will receive a confirmation email shortly.</p>
+
+            {syncError ? (
+              <p style={{ marginTop: 12, color: "#ff6b6b" }}>
+                Supabase sync error: {syncError}
+              </p>
+            ) : null}
+
             <div className="success-actions">
               <Link to="/shop" className="primary-btn">Continue Shopping</Link>
               <Link to="/" className="secondary-btn">Back to Home</Link>
