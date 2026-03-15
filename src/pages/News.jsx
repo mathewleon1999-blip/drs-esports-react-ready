@@ -1,10 +1,10 @@
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 
-// Demo news data
-const news = [
+// Demo fallback news data
+const demoNews = [
   {
     id: 1,
     title: "DRS Pro League Season 5 Announced with ₹5 Lakh Prize Pool",
@@ -67,17 +67,68 @@ const news = [
   }
 ];
 
-const categories = ["All", "Tournament", "Team News", "Results", "Guides", "Merchandise"];
+const categories = ["All", "PUBG Mobile (Live)", "Tournament", "Team News", "Results", "Guides", "Merchandise"];
 
 function News() {
   const [activeCategory, setActiveCategory] = useState("All");
   const [selectedArticle, setSelectedArticle] = useState(null);
+  const [liveArticles, setLiveArticles] = useState([]);
+  const [loadingLive, setLoadingLive] = useState(false);
+  const [liveError, setLiveError] = useState("");
 
-  const filteredNews = activeCategory === "All" 
-    ? news 
-    : news.filter(n => n.category === activeCategory);
+  useEffect(() => {
+    let mounted = true;
+    (async () => {
+      try {
+        setLoadingLive(true);
+        setLiveError("");
+        const r = await fetch("/api/pubg-news?pageSize=20");
+        const data = await r.json();
+        if (!r.ok) {
+          throw new Error(data?.error || "Failed to load live news");
+        }
+        if (!mounted) return;
+        setLiveArticles(Array.isArray(data?.articles) ? data.articles : []);
+      } catch (err) {
+        if (!mounted) return;
+        setLiveError(err?.message || "Failed to load live news");
+      } finally {
+        if (!mounted) return;
+        setLoadingLive(false);
+      }
+    })();
+    return () => {
+      mounted = false;
+    };
+  }, []);
 
-  const featuredArticle = news.find(n => n.featured);
+  const normalizedLive = useMemo(() => {
+    return (liveArticles || []).map((a, idx) => ({
+      id: `live-${idx}-${a?.publishedAt || ""}`,
+      title: a?.title || "Untitled",
+      category: "PUBG Mobile (Live)",
+      date: a?.publishedAt ? new Date(a.publishedAt).toISOString().slice(0, 10) : "",
+      author: a?.source || "NewsAPI",
+      image: a?.urlToImage || "",
+      excerpt: a?.description || "",
+      featured: idx === 0,
+      url: a?.url || "",
+      source: a?.source || "",
+    }));
+  }, [liveArticles]);
+
+  const allNews = useMemo(() => {
+    return [...normalizedLive, ...demoNews];
+  }, [normalizedLive]);
+
+  const filteredNews = useMemo(() => {
+    if (activeCategory === "All") return allNews;
+    return allNews.filter((n) => n.category === activeCategory);
+  }, [activeCategory, allNews]);
+
+  const featuredArticle = useMemo(() => {
+    return allNews.find((n) => n.featured) || null;
+  }, [allNews]);
 
   return (
     <>
@@ -97,6 +148,15 @@ function News() {
 
         {/* News Content */}
         <section className="news-content">
+          {activeCategory === "PUBG Mobile (Live)" ? (
+            <div style={{ margin: "0 auto", maxWidth: 1100, padding: "0 16px" }}>
+              {loadingLive ? (
+                <p style={{ opacity: 0.9 }}>Loading live PUBG Mobile news…</p>
+              ) : liveError ? (
+                <p style={{ color: "#ff6b6b" }}>{liveError}</p>
+              ) : null}
+            </div>
+          ) : null}
           {/* Featured Article */}
           {featuredArticle && activeCategory === "All" && (
             <motion.div 
@@ -203,8 +263,20 @@ function News() {
 
             <div className="article-body">
               <p>{selectedArticle.excerpt}</p>
-              <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
-              <p>Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+
+              {selectedArticle.url ? (
+                <p style={{ marginTop: 16 }}>
+                  <a
+                    href={selectedArticle.url}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="primary-btn"
+                    style={{ display: "inline-block", textDecoration: "none" }}
+                  >
+                    Read full article →
+                  </a>
+                </p>
+              ) : null}
             </div>
 
             <div className="article-footer">
