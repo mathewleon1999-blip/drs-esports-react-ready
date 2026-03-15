@@ -7,6 +7,7 @@ import Meta from "../components/Meta";
 import { fetchTournaments, mapTournamentRow } from "../lib/tournamentsRepo";
 import {
   createIndividualRegistration,
+  createTeamRegistration,
   fetchClanMembersByTeamSlug,
 } from "../lib/tournamentRegistrationsRepo";
 
@@ -69,6 +70,50 @@ function RegistrationForm({ tournament, onClose, onSubmit }) {
     e.preventDefault();
 
     if (mode === "team") {
+      try {
+        setSaving(true);
+        setToast(null);
+
+        const payload = {
+          tournament_id: tournament.id,
+          tournament_name: tournament.name,
+          registration_type: "team",
+          team_slug: null,
+          team_name: String(formData.teamName || "").trim(),
+          captain_name: String(formData.captainName || "").trim(),
+          players: (formData.players || []).map((p) => String(p || "").trim()).filter(Boolean),
+          substitute: formData.substitute ? String(formData.substitute).trim() : null,
+          email: formData.email || null,
+          phone: formData.phone || null,
+        };
+
+        if (!payload.team_name || !payload.captain_name || !payload.email || !payload.phone) {
+          setToast({ type: "error", message: "Team name, captain, email and phone are required" });
+          return;
+        }
+
+        if (!payload.players || payload.players.length < 5) {
+          setToast({ type: "error", message: "Please add at least 5 players" });
+          return;
+        }
+
+        const { error } = await createTeamRegistration(payload);
+        if (error) {
+          console.error("Supabase team registration failed:", error);
+          setToast({ type: "error", message: error.message || "Failed to register team" });
+          return;
+        }
+
+        setToast({ type: "success", message: "Team registered successfully!" });
+        setTimeout(() => onClose(), 700);
+      } catch (err) {
+        console.error("Supabase team registration crashed:", err);
+        setToast({ type: "error", message: "Failed to register team" });
+      } finally {
+        setSaving(false);
+      }
+
+      // keep local callback for any legacy UI
       onSubmit(tournament, formData);
       return;
     }
@@ -391,10 +436,10 @@ function Tournaments() {
   };
 
   const handleSubmitRegistration = (tournament, data) => {
+    // Keep local history only (Supabase is handled inside RegistrationForm)
     setRegistrations([...registrations, { tournament: tournament.name, ...data, date: new Date().toISOString() }]);
     setShowRegistration(false);
     setSelectedTournament(null);
-    alert("Registration submitted successfully!");
   };
 
   const getStatusBadge = (status) => {

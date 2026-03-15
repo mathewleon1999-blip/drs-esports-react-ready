@@ -10,6 +10,16 @@ export async function createIndividualRegistration(payload) {
   return { data, error };
 }
 
+export async function createTeamRegistration(payload) {
+  const { data, error } = await supabase
+    .from("tournament_registrations")
+    .insert(payload)
+    .select()
+    .single();
+
+  return { data, error };
+}
+
 export async function fetchClanMembersByTeamSlug(teamSlug) {
   const { data, error } = await supabase
     .from("clan_members")
