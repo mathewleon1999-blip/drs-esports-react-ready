@@ -75,6 +75,8 @@ function AdminDashboard() {
   const [news, setNews] = useState([]);
   const [discounts, setDiscounts] = useState([]);
   const [transactions, setTransactions] = useState([]);
+  const [tournamentRegistrations, setTournamentRegistrations] = useState([]);
+  const [loadingRegistrations, setLoadingRegistrations] = useState(false);
   const [liveSettings, setLiveSettings] = useState(null);
   const [liveForm, setLiveForm] = useState({ is_live: false, title: "DRS Live", stream_url: "" });
   const [savingLive, setSavingLive] = useState(false);
@@ -180,6 +182,31 @@ function AdminDashboard() {
     }
   }
 
+  async function fetchTournamentRegistrationsFromSupabase() {
+    try {
+      setLoadingRegistrations(true);
+      const { data, error } = await supabase
+        .from("tournament_registrations")
+        .select("*")
+        .order("created_at", { ascending: false });
+
+      if (error) {
+        console.error("Supabase tournament_registrations fetch failed:", error);
+        setTournamentRegistrations([]);
+        showToast("Registrations sync failed (Supabase)", "error");
+        return;
+      }
+
+      setTournamentRegistrations(data || []);
+    } catch (err) {
+      console.error("Supabase tournament_registrations fetch crashed:", err);
+      setTournamentRegistrations([]);
+      showToast("Registrations sync error (Supabase)", "error");
+    } finally {
+      setLoadingRegistrations(false);
+    }
+  }
+
   // Initialize data
   useEffect(() => {
     // Auth is enforced by route guard (RequireAdmin). We only read session for display.
@@ -211,6 +238,9 @@ function AdminDashboard() {
 
     // Clan members: Supabase
     fetchClanMembersFromSupabase();
+
+    // Tournament registrations: Supabase
+    fetchTournamentRegistrationsFromSupabase();
 
     // News/Discounts still local
     setNews(getStoredData("drs-news-admin", defaultNews));
@@ -845,6 +875,9 @@ const deleteDiscount = (discountId) => {
             <button className={activeTab === "tournaments" ? "active" : ""} onClick={() => setActiveTab("tournaments")}>
               🏆 Tournaments
             </button>
+            <button className={activeTab === "registrations" ? "active" : ""} onClick={() => setActiveTab("registrations")}>
+              📝 Registrations
+            </button>
             <button className={activeTab === "clan-members" ? "active" : ""} onClick={() => setActiveTab("clan-members")}>
               👥 Clan Members
             </button>
@@ -1146,6 +1179,61 @@ const deleteDiscount = (discountId) => {
                   </tbody>
                 </table>
               </div>
+            </motion.div>
+          )}
+
+          {/* Registrations Tab */}
+          {activeTab === "registrations" && (
+            <motion.div
+              className="tab-panel"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+            >
+              <div className="panel-header">
+                <h1>Tournament Registrations</h1>
+                <button className="add-btn" onClick={fetchTournamentRegistrationsFromSupabase}>
+                  ↻ Refresh
+                </button>
+              </div>
+
+              {loadingRegistrations ? (
+                <div className="empty-state">
+                  <p>Loading registrations…</p>
+                </div>
+              ) : tournamentRegistrations.length === 0 ? (
+                <div className="empty-state">
+                  <p>No registrations yet</p>
+                </div>
+              ) : (
+                <div className="table-container">
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>Type</th>
+                        <th>Tournament</th>
+                        <th>Member</th>
+                        <th>IGN</th>
+                        <th>Email</th>
+                        <th>Phone</th>
+                        <th>Created</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {tournamentRegistrations.map((r) => (
+                        <tr key={r.id}>
+                          <td>{r.registration_type || "-"}</td>
+                          <td>{r.tournament_name || r.tournament_id || "-"}</td>
+                          <td>{r.member_name || "-"}</td>
+                          <td>{r.ign || "-"}</td>
+                          <td>{r.email || "-"}</td>
+                          <td>{r.phone || "-"}</td>
+                          <td>{r.created_at ? new Date(r.created_at).toLocaleString() : "-"}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
             </motion.div>
           )}
 
