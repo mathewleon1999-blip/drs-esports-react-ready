@@ -10,6 +10,7 @@ import {
   updateUser as updateUserInSupabase,
   deleteUser as deleteUserInSupabase,
 } from "../lib/usersRepo";
+import { fetchLiveSettings } from "../lib/liveSettingsRepo";
 
 // Transaction categories
 const TRANSACTION_CATEGORIES = [
@@ -71,6 +72,9 @@ function AdminDashboard() {
   const [news, setNews] = useState([]);
   const [discounts, setDiscounts] = useState([]);
   const [transactions, setTransactions] = useState([]);
+  const [liveSettings, setLiveSettings] = useState(null);
+  const [liveForm, setLiveForm] = useState({ is_live: false, title: "DRS Live", stream_url: "" });
+  const [savingLive, setSavingLive] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [modalType, setModalType] = useState("");
   const [editingItem, setEditingItem] = useState(null);
@@ -139,6 +143,21 @@ function AdminDashboard() {
 
     // Transactions: Supabase (sync across devices)
     fetchTransactionsFromSupabase();
+
+    // Live settings: Supabase
+    (async () => {
+      try {
+        const { data } = await fetchLiveSettings("main");
+        setLiveSettings(data || null);
+        setLiveForm({
+          is_live: Boolean(data?.is_live),
+          title: data?.title || "DRS Live",
+          stream_url: data?.stream_url || "",
+        });
+      } catch {
+        // ignore
+      }
+    })();
   }, []);
 
   // Show toast notification
@@ -556,6 +575,9 @@ const deleteDiscount = (discountId) => {
             </button>
             <button className={activeTab === "finance" ? "active" : ""} onClick={() => setActiveTab("finance")}>
               💵 Finance
+            </button>
+            <button className={activeTab === "live" ? "active" : ""} onClick={() => setActiveTab("live")}>
+              📺 Live
             </button>
             <button className={activeTab === "settings" ? "active" : ""} onClick={() => setActiveTab("settings")}>
               ⚙️ Settings
@@ -1100,6 +1122,99 @@ const deleteDiscount = (discountId) => {
                   </table>
                 </div>
               )}
+            </motion.div>
+          )}
+
+          {/* Live Tab */}
+          {activeTab === "live" && (
+            <motion.div
+              className="tab-panel"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+            >
+              <h1>Live Stream Settings</h1>
+              <p style={{ color: "var(--text-muted)", marginTop: -10, marginBottom: 20 }}>
+                Paste your YouTube Live URL here. When you set Live = ON, it will play on the Live page.
+              </p>
+
+              <div className="settings-section" style={{ maxWidth: 720 }}>
+                <div className="form-group">
+                  <label>Live Status</label>
+                  <select
+                    value={liveForm.is_live ? "true" : "false"}
+                    onChange={(e) => setLiveForm((p) => ({ ...p, is_live: e.target.value === "true" }))}
+                  >
+                    <option value="false">OFFLINE</option>
+                    <option value="true">LIVE</option>
+                  </select>
+                </div>
+
+                <div className="form-group">
+                  <label>Title</label>
+                  <input
+                    type="text"
+                    value={liveForm.title}
+                    onChange={(e) => setLiveForm((p) => ({ ...p, title: e.target.value }))}
+                    placeholder="DRS Live"
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label>YouTube URL</label>
+                  <input
+                    type="text"
+                    value={liveForm.stream_url}
+                    onChange={(e) => setLiveForm((p) => ({ ...p, stream_url: e.target.value }))}
+                    placeholder="https://www.youtube.com/watch?v=..."
+                  />
+                </div>
+
+                <button
+                  className="save-btn"
+                  disabled={savingLive}
+                  onClick={async () => {
+                    try {
+                      setSavingLive(true);
+                      const payload = {
+                        slug: "main",
+                        platform: "youtube",
+                        is_live: Boolean(liveForm.is_live),
+                        title: String(liveForm.title || "DRS Live"),
+                        stream_url: String(liveForm.stream_url || "").trim(),
+                        updated_at: new Date().toISOString(),
+                      };
+
+                      const { data, error } = await supabase
+                        .from("live_settings")
+                        .upsert(payload, { onConflict: "slug" })
+                        .select()
+                        .single();
+
+                      if (error) {
+                        console.error("Supabase live_settings upsert failed:", error);
+                        showToast(`Failed to save live settings: ${error.message}`, "error");
+                        return;
+                      }
+
+                      setLiveSettings(data);
+                      showToast("Live settings saved!");
+                    } catch (err) {
+                      console.error("Supabase live_settings upsert crashed:", err);
+                      showToast("Failed to save live settings", "error");
+                    } finally {
+                      setSavingLive(false);
+                    }
+                  }}
+                >
+                  {savingLive ? "Saving…" : "Save Live Settings"}
+                </button>
+
+                {liveSettings?.updated_at ? (
+                  <p style={{ marginTop: 12, color: "var(--text-muted)", fontSize: 13 }}>
+                    Last updated: {new Date(liveSettings.updated_at).toLocaleString()}
+                  </p>
+                ) : null}
+              </div>
             </motion.div>
           )}
 

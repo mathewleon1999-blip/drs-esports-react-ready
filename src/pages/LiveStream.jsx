@@ -1,7 +1,8 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
+import { fetchLiveSettings } from "../lib/liveSettingsRepo";
 
 const toYouTubeEmbedUrl = (urlOrId) => {
   if (!urlOrId) return null;
@@ -35,7 +36,7 @@ const toYouTubeEmbedUrl = (urlOrId) => {
   return `https://www.youtube.com/embed/${id}`;
 };
 
-// Demo stream data (YouTube items include a playable videoId/url)
+// Demo stream data (fallback)
 const streams = [
   {
     id: 1,
@@ -104,11 +105,58 @@ const upcomingStreams = [
 function LiveStream() {
   const [activeTab, setActiveTab] = useState("live");
   const [selectedStream, setSelectedStream] = useState(null);
+  const [liveSettings, setLiveSettings] = useState(null);
+  const [loadingSettings, setLoadingSettings] = useState(false);
 
-  const liveStreams = useMemo(() => streams.filter((s) => s.live), []);
+  useEffect(() => {
+    let mounted = true;
+    (async () => {
+      try {
+        setLoadingSettings(true);
+        const { data } = await fetchLiveSettings("main");
+        if (!mounted) return;
+        setLiveSettings(data || null);
+      } finally {
+        if (!mounted) return;
+        setLoadingSettings(false);
+      }
+    })();
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
+  const normalizedLive = useMemo(() => {
+    const isLive = Boolean(liveSettings?.is_live);
+    const streamUrl = liveSettings?.stream_url || "";
+
+    if (!isLive || !streamUrl) return [];
+
+    const platform = String(liveSettings?.platform || "youtube").toLowerCase();
+
+    return [
+      {
+        id: "supabase-live",
+        title: liveSettings?.title || "DRS Live",
+        streamer: "DRS Esports",
+        game: "PUBG Mobile",
+        viewers: 0,
+        thumbnail: "",
+        live: true,
+        platform,
+        youtube: platform === "youtube" ? { url: streamUrl } : undefined,
+        twitch: platform === "twitch" ? { url: streamUrl } : undefined,
+      },
+    ];
+  }, [liveSettings]);
+
+  const liveStreams = useMemo(() => {
+    // Use Supabase-controlled live stream when available; otherwise fallback demo
+    return normalizedLive.length ? normalizedLive : streams.filter((s) => s.live);
+  }, [normalizedLive]);
 
   const featuredStream = useMemo(() => {
-    // Prefer a YouTube stream as featured so it actually plays on-site.
+    // Prefer YouTube as featured because it can be embedded.
     return liveStreams.find((s) => s.platform === "youtube") || liveStreams[0] || null;
   }, [liveStreams]);
 
@@ -159,7 +207,13 @@ function LiveStream() {
           {/* Live Streams */}
           {activeTab === "live" && (
             <div className="live-section">
-              {liveStreams.length > 0 ? (
+              {loadingSettings ? (
+                <div className="no-streams">
+                  <span>⏳</span>
+                  <h3>Loading live status…</h3>
+                  <p>Please wait</p>
+                </div>
+              ) : liveStreams.length > 0 ? (
                 <>
                   {/* Featured Stream */}
                   <motion.div 
@@ -314,8 +368,8 @@ function LiveStream() {
               ) : (
                 <div className="no-streams">
                   <span>📺</span>
-                  <h3>No Live Streams</h3>
-                  <p>Check back later for live content</p>
+                  <h3>We’re Offline</h3>
+                  <p>We’re not live right now. Follow DRS Esports and come back when we go live.</p>
                 </div>
               )}
             </div>
