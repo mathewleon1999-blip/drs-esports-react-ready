@@ -5,6 +5,8 @@ import * as XLSX from "xlsx";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import { supabase } from "../lib/supabaseClient";
+import { fetchMatches } from "../lib/matchesRepo";
+import { fetchPlayerLeaderboard, fetchTeamLeaderboard } from "../lib/leaderboardRepo";
 import {
   fetchUsers as fetchUsersFromSupabase,
   updateUser as updateUserInSupabase,
@@ -80,6 +82,14 @@ function AdminDashboard() {
   const [liveSettings, setLiveSettings] = useState(null);
   const [liveForm, setLiveForm] = useState({ is_live: false, title: "DRS Live", stream_url: "" });
   const [savingLive, setSavingLive] = useState(false);
+
+  // Schedule + Leaderboard (Supabase)
+  const [matches, setMatches] = useState([]);
+  const [loadingMatches, setLoadingMatches] = useState(false);
+  const [playerLeaderboard, setPlayerLeaderboard] = useState([]);
+  const [teamLeaderboard, setTeamLeaderboard] = useState([]);
+  const [leaderboardFilters, setLeaderboardFilters] = useState({ game: "all", region: "all" });
+  const [loadingLeaderboard, setLoadingLeaderboard] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [modalType, setModalType] = useState("");
   const [editingItem, setEditingItem] = useState(null);
@@ -207,6 +217,234 @@ function AdminDashboard() {
     }
   }
 
+  async function fetchMatchesFromSupabase() {
+    try {
+      setLoadingMatches(true);
+      const rows = await fetchMatches();
+
+      const normalized = (rows ?? []).map((m) => ({
+        id: m.id,
+        team1: m.team1,
+        team2: m.team2,
+        game: m.game ?? "PUBG Mobile",
+        tournament: m.tournament ?? "",
+        status: m.status ?? "upcoming",
+        start_time: m.start_time ?? null,
+        stream_url: m.stream_url ?? null,
+        result: m.result ?? null,
+      }));
+
+      setMatches(normalized);
+    } catch (err) {
+      console.error("Supabase matches fetch failed:", err);
+      setMatches([]);
+      showToast("Schedule sync failed (Supabase)", "error");
+    } finally {
+      setLoadingMatches(false);
+    }
+  }
+
+  async function fetchLeaderboardFromSupabase(nextFilters = leaderboardFilters) {
+    try {
+      setLoadingLeaderboard(true);
+      const [players, teams] = await Promise.all([
+        fetchPlayerLeaderboard(nextFilters),
+        fetchTeamLeaderboard(nextFilters),
+      ]);
+      setPlayerLeaderboard(players || []);
+      setTeamLeaderboard(teams || []);
+    } catch (err) {
+      console.error("Supabase leaderboard fetch failed:", err);
+      setPlayerLeaderboard([]);
+      setTeamLeaderboard([]);
+      showToast("Leaderboard sync failed (Supabase)", "error");
+    } finally {
+      setLoadingLeaderboard(false);
+    }
+  }
+
+  async function addMatch(match) {
+    try {
+      const payload = {
+        team1: String(match?.team1 || "").trim(),
+        team2: String(match?.team2 || "").trim(),
+        game: String(match?.game || "PUBG Mobile").trim(),
+        tournament: String(match?.tournament || "").trim() || null,
+        status: String(match?.status || "upcoming").trim(),
+        start_time: match?.start_time ? new Date(match.start_time).toISOString() : null,
+        stream_url: match?.stream_url ? String(match.stream_url).trim() : null,
+        result: match?.result ? String(match.result).trim() : null,
+      };
+
+      if (!payload.team1 || !payload.team2 || !payload.start_time) {
+        showToast("Team 1, Team 2 and Start Time are required", "error");
+        return;
+      }
+
+      const { data, error } = await supabase.from("matches").insert(payload).select().single();
+      if (error) {
+        console.error("Supabase matches insert failed:", error);
+        showToast(`Failed to add match: ${error.message}`, "error");
+        return;
+      }
+
+      setMatches((prev) => [data, ...prev]);
+      showToast("Match added!");
+      setShowModal(false);
+    } catch (err) {
+      console.error("Supabase matches insert crashed:", err);
+      showToast("Failed to add match", "error");
+    }
+  }
+
+  async function updateMatch(matchId, updates) {
+    try {
+      const payload = {
+        ...(Object.prototype.hasOwnProperty.call(updates || {}, "team1")
+          ? { team1: String(updates.team1 || "").trim() }
+          : {}),
+        ...(Object.prototype.hasOwnProperty.call(updates || {}, "team2")
+          ? { team2: String(updates.team2 || "").trim() }
+          : {}),
+        ...(Object.prototype.hasOwnProperty.call(updates || {}, "game")
+          ? { game: String(updates.game || "").trim() }
+          : {}),
+        ...(Object.prototype.hasOwnProperty.call(updates || {}, "tournament")
+          ? { tournament: String(updates.tournament || "").trim() || null }
+          : {}),
+        ...(Object.prototype.hasOwnProperty.call(updates || {}, "status")
+          ? { status: String(updates.status || "upcoming").trim() }
+          : {}),
+        ...(Object.prototype.hasOwnProperty.call(updates || {}, "start_time")
+          ? { start_time: updates.start_time ? new Date(updates.start_time).toISOString() : null }
+          : {}),
+        ...(Object.prototype.hasOwnProperty.call(updates || {}, "stream_url")
+          ? { stream_url: updates.stream_url ? String(updates.stream_url).trim() : null }
+          : {}),
+        ...(Object.prototype.hasOwnProperty.call(updates || {}, "result")
+          ? { result: updates.result ? String(updates.result).trim() : null }
+          : {}),
+        updated_at: new Date().toISOString(),
+      };
+
+      const { data, error } = await supabase
+        .from("matches")
+        .update(payload)
+        .eq("id", matchId)
+        .select()
+        .single();
+
+      if (error) {
+        console.error("Supabase matches update failed:", error);
+        showToast(`Failed to update match: ${error.message}`, "error");
+        return;
+      }
+
+      setMatches((prev) => prev.map((m) => (m.id === matchId ? data : m)));
+      showToast("Match updated!");
+      setShowModal(false);
+      setEditingItem(null);
+    } catch (err) {
+      console.error("Supabase matches update crashed:", err);
+      showToast("Failed to update match", "error");
+    }
+  }
+
+  async function deleteMatch(matchId) {
+    try {
+      const { error } = await supabase.from("matches").delete().eq("id", matchId);
+      if (error) {
+        console.error("Supabase matches delete failed:", error);
+        showToast(`Failed to delete match: ${error.message}`, "error");
+        return;
+      }
+      setMatches((prev) => prev.filter((m) => m.id !== matchId));
+      showToast("Match deleted!");
+    } catch (err) {
+      console.error("Supabase matches delete crashed:", err);
+      showToast("Failed to delete match", "error");
+    }
+  }
+
+  async function upsertLeaderboardPlayer(row) {
+    try {
+      const payload = {
+        username: String(row?.username || "").trim(),
+        team: row?.team ? String(row.team).trim() : null,
+        points: Number(row?.points ?? 0),
+        wins: Number(row?.wins ?? 0),
+        kills: Number(row?.kills ?? 0),
+        games: Number(row?.games ?? 0),
+        game: String(row?.game || "pubg").trim(),
+        region: String(row?.region || "global").trim(),
+        updated_at: new Date().toISOString(),
+      };
+
+      if (!payload.username) {
+        showToast("Username is required", "error");
+        return;
+      }
+
+      const { data, error } = await supabase
+        .from("leaderboard_players")
+        .upsert(payload, { onConflict: "username,game,region" })
+        .select()
+        .single();
+
+      if (error) {
+        console.error("Supabase leaderboard_players upsert failed:", error);
+        showToast(`Failed to save player row: ${error.message}`, "error");
+        return;
+      }
+
+      showToast("Player leaderboard updated!");
+      await fetchLeaderboardFromSupabase();
+      setShowModal(false);
+    } catch (err) {
+      console.error("Supabase leaderboard_players upsert crashed:", err);
+      showToast("Failed to save player row", "error");
+    }
+  }
+
+  async function upsertLeaderboardTeam(row) {
+    try {
+      const payload = {
+        name: String(row?.name || "").trim(),
+        wins: Number(row?.wins ?? 0),
+        losses: Number(row?.losses ?? 0),
+        points: Number(row?.points ?? 0),
+        kd: row?.kd != null && row.kd !== "" ? Number(row.kd) : null,
+        game: String(row?.game || "pubg").trim(),
+        region: String(row?.region || "global").trim(),
+        updated_at: new Date().toISOString(),
+      };
+
+      if (!payload.name) {
+        showToast("Team name is required", "error");
+        return;
+      }
+
+      const { data, error } = await supabase
+        .from("leaderboard_teams")
+        .upsert(payload, { onConflict: "name,game,region" })
+        .select()
+        .single();
+
+      if (error) {
+        console.error("Supabase leaderboard_teams upsert failed:", error);
+        showToast(`Failed to save team row: ${error.message}`, "error");
+        return;
+      }
+
+      showToast("Team leaderboard updated!");
+      await fetchLeaderboardFromSupabase();
+      setShowModal(false);
+    } catch (err) {
+      console.error("Supabase leaderboard_teams upsert crashed:", err);
+      showToast("Failed to save team row", "error");
+    }
+  }
+
   // Initialize data
   useEffect(() => {
     // Auth is enforced by route guard (RequireAdmin). We only read session for display.
@@ -248,6 +486,10 @@ function AdminDashboard() {
 
     // Transactions: Supabase (sync across devices)
     fetchTransactionsFromSupabase();
+
+    // Schedule + Leaderboard: Supabase
+    fetchMatchesFromSupabase();
+    fetchLeaderboardFromSupabase({ game: "all", region: "all" });
 
     // Live settings: Supabase
     (async () => {
@@ -875,6 +1117,12 @@ const deleteDiscount = (discountId) => {
             <button className={activeTab === "tournaments" ? "active" : ""} onClick={() => setActiveTab("tournaments")}>
               🏆 Tournaments
             </button>
+            <button className={activeTab === "schedule" ? "active" : ""} onClick={() => setActiveTab("schedule")}>
+              📅 Schedule
+            </button>
+            <button className={activeTab === "leaderboard" ? "active" : ""} onClick={() => setActiveTab("leaderboard")}>
+              🏅 Leaderboard
+            </button>
             <button className={activeTab === "registrations" ? "active" : ""} onClick={() => setActiveTab("registrations")}>
               📝 Registrations
             </button>
@@ -1179,6 +1427,208 @@ const deleteDiscount = (discountId) => {
                   </tbody>
                 </table>
               </div>
+            </motion.div>
+          )}
+
+          {/* Schedule Tab */}
+          {activeTab === "schedule" && (
+            <motion.div
+              className="tab-panel"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+            >
+              <div className="panel-header">
+                <h1>Schedule (Matches)</h1>
+                <div className="header-actions">
+                  <button className="add-btn" onClick={fetchMatchesFromSupabase}>
+                    ↻ Refresh
+                  </button>
+                  <button className="add-btn" onClick={() => openModal("addMatch")}>
+                    + Add Match
+                  </button>
+                </div>
+              </div>
+
+              {loadingMatches ? (
+                <div className="empty-state"><p>Loading matches…</p></div>
+              ) : matches.length === 0 ? (
+                <div className="empty-state"><p>No matches yet</p></div>
+              ) : (
+                <div className="table-container">
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>Start</th>
+                        <th>Tournament</th>
+                        <th>Game</th>
+                        <th>Team 1</th>
+                        <th>Team 2</th>
+                        <th>Status</th>
+                        <th>Stream</th>
+                        <th>Result</th>
+                        <th>Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {matches.map((m) => (
+                        <tr key={m.id}>
+                          <td>{m.start_time ? new Date(m.start_time).toLocaleString() : "-"}</td>
+                          <td>{m.tournament || "-"}</td>
+                          <td>{m.game || "-"}</td>
+                          <td>{m.team1}</td>
+                          <td>{m.team2}</td>
+                          <td>{m.status}</td>
+                          <td>{m.stream_url ? "Yes" : "No"}</td>
+                          <td>{m.result || "-"}</td>
+                          <td>
+                            <button className="edit-btn" onClick={() => openModal("editMatch", m)}>✏️</button>
+                            <button className="delete-btn" onClick={() => deleteMatch(m.id)}>🗑️</button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+            </motion.div>
+          )}
+
+          {/* Leaderboard Tab */}
+          {activeTab === "leaderboard" && (
+            <motion.div
+              className="tab-panel"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+            >
+              <div className="panel-header">
+                <h1>Leaderboard</h1>
+                <div className="header-actions">
+                  <button className="add-btn" onClick={() => fetchLeaderboardFromSupabase()}>
+                    ↻ Refresh
+                  </button>
+                  <button className="add-btn" onClick={() => openModal("addLeaderboardPlayer")}>
+                    + Add Player Row
+                  </button>
+                  <button className="add-btn" onClick={() => openModal("addLeaderboardTeam")}>
+                    + Add Team Row
+                  </button>
+                </div>
+              </div>
+
+              <div className="finance-filters" style={{ marginBottom: 20 }}>
+                <div className="filter-group">
+                  <label>Game</label>
+                  <select
+                    value={leaderboardFilters.game}
+                    onChange={async (e) => {
+                      const next = { ...leaderboardFilters, game: e.target.value };
+                      setLeaderboardFilters(next);
+                      await fetchLeaderboardFromSupabase(next);
+                    }}
+                  >
+                    <option value="all">All</option>
+                    <option value="valorant">Valorant</option>
+                    <option value="cs2">CS2</option>
+                    <option value="pubg">PUBG</option>
+                  </select>
+                </div>
+                <div className="filter-group">
+                  <label>Region</label>
+                  <select
+                    value={leaderboardFilters.region}
+                    onChange={async (e) => {
+                      const next = { ...leaderboardFilters, region: e.target.value };
+                      setLeaderboardFilters(next);
+                      await fetchLeaderboardFromSupabase(next);
+                    }}
+                  >
+                    <option value="all">All</option>
+                    <option value="india">India</option>
+                    <option value="asia">Asia</option>
+                    <option value="global">Global</option>
+                  </select>
+                </div>
+              </div>
+
+              {loadingLeaderboard ? (
+                <div className="empty-state"><p>Loading leaderboard…</p></div>
+              ) : (
+                <>
+                  <h2 style={{ marginTop: 10 }}>Players</h2>
+                  {playerLeaderboard.length === 0 ? (
+                    <div className="empty-state"><p>No player rows</p></div>
+                  ) : (
+                    <div className="table-container">
+                      <table>
+                        <thead>
+                          <tr>
+                            <th>Rank</th>
+                            <th>Username</th>
+                            <th>Team</th>
+                            <th>Points</th>
+                            <th>Wins</th>
+                            <th>Kills</th>
+                            <th>Games</th>
+                            <th>Game</th>
+                            <th>Region</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {playerLeaderboard.map((p) => (
+                            <tr key={`${p.username}-${p.game}-${p.region}`}>
+                              <td>#{p.rank}</td>
+                              <td>{p.username}</td>
+                              <td>{p.team || "-"}</td>
+                              <td>{Number(p.points ?? 0).toLocaleString()}</td>
+                              <td>{p.wins}</td>
+                              <td>{Number(p.kills ?? 0).toLocaleString()}</td>
+                              <td>{p.games}</td>
+                              <td>{p.game}</td>
+                              <td>{p.region}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  )}
+
+                  <h2 style={{ marginTop: 24 }}>Teams</h2>
+                  {teamLeaderboard.length === 0 ? (
+                    <div className="empty-state"><p>No team rows</p></div>
+                  ) : (
+                    <div className="table-container">
+                      <table>
+                        <thead>
+                          <tr>
+                            <th>Rank</th>
+                            <th>Name</th>
+                            <th>Wins</th>
+                            <th>Losses</th>
+                            <th>Points</th>
+                            <th>K/D</th>
+                            <th>Game</th>
+                            <th>Region</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {teamLeaderboard.map((t) => (
+                            <tr key={`${t.name}-${t.game}-${t.region}`}>
+                              <td>#{t.rank}</td>
+                              <td>{t.name}</td>
+                              <td>{t.wins}</td>
+                              <td>{t.losses}</td>
+                              <td>{t.points}</td>
+                              <td>{t.kd}</td>
+                              <td>{t.game}</td>
+                              <td>{t.region}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  )}
+                </>
+              )}
             </motion.div>
           )}
 
@@ -1777,6 +2227,32 @@ const deleteDiscount = (discountId) => {
                   onCancel={closeModal}
                 />
               )}
+
+              {/* Add/Edit Match Modal */}
+              {(modalType === "addMatch" || modalType === "editMatch") && (
+                <MatchForm
+                  match={editingItem}
+                  onSave={(data) => (editingItem ? updateMatch(editingItem.id, data) : addMatch(data))}
+                  onCancel={closeModal}
+                />
+              )}
+
+              {/* Add Leaderboard Player/Team Row */}
+              {(modalType === "addLeaderboardPlayer" || modalType === "editLeaderboardPlayer") && (
+                <LeaderboardPlayerForm
+                  row={editingItem}
+                  onSave={(data) => upsertLeaderboardPlayer(data)}
+                  onCancel={closeModal}
+                />
+              )}
+
+              {(modalType === "addLeaderboardTeam" || modalType === "editLeaderboardTeam") && (
+                <LeaderboardTeamForm
+                  row={editingItem}
+                  onSave={(data) => upsertLeaderboardTeam(data)}
+                  onCancel={closeModal}
+                />
+              )}
             </motion.div>
           </motion.div>
         )}
@@ -2029,6 +2505,319 @@ function ClanMemberForm({ member, onSave, onCancel }) {
             placeholder="username#0000"
           />
         </div>
+      </div>
+
+      <div className="form-actions">
+        <button type="button" className="cancel-btn" onClick={onCancel}>Cancel</button>
+        <button type="submit" className="save-btn">Save</button>
+      </div>
+    </form>
+  );
+}
+
+function MatchForm({ match, onSave, onCancel }) {
+  const [formData, setFormData] = useState({
+    team1: match?.team1 || "",
+    team2: match?.team2 || "",
+    game: match?.game || "PUBG Mobile",
+    tournament: match?.tournament || "",
+    status: match?.status || "upcoming",
+    start_time: match?.start_time ? new Date(match.start_time).toISOString().slice(0, 16) : "",
+    stream_url: match?.stream_url || "",
+    result: match?.result || "",
+  });
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    onSave(formData);
+  };
+
+  return (
+    <form onSubmit={handleSubmit} className="admin-form">
+      <h2>{match ? "Edit Match" : "Add Match"}</h2>
+
+      <div className="form-row">
+        <div className="form-group">
+          <label>Team 1 *</label>
+          <input
+            type="text"
+            value={formData.team1}
+            onChange={(e) => setFormData({ ...formData, team1: e.target.value })}
+            required
+          />
+        </div>
+        <div className="form-group">
+          <label>Team 2 *</label>
+          <input
+            type="text"
+            value={formData.team2}
+            onChange={(e) => setFormData({ ...formData, team2: e.target.value })}
+            required
+          />
+        </div>
+      </div>
+
+      <div className="form-row">
+        <div className="form-group">
+          <label>Game</label>
+          <input
+            type="text"
+            value={formData.game}
+            onChange={(e) => setFormData({ ...formData, game: e.target.value })}
+          />
+        </div>
+        <div className="form-group">
+          <label>Status</label>
+          <select
+            value={formData.status}
+            onChange={(e) => setFormData({ ...formData, status: e.target.value })}
+          >
+            <option value="upcoming">Upcoming</option>
+            <option value="live">Live</option>
+            <option value="completed">Completed</option>
+          </select>
+        </div>
+      </div>
+
+      <div className="form-group">
+        <label>Start Time *</label>
+        <input
+          type="datetime-local"
+          value={formData.start_time}
+          onChange={(e) => setFormData({ ...formData, start_time: e.target.value })}
+          required
+        />
+      </div>
+
+      <div className="form-group">
+        <label>Tournament</label>
+        <input
+          type="text"
+          value={formData.tournament}
+          onChange={(e) => setFormData({ ...formData, tournament: e.target.value })}
+        />
+      </div>
+
+      <div className="form-group">
+        <label>Stream URL</label>
+        <input
+          type="text"
+          value={formData.stream_url}
+          onChange={(e) => setFormData({ ...formData, stream_url: e.target.value })}
+          placeholder="https://youtube.com/..."
+        />
+      </div>
+
+      <div className="form-group">
+        <label>Result (for completed matches)</label>
+        <input
+          type="text"
+          value={formData.result}
+          onChange={(e) => setFormData({ ...formData, result: e.target.value })}
+          placeholder="Team DRS won 2-0"
+        />
+      </div>
+
+      <div className="form-actions">
+        <button type="button" className="cancel-btn" onClick={onCancel}>Cancel</button>
+        <button type="submit" className="save-btn">Save</button>
+      </div>
+    </form>
+  );
+}
+
+function LeaderboardPlayerForm({ row, onSave, onCancel }) {
+  const [formData, setFormData] = useState({
+    username: row?.username || "",
+    team: row?.team || "",
+    points: row?.points ?? 0,
+    wins: row?.wins ?? 0,
+    kills: row?.kills ?? 0,
+    games: row?.games ?? 0,
+    game: row?.game || "pubg",
+    region: row?.region || "global",
+  });
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    onSave(formData);
+  };
+
+  return (
+    <form onSubmit={handleSubmit} className="admin-form">
+      <h2>{row ? "Edit Player Row" : "Add Player Row"}</h2>
+
+      <div className="form-row">
+        <div className="form-group">
+          <label>Username *</label>
+          <input
+            type="text"
+            value={formData.username}
+            onChange={(e) => setFormData({ ...formData, username: e.target.value })}
+            required
+          />
+        </div>
+        <div className="form-group">
+          <label>Team</label>
+          <input
+            type="text"
+            value={formData.team}
+            onChange={(e) => setFormData({ ...formData, team: e.target.value })}
+          />
+        </div>
+      </div>
+
+      <div className="form-row">
+        <div className="form-group">
+          <label>Points</label>
+          <input
+            type="number"
+            value={formData.points}
+            onChange={(e) => setFormData({ ...formData, points: e.target.value })}
+          />
+        </div>
+        <div className="form-group">
+          <label>Wins</label>
+          <input
+            type="number"
+            value={formData.wins}
+            onChange={(e) => setFormData({ ...formData, wins: e.target.value })}
+          />
+        </div>
+      </div>
+
+      <div className="form-row">
+        <div className="form-group">
+          <label>Kills</label>
+          <input
+            type="number"
+            value={formData.kills}
+            onChange={(e) => setFormData({ ...formData, kills: e.target.value })}
+          />
+        </div>
+        <div className="form-group">
+          <label>Games</label>
+          <input
+            type="number"
+            value={formData.games}
+            onChange={(e) => setFormData({ ...formData, games: e.target.value })}
+          />
+        </div>
+      </div>
+
+      <div className="form-row">
+        <div className="form-group">
+          <label>Game</label>
+          <select value={formData.game} onChange={(e) => setFormData({ ...formData, game: e.target.value })}>
+            <option value="valorant">Valorant</option>
+            <option value="cs2">CS2</option>
+            <option value="pubg">PUBG</option>
+          </select>
+        </div>
+        <div className="form-group">
+          <label>Region</label>
+          <select value={formData.region} onChange={(e) => setFormData({ ...formData, region: e.target.value })}>
+            <option value="india">India</option>
+            <option value="asia">Asia</option>
+            <option value="global">Global</option>
+          </select>
+        </div>
+      </div>
+
+      <div className="form-actions">
+        <button type="button" className="cancel-btn" onClick={onCancel}>Cancel</button>
+        <button type="submit" className="save-btn">Save</button>
+      </div>
+    </form>
+  );
+}
+
+function LeaderboardTeamForm({ row, onSave, onCancel }) {
+  const [formData, setFormData] = useState({
+    name: row?.name || "",
+    wins: row?.wins ?? 0,
+    losses: row?.losses ?? 0,
+    points: row?.points ?? 0,
+    kd: row?.kd ?? 1,
+    game: row?.game || "pubg",
+    region: row?.region || "global",
+  });
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    onSave(formData);
+  };
+
+  return (
+    <form onSubmit={handleSubmit} className="admin-form">
+      <h2>{row ? "Edit Team Row" : "Add Team Row"}</h2>
+
+      <div className="form-row">
+        <div className="form-group">
+          <label>Name *</label>
+          <input
+            type="text"
+            value={formData.name}
+            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+            required
+          />
+        </div>
+        <div className="form-group">
+          <label>Points</label>
+          <input
+            type="number"
+            value={formData.points}
+            onChange={(e) => setFormData({ ...formData, points: e.target.value })}
+          />
+        </div>
+      </div>
+
+      <div className="form-row">
+        <div className="form-group">
+          <label>Wins</label>
+          <input
+            type="number"
+            value={formData.wins}
+            onChange={(e) => setFormData({ ...formData, wins: e.target.value })}
+          />
+        </div>
+        <div className="form-group">
+          <label>Losses</label>
+          <input
+            type="number"
+            value={formData.losses}
+            onChange={(e) => setFormData({ ...formData, losses: e.target.value })}
+          />
+        </div>
+      </div>
+
+      <div className="form-row">
+        <div className="form-group">
+          <label>K/D</label>
+          <input
+            type="number"
+            step="0.01"
+            value={formData.kd}
+            onChange={(e) => setFormData({ ...formData, kd: e.target.value })}
+          />
+        </div>
+        <div className="form-group">
+          <label>Game</label>
+          <select value={formData.game} onChange={(e) => setFormData({ ...formData, game: e.target.value })}>
+            <option value="valorant">Valorant</option>
+            <option value="cs2">CS2</option>
+            <option value="pubg">PUBG</option>
+          </select>
+        </div>
+      </div>
+
+      <div className="form-group">
+        <label>Region</label>
+        <select value={formData.region} onChange={(e) => setFormData({ ...formData, region: e.target.value })}>
+          <option value="india">India</option>
+          <option value="asia">Asia</option>
+          <option value="global">Global</option>
+        </select>
       </div>
 
       <div className="form-actions">
