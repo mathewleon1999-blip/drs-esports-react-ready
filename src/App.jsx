@@ -28,6 +28,7 @@ const Tournaments = lazy(() => import("./pages/Tournaments"));
 const LiveStream = lazy(() => import("./pages/LiveStream"));
 const Leaderboard = lazy(() => import("./pages/Leaderboard"));
 const Teams = lazy(() => import("./pages/Teams"));
+const Members = lazy(() => import("./pages/Members"));
 const News = lazy(() => import("./pages/News"));
 const Schedule = lazy(() => import("./pages/Schedule"));
 const ShopEnhanced = lazy(() => import("./pages/ShopEnhanced"));
@@ -89,6 +90,7 @@ function App() {
                     <Route path="/live" element={<LiveStream />} />
                     <Route path="/leaderboard" element={<Leaderboard />} />
                     <Route path="/teams" element={<Teams />} />
+                    <Route path="/members" element={<Members />} />
                     <Route path="/news" element={<News />} />
                     <Route path="/schedule" element={<Schedule />} />
                     <Route path="/newsletter" element={<Newsletter />} />

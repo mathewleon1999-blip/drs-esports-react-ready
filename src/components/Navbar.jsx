@@ -98,6 +98,7 @@ const Navbar = memo(function Navbar() {
         </div>
         
         <Link to="/teams">Teams</Link>
+        <Link to="/members">Members</Link>
         <Link to="/news">News</Link>
         <Link to="/live">Live</Link>
         <Link to="/shop">Shop</Link>
@@ -173,6 +174,7 @@ const Navbar = memo(function Navbar() {
             <Link to="/schedule" onClick={() => setShowMobileMenu(false)}>Schedule</Link>
             <Link to="/leaderboard" onClick={() => setShowMobileMenu(false)}>Leaderboard</Link>
             <Link to="/teams" onClick={() => setShowMobileMenu(false)}>Teams</Link>
+            <Link to="/members" onClick={() => setShowMobileMenu(false)}>Members</Link>
             <Link to="/news" onClick={() => setShowMobileMenu(false)}>News</Link>
             <Link to="/live" onClick={() => setShowMobileMenu(false)}>Live</Link>
             <Link to="/shop" onClick={() => setShowMobileMenu(false)}>Shop</Link>
