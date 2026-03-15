@@ -212,9 +212,23 @@ function News() {
                 onClick={() => setSelectedArticle(article)}
               >
                 <div className="news-image">
-                  <div className="news-placeholder">
+                  {article.image ? (
+                    <img
+                      src={article.image}
+                      alt={article.title}
+                      loading="lazy"
+                      onError={(e) => {
+                        // hide broken external images
+                        e.currentTarget.style.display = "none";
+                      }}
+                      style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                    />
+                  ) : null}
+
+                  <div className="news-placeholder" style={{ position: "absolute", inset: 0 }}>
                     <span>📰</span>
                   </div>
+
                   <span className="category-badge">{article.category}</span>
                 </div>
                 <div className="news-info">
@@ -256,7 +270,19 @@ function News() {
             </div>
 
             <div className="article-image">
-              <div className="news-placeholder large">
+              {selectedArticle.image ? (
+                <img
+                  src={selectedArticle.image}
+                  alt={selectedArticle.title}
+                  loading="lazy"
+                  onError={(e) => {
+                    e.currentTarget.style.display = "none";
+                  }}
+                  style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                />
+              ) : null}
+
+              <div className="news-placeholder large" style={{ position: "absolute", inset: 0 }}>
                 <span>📰</span>
               </div>
             </div>
