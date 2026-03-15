@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { Link, useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
+import { upsertUser } from "../lib/usersRepo";
 
 function Login() {
   const [isLogin, setIsLogin] = useState(true);
@@ -23,7 +24,7 @@ function Login() {
     setSuccess("");
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     
     if (isLogin) {
@@ -58,13 +59,31 @@ function Login() {
         return;
       }
       
-      // Store player registration
+      // Store player registration locally
       localStorage.setItem("drs-player", JSON.stringify({
         username: formData.username,
         email: formData.email,
         phone: formData.phone,
         registered: true,
       }));
+
+      // Save/Update user in Supabase (sync across devices)
+      try {
+        const { error: supabaseError } = await upsertUser({
+          username: formData.username,
+          email: formData.email,
+          phone: formData.phone,
+          role: "player",
+        });
+
+        if (supabaseError) {
+          console.error("Supabase user upsert failed:", supabaseError);
+          // Don’t block registration if Supabase fails.
+        }
+      } catch (err) {
+        console.error("Supabase user upsert crashed:", err);
+      }
+
       setSuccess("Registration successful! Please login.");
       setIsLogin(true);
       setFormData({ ...formData, password: "", confirmPassword: "" });

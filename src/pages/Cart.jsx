@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import { createOrder } from "../lib/ordersRepo";
@@ -34,10 +34,14 @@ const saveCart = (cart) => {
 };
 
 function Cart() {
+  const navigate = useNavigate();
   const [cart, setCart] = useState(() => getCart());
   const [showCheckout, setShowCheckout] = useState(false);
   const [orderPlaced, setOrderPlaced] = useState(false);
   const [syncError, setSyncError] = useState("");
+  const player = getLocalStorage("drs-player", {});
+  const isLoggedIn = Boolean(player?.loggedIn);
+
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -77,6 +81,12 @@ function Cart() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (!isLoggedIn) {
+      // Safety check: prevent order placement if user session is missing
+      navigate("/login", { state: { from: "/cart" } });
+      return;
+    }
 
     // Create order object (still saved locally for the user)
     const newOrder = {
@@ -291,7 +301,13 @@ function Cart() {
                     </div>
                     <button 
                       className="checkout-btn"
-                      onClick={() => setShowCheckout(true)}
+                      onClick={() => {
+                        if (!isLoggedIn) {
+                          navigate("/login", { state: { from: "/cart" } });
+                          return;
+                        }
+                        setShowCheckout(true);
+                      }}
                     >
                       Proceed to Checkout
                     </button>

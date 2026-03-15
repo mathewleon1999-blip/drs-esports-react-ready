@@ -5,6 +5,11 @@ import * as XLSX from "xlsx";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import { supabase } from "../lib/supabaseClient";
+import {
+  fetchUsers as fetchUsersFromSupabase,
+  updateUser as updateUserInSupabase,
+  deleteUser as deleteUserInSupabase,
+} from "../lib/usersRepo";
 
 // Transaction categories
 const TRANSACTION_CATEGORIES = [
@@ -113,7 +118,21 @@ function AdminDashboard() {
     // Load all other data (still local for now)
     setOrders(getStoredData("drs-orders", []));
     setProducts(getStoredData("drs-products", defaultProducts));
-    setUsers(getStoredData("drs-users", defaultUsers));
+    // Users: Supabase (sync across devices)
+    (async () => {
+      try {
+        const { data, error } = await fetchUsersFromSupabase();
+        if (error) {
+          console.error("Supabase users fetch failed:", error);
+          setUsers(getStoredData("drs-users", defaultUsers));
+          return;
+        }
+        setUsers(data || []);
+      } catch (err) {
+        console.error("Supabase users fetch crashed:", err);
+        setUsers(getStoredData("drs-users", defaultUsers));
+      }
+    })();
     setTournaments(getStoredData("drs-tournaments-admin", defaultTournaments));
     setNews(getStoredData("drs-news-admin", defaultNews));
     setDiscounts(getStoredData("drs-discounts", defaultDiscounts));
@@ -179,20 +198,39 @@ function AdminDashboard() {
   };
 
   // User functions
-  const toggleUserStatus = (userId) => {
-    const updatedUsers = users.map(u => 
-      u.id === userId ? { ...u, status: u.status === "active" ? "suspended" : "active" } : u
-    );
-    setUsers(updatedUsers);
-    setStoredData("drs-users", updatedUsers);
-    showToast("User status updated!");
+  const toggleUserStatus = async (userId) => {
+    const current = users.find((u) => u.id === userId);
+    const nextStatus = current?.status === "active" ? "suspended" : "active";
+
+    try {
+      const { data, error } = await updateUserInSupabase(userId, { status: nextStatus });
+      if (error) {
+        console.error("Supabase user update failed:", error);
+        showToast(`Failed to update user: ${error.message}`, "error");
+        return;
+      }
+      setUsers((prev) => prev.map((u) => (u.id === userId ? data : u)));
+      showToast("User status updated!");
+    } catch (err) {
+      console.error("Supabase user update crashed:", err);
+      showToast("Failed to update user", "error");
+    }
   };
 
-  const deleteUser = (userId) => {
-    const updatedUsers = users.filter(u => u.id !== userId);
-    setUsers(updatedUsers);
-    setStoredData("drs-users", updatedUsers);
-    showToast("User deleted!");
+  const deleteUser = async (userId) => {
+    try {
+      const { error } = await deleteUserInSupabase(userId);
+      if (error) {
+        console.error("Supabase user delete failed:", error);
+        showToast(`Failed to delete user: ${error.message}`, "error");
+        return;
+      }
+      setUsers((prev) => prev.filter((u) => u.id !== userId));
+      showToast("User deleted!");
+    } catch (err) {
+      console.error("Supabase user delete crashed:", err);
+      showToast("Failed to delete user", "error");
+    }
   };
 
   // Tournament functions

@@ -4,6 +4,18 @@ import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import { useWishlist } from "../components/WishlistContext";
 
+// Admin edits products in localStorage key: drs-products
+const getAdminProducts = () => {
+  try {
+    const raw = localStorage.getItem("drs-products");
+    if (!raw) return null;
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) ? parsed : null;
+  } catch {
+    return null;
+  }
+};
+
 // Jersey and Hoodie product data with front and back images
 const jerseys = [
   // Jersey - 2 images (front and back)
@@ -50,6 +62,7 @@ const saveCart = (cart) => {
 
 function Shop() {
   const [cart, setCart] = useState(getCart());
+  const [products, setProducts] = useState(() => getAdminProducts() || jerseys);
   const { wishlist, toggleWishlist, isInWishlist } = useWishlist();
   const [selectedJersey, setSelectedJersey] = useState(null);
   const [selectedSize, setSelectedSize] = useState("M");
@@ -65,9 +78,20 @@ function Shop() {
   const [categoryFilter, setCategoryFilter] = useState("all");
   const [showFilters, setShowFilters] = useState(false);
 
+  // keep in sync if admin updates products in another tab
+  useEffect(() => {
+    const handleStorage = (e) => {
+      if (e.key === "drs-products") {
+        setProducts(getAdminProducts() || jerseys);
+      }
+    };
+    window.addEventListener("storage", handleStorage);
+    return () => window.removeEventListener("storage", handleStorage);
+  }, []);
+
   // Filter and sort products
   const filteredJerseys = useMemo(() => {
-    let result = [...jerseys];
+    let result = [...products];
     
     // Search filter
     if (searchQuery) {
@@ -123,7 +147,7 @@ function Shop() {
     };
   }, [selectedJersey]);
 
-  const categories = ["all", ...new Set(jerseys.map(j => j.category))];
+  const categories = ["all", ...new Set(products.map(j => j.category))];
 
   const addToCart = (jersey) => {
     const newItem = {
