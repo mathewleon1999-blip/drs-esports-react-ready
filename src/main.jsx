@@ -4,9 +4,11 @@ import { BrowserRouter } from "react-router-dom";
 import { HelmetProvider } from "react-helmet-async";
 import App from "./App";
 import "./index.css";
-import { registerServiceWorker } from "./registerServiceWorker";
+// Service worker disabled to prevent stale cached builds causing runtime issues on deploy.
+// (Can be re-enabled once caching strategy is finalized.)
+// import { registerServiceWorker } from "./registerServiceWorker";
 
-registerServiceWorker();
+// registerServiceWorker();
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
