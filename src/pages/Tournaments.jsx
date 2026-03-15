@@ -4,7 +4,7 @@ import { useSearchParams } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import Meta from "../components/Meta";
-import { tournaments } from "../data/tournaments";
+import { fetchTournaments, mapTournamentRow } from "../lib/tournamentsRepo";
 
 // Registration form component
 function RegistrationForm({ tournament, onClose, onSubmit }) {
@@ -185,6 +185,33 @@ function Tournaments() {
   const [showBracket, setShowBracket] = useState(null);
   const [registrations, setRegistrations] = useState([]);
 
+  const [tournaments, setTournaments] = useState([]);
+  const [loadingTournaments, setLoadingTournaments] = useState(false);
+
+  useEffect(() => {
+    let mounted = true;
+    (async () => {
+      try {
+        setLoadingTournaments(true);
+        const { data, error } = await fetchTournaments();
+        if (!mounted) return;
+        if (error) {
+          console.error("Supabase tournaments fetch failed:", error);
+          setTournaments([]);
+          return;
+        }
+        setTournaments((data || []).map(mapTournamentRow).filter(Boolean));
+      } finally {
+        if (!mounted) return;
+        setLoadingTournaments(false);
+      }
+    })();
+
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
   const pageSize = 6;
 
   // keep page in URL (?page=2) so pagination is shareable
@@ -303,7 +330,12 @@ function Tournaments() {
 
           {/* Tournament Cards */}
           <div className="tournaments-grid">
-            {pagedTournaments.length === 0 ? (
+            {loadingTournaments ? (
+              <div className="empty-state" style={{ gridColumn: "1 / -1", padding: "24px" }}>
+                <h3 style={{ marginBottom: 8 }}>Loading tournaments…</h3>
+                <p style={{ opacity: 0.8 }}>Please wait</p>
+              </div>
+            ) : pagedTournaments.length === 0 ? (
               <div className="empty-state" style={{ gridColumn: "1 / -1", padding: "24px" }}>
                 <h3 style={{ marginBottom: 8 }}>No tournaments found</h3>
                 <p style={{ opacity: 0.8 }}>Try switching tabs to view other events.</p>
