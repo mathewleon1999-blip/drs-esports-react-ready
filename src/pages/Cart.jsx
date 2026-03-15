@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
+import { createOrder } from "../lib/ordersRepo";
 
 // Safe localStorage helpers
 const getLocalStorage = (key, defaultValue) => {
@@ -73,24 +74,24 @@ function Cart() {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    
-    // Create order object
+
+    // Create order object (still saved locally for the user)
     const newOrder = {
       id: `ORD-${Date.now().toString(36).toUpperCase()}`,
-      items: cart.map(item => ({
+      items: cart.map((item) => ({
         id: item.id,
         name: item.name,
         price: item.price,
         size: item.size,
         color: item.color,
-        quantity: item.quantity || 1
+        quantity: item.quantity || 1,
       })),
       itemCount: cart.reduce((sum, item) => sum + (item.quantity || 1), 0),
-      subtotal: subtotal,
-      shipping: shipping,
-      total: total,
+      subtotal,
+      shipping,
+      total,
       status: "pending",
       date: new Date().toISOString(),
       customer: {
@@ -99,20 +100,29 @@ function Cart() {
         phone: formData.phone,
         address: formData.address,
         city: formData.city,
-        pincode: formData.pincode
+        pincode: formData.pincode,
       },
       paymentMethod: formData.paymentMethod,
-      createdAt: new Date().toLocaleString()
+      createdAt: new Date().toLocaleString(),
     };
-    
-    // Get existing orders and add new one
+
+    // Save locally (so user can track order on the same device)
     const existingOrders = getOrders();
     const updatedOrders = [newOrder, ...existingOrders];
     saveOrders(updatedOrders);
-    
-    // Simulate order placement
+
+    // Save to Supabase (for admin + cross-device visibility)
+    try {
+      const { error } = await createOrder(newOrder);
+      if (error) {
+        console.error("Supabase order insert failed:", error);
+        // keep local order even if sync fails
+      }
+    } catch (err) {
+      console.error("Supabase order insert crashed:", err);
+    }
+
     setOrderPlaced(true);
-    // Clear cart
     setCart([]);
     saveCart([]);
   };
