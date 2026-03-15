@@ -5,17 +5,55 @@ import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import Meta from "../components/Meta";
 import { fetchTournaments, mapTournamentRow } from "../lib/tournamentsRepo";
+import {
+  createIndividualRegistration,
+  fetchTeamMembersByTeamSlug,
+} from "../lib/tournamentRegistrationsRepo";
 
 // Registration form component
 function RegistrationForm({ tournament, onClose, onSubmit }) {
+  const [mode, setMode] = useState("team"); // team | individual
+  const [saving, setSaving] = useState(false);
+  const [toast, setToast] = useState(null);
+
+  const [clanMembers, setClanMembers] = useState([]);
+  const [loadingMembers, setLoadingMembers] = useState(false);
+
   const [formData, setFormData] = useState({
     teamName: "",
     captainName: "",
     email: "",
     phone: "",
     players: ["", "", "", "", ""],
-    substitute: ""
+    substitute: "",
+    // individual
+    memberId: "",
+    ign: "",
   });
+
+  useEffect(() => {
+    let mounted = true;
+    (async () => {
+      try {
+        setLoadingMembers(true);
+        const { data, error } = await fetchTeamMembersByTeamSlug("drs-esports");
+        if (!mounted) return;
+        if (error) {
+          console.error("Supabase team_members fetch failed:", error);
+          setClanMembers([]);
+          return;
+        }
+        setClanMembers(data || []);
+      } finally {
+        if (!mounted) return;
+        setLoadingMembers(false);
+      }
+    })();
+
+    return () => {
+      mounted = false;
+    };
+  }, []);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -27,9 +65,46 @@ function RegistrationForm({ tournament, onClose, onSubmit }) {
     setFormData({ ...formData, players: newPlayers });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    onSubmit(tournament, formData);
+
+    if (mode === "team") {
+      onSubmit(tournament, formData);
+      return;
+    }
+
+    try {
+      setSaving(true);
+      setToast(null);
+
+      const member = clanMembers.find((m) => String(m.id) === String(formData.memberId));
+      const payload = {
+        tournament_id: tournament.id,
+        tournament_name: tournament.name,
+        registration_type: "individual",
+        team_slug: "drs-esports",
+        member_id: member?.id ?? null,
+        member_name: member?.name ?? null,
+        ign: formData.ign || member?.ign || member?.name || null,
+        email: formData.email || null,
+        phone: formData.phone || null,
+      };
+
+      const { error } = await createIndividualRegistration(payload);
+      if (error) {
+        console.error("Supabase individual registration failed:", error);
+        setToast({ type: "error", message: error.message || "Failed to register" });
+        return;
+      }
+
+      setToast({ type: "success", message: "Registered successfully!" });
+      setTimeout(() => onClose(), 700);
+    } catch (err) {
+      console.error("Supabase individual registration crashed:", err);
+      setToast({ type: "error", message: "Failed to register" });
+    } finally {
+      setSaving(false);
+    }
   };
 
   return (
@@ -48,83 +123,144 @@ function RegistrationForm({ tournament, onClose, onSubmit }) {
         <button className="modal-close" onClick={onClose}>×</button>
         <h2>Register for {tournament.name}</h2>
         <p className="modal-subtitle">{tournament.game} • {tournament.prizePool}</p>
+
+        <div className="form-group">
+          <label>Registration Type</label>
+          <select value={mode} onChange={(e) => setMode(e.target.value)}>
+            <option value="team">Register a Team</option>
+            <option value="individual">Register Individual (Clan Member)</option>
+          </select>
+        </div>
+
+        {toast ? (
+          <div
+            className={toast.type === "error" ? "error-message" : "success-message"}
+            style={{ marginBottom: 16 }}
+          >
+            {toast.message}
+          </div>
+        ) : null}
         
         <form onSubmit={handleSubmit} className="registration-form">
-          <div className="form-group">
-            <label>Team Name *</label>
-            <input
-              type="text"
-              name="teamName"
-              value={formData.teamName}
-              onChange={handleChange}
-              placeholder="Enter your team name"
-              required
-            />
-          </div>
+          {mode === "team" ? (
+            <div className="form-group">
+              <label>Team Name *</label>
+              <input
+                type="text"
+                name="teamName"
+                value={formData.teamName}
+                onChange={handleChange}
+                placeholder="Enter your team name"
+                required
+              />
+            </div>
+          ) : (
+            <div className="form-group">
+              <label>Select Clan Member *</label>
+              <select
+                value={formData.memberId}
+                onChange={(e) => {
+                  const memberId = e.target.value;
+                  const member = clanMembers.find((m) => String(m.id) === String(memberId));
+                  setFormData((p) => ({
+                    ...p,
+                    memberId,
+                    ign: p.ign || member?.ign || member?.name || "",
+                  }));
+                }}
+                required
+                disabled={loadingMembers}
+              >
+                <option value="">{loadingMembers ? "Loading…" : "Select a member"}</option>
+                {clanMembers.map((m) => (
+                  <option key={m.id} value={m.id}>
+                    {m.name}{m.ign ? ` (${m.ign})` : ""}
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
+          
+          {mode === "team" ? (
+            <div className="form-group">
+              <label>Captain Name *</label>
+              <input
+                type="text"
+                name="captainName"
+                value={formData.captainName}
+                onChange={handleChange}
+                placeholder="Team captain name"
+                required
+              />
+            </div>
+          ) : null}
           
           <div className="form-group">
-            <label>Captain Name *</label>
-            <input
-              type="text"
-              name="captainName"
-              value={formData.captainName}
-              onChange={handleChange}
-              placeholder="Team captain name"
-              required
-            />
-          </div>
-          
-          <div className="form-group">
-            <label>Email *</label>
+            <label>Email {mode === "team" ? "*" : "(optional)"}</label>
             <input
               type="email"
               name="email"
               value={formData.email}
               onChange={handleChange}
-              placeholder="captain@email.com"
-              required
+              placeholder="you@email.com"
+              required={mode === "team"}
             />
           </div>
           
           <div className="form-group">
-            <label>Phone *</label>
+            <label>Phone {mode === "team" ? "*" : "(optional)"}</label>
             <input
               type="tel"
               name="phone"
               value={formData.phone}
               onChange={handleChange}
               placeholder="+91 98765 43210"
-              required
+              required={mode === "team"}
             />
           </div>
           
-          <div className="form-group">
-            <label>Team Players (5 required)</label>
-            {formData.players.map((player, index) => (
+          {mode === "team" ? (
+            <div className="form-group">
+              <label>Team Players (5 required)</label>
+              {formData.players.map((player, index) => (
+                <input
+                  key={index}
+                  type="text"
+                  value={player}
+                  onChange={(e) => handlePlayerChange(index, e.target.value)}
+                  placeholder={`Player ${index + 1} name`}
+                  required={index < 5}
+                />
+              ))}
+            </div>
+          ) : (
+            <div className="form-group">
+              <label>In-Game Name (optional)</label>
               <input
-                key={index}
                 type="text"
-                value={player}
-                onChange={(e) => handlePlayerChange(index, e.target.value)}
-                placeholder={`Player ${index + 1} name`}
-                required={index < 5}
+                name="ign"
+                value={formData.ign}
+                onChange={handleChange}
+                placeholder="Your IGN"
               />
-            ))}
-          </div>
+            </div>
+          )}
           
-          <div className="form-group">
-            <label>Substitute Player (optional)</label>
-            <input
-              type="text"
-              name="substitute"
-              value={formData.substitute}
-              onChange={handleChange}
-              placeholder="Substitute player name"
-            />
-          </div>
+          {mode === "team" ? (
+            <div className="form-group">
+              <label>Substitute Player (optional)</label>
+              <input
+                type="text"
+                name="substitute"
+                value={formData.substitute}
+                onChange={handleChange}
+                placeholder="Substitute player name"
+              />
+            </div>
+          ) : null}
           
-          <button type="submit" className="submit-btn">
-            Submit Registration
+          <button type="submit" className="submit-btn" disabled={saving}>
+            {saving ? "Submitting…" : "Submit Registration"}
           </button>
         </form>
       </motion.div>
