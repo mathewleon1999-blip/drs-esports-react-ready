@@ -10,9 +10,9 @@ export async function createIndividualRegistration(payload) {
   return { data, error };
 }
 
-export async function fetchTeamMembersByTeamSlug(teamSlug) {
+export async function fetchClanMembersByTeamSlug(teamSlug) {
   const { data, error } = await supabase
-    .from("team_members")
+    .from("clan_members")
     .select("id, team_slug, name, ign, role, image_url")
     .eq("team_slug", teamSlug)
     .order("created_at", { ascending: true });

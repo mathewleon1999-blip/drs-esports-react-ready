@@ -7,7 +7,7 @@ import Meta from "../components/Meta";
 import { fetchTournaments, mapTournamentRow } from "../lib/tournamentsRepo";
 import {
   createIndividualRegistration,
-  fetchTeamMembersByTeamSlug,
+  fetchClanMembersByTeamSlug,
 } from "../lib/tournamentRegistrationsRepo";
 
 // Registration form component
@@ -36,10 +36,10 @@ function RegistrationForm({ tournament, onClose, onSubmit }) {
     (async () => {
       try {
         setLoadingMembers(true);
-        const { data, error } = await fetchTeamMembersByTeamSlug("drs-esports");
+        const { data, error } = await fetchClanMembersByTeamSlug("drs-esports");
         if (!mounted) return;
         if (error) {
-          console.error("Supabase team_members fetch failed:", error);
+          console.error("Supabase clan_members fetch failed:", error);
           setClanMembers([]);
           return;
         }

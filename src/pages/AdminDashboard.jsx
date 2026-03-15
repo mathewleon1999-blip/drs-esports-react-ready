@@ -70,6 +70,8 @@ function AdminDashboard() {
   const [users, setUsers] = useState([]);
   const [tournaments, setTournaments] = useState([]);
   const [loadingTournaments, setLoadingTournaments] = useState(false);
+  const [clanMembers, setClanMembers] = useState([]);
+  const [loadingClanMembers, setLoadingClanMembers] = useState(false);
   const [news, setNews] = useState([]);
   const [discounts, setDiscounts] = useState([]);
   const [transactions, setTransactions] = useState([]);
@@ -152,6 +154,32 @@ function AdminDashboard() {
     }
   }
 
+  async function fetchClanMembersFromSupabase() {
+    try {
+      setLoadingClanMembers(true);
+      const { data, error } = await supabase
+        .from("clan_members")
+        .select("*")
+        .eq("team_slug", "drs-esports")
+        .order("created_at", { ascending: false });
+
+      if (error) {
+        console.error("Supabase clan_members fetch failed:", error);
+        setClanMembers([]);
+        showToast("Clan members sync failed (Supabase)", "error");
+        return;
+      }
+
+      setClanMembers(data || []);
+    } catch (err) {
+      console.error("Supabase clan_members fetch crashed:", err);
+      setClanMembers([]);
+      showToast("Clan members sync error (Supabase)", "error");
+    } finally {
+      setLoadingClanMembers(false);
+    }
+  }
+
   // Initialize data
   useEffect(() => {
     // Auth is enforced by route guard (RequireAdmin). We only read session for display.
@@ -180,6 +208,9 @@ function AdminDashboard() {
 
     // Tournaments: Supabase
     fetchTournamentsFromSupabase();
+
+    // Clan members: Supabase
+    fetchClanMembersFromSupabase();
 
     // News/Discounts still local
     setNews(getStoredData("drs-news-admin", defaultNews));
@@ -293,6 +324,111 @@ function AdminDashboard() {
     } catch (err) {
       console.error("Supabase user delete crashed:", err);
       showToast("Failed to delete user", "error");
+    }
+  };
+
+  // Clan Members functions (Supabase-backed)
+  const addClanMember = async (member) => {
+    try {
+      const payload = {
+        team_slug: "drs-esports",
+        name: String(member?.name || "").trim(),
+        ign: member?.ign ? String(member.ign).trim() : null,
+        role: member?.role ? String(member.role).trim() : null,
+        image_url: member?.image_url ? String(member.image_url).trim() : null,
+        instagram_url: member?.instagram_url ? String(member.instagram_url).trim() : null,
+        discord: member?.discord ? String(member.discord).trim() : null,
+        country: member?.country ? String(member.country).trim() : null,
+        join_date: member?.join_date || null,
+      };
+
+      if (!payload.name) {
+        showToast("Member name is required", "error");
+        return;
+      }
+
+      const { data, error } = await supabase.from("clan_members").insert(payload).select().single();
+      if (error) {
+        console.error("Supabase clan_members insert failed:", error);
+        showToast(`Failed to add member: ${error.message}`, "error");
+        return;
+      }
+
+      setClanMembers((prev) => [data, ...prev]);
+      showToast("Clan member added!");
+      setShowModal(false);
+    } catch (err) {
+      console.error("Supabase clan_members insert crashed:", err);
+      showToast("Failed to add member", "error");
+    }
+  };
+
+  const updateClanMember = async (memberId, updates) => {
+    try {
+      const payload = {
+        ...(Object.prototype.hasOwnProperty.call(updates || {}, "name")
+          ? { name: String(updates.name || "").trim() }
+          : {}),
+        ...(Object.prototype.hasOwnProperty.call(updates || {}, "ign")
+          ? { ign: updates.ign ? String(updates.ign).trim() : null }
+          : {}),
+        ...(Object.prototype.hasOwnProperty.call(updates || {}, "role")
+          ? { role: updates.role ? String(updates.role).trim() : null }
+          : {}),
+        ...(Object.prototype.hasOwnProperty.call(updates || {}, "image_url")
+          ? { image_url: updates.image_url ? String(updates.image_url).trim() : null }
+          : {}),
+        ...(Object.prototype.hasOwnProperty.call(updates || {}, "instagram_url")
+          ? { instagram_url: updates.instagram_url ? String(updates.instagram_url).trim() : null }
+          : {}),
+        ...(Object.prototype.hasOwnProperty.call(updates || {}, "discord")
+          ? { discord: updates.discord ? String(updates.discord).trim() : null }
+          : {}),
+        ...(Object.prototype.hasOwnProperty.call(updates || {}, "country")
+          ? { country: updates.country ? String(updates.country).trim() : null }
+          : {}),
+        ...(Object.prototype.hasOwnProperty.call(updates || {}, "join_date")
+          ? { join_date: updates.join_date || null }
+          : {}),
+      };
+
+      const { data, error } = await supabase
+        .from("clan_members")
+        .update(payload)
+        .eq("id", memberId)
+        .select()
+        .single();
+
+      if (error) {
+        console.error("Supabase clan_members update failed:", error);
+        showToast(`Failed to update member: ${error.message}`, "error");
+        return;
+      }
+
+      setClanMembers((prev) => prev.map((m) => (m.id === memberId ? data : m)));
+      showToast("Clan member updated!");
+      setShowModal(false);
+      setEditingItem(null);
+    } catch (err) {
+      console.error("Supabase clan_members update crashed:", err);
+      showToast("Failed to update member", "error");
+    }
+  };
+
+  const deleteClanMember = async (memberId) => {
+    try {
+      const { error } = await supabase.from("clan_members").delete().eq("id", memberId);
+      if (error) {
+        console.error("Supabase clan_members delete failed:", error);
+        showToast(`Failed to delete member: ${error.message}`, "error");
+        return;
+      }
+
+      setClanMembers((prev) => prev.filter((m) => m.id !== memberId));
+      showToast("Clan member deleted!");
+    } catch (err) {
+      console.error("Supabase clan_members delete crashed:", err);
+      showToast("Failed to delete member", "error");
     }
   };
 
@@ -709,6 +845,9 @@ const deleteDiscount = (discountId) => {
             <button className={activeTab === "tournaments" ? "active" : ""} onClick={() => setActiveTab("tournaments")}>
               🏆 Tournaments
             </button>
+            <button className={activeTab === "clan-members" ? "active" : ""} onClick={() => setActiveTab("clan-members")}>
+              👥 Clan Members
+            </button>
             <button className={activeTab === "news" ? "active" : ""} onClick={() => setActiveTab("news")}>
               📰 News
             </button>
@@ -1007,6 +1146,60 @@ const deleteDiscount = (discountId) => {
                   </tbody>
                 </table>
               </div>
+            </motion.div>
+          )}
+
+          {/* Clan Members Tab */}
+          {activeTab === "clan-members" && (
+            <motion.div
+              className="tab-panel"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+            >
+              <div className="panel-header">
+                <h1>Clan Members</h1>
+                <button className="add-btn" onClick={() => openModal("addClanMember")}>
+                  + Add Member
+                </button>
+              </div>
+
+              {loadingClanMembers ? (
+                <div className="empty-state">
+                  <p>Loading clan members…</p>
+                </div>
+              ) : clanMembers.length === 0 ? (
+                <div className="empty-state">
+                  <p>No clan members yet</p>
+                </div>
+              ) : (
+                <div className="table-container">
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>Name</th>
+                        <th>IGN</th>
+                        <th>Role</th>
+                        <th>Country</th>
+                        <th>Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {clanMembers.map((m) => (
+                        <tr key={m.id}>
+                          <td>{m.name}</td>
+                          <td>{m.ign || "-"}</td>
+                          <td>{m.role || "-"}</td>
+                          <td>{m.country || "-"}</td>
+                          <td>
+                            <button className="edit-btn" onClick={() => openModal("editClanMember", m)}>✏️</button>
+                            <button className="delete-btn" onClick={() => deleteClanMember(m.id)}>🗑️</button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
             </motion.div>
           )}
 
@@ -1460,6 +1653,17 @@ const deleteDiscount = (discountId) => {
                 />
               )}
 
+              {/* Add/Edit Clan Member Modal */}
+              {(modalType === "addClanMember" || modalType === "editClanMember") && (
+                <ClanMemberForm
+                  member={editingItem}
+                  onSave={(data) =>
+                    editingItem ? updateClanMember(editingItem.id, data) : addClanMember(data)
+                  }
+                  onCancel={closeModal}
+                />
+              )}
+
               {/* Add/Edit News Modal */}
               {(modalType === "addNews" || modalType === "editNews") && (
                 <NewsForm 
@@ -1637,6 +1841,116 @@ function UserForm({ user, onSave, onCancel }) {
 }
 
 // Tournament Form Component
+function ClanMemberForm({ member, onSave, onCancel }) {
+  const [formData, setFormData] = useState({
+    name: member?.name || "",
+    ign: member?.ign || "",
+    role: member?.role || "",
+    country: member?.country || "",
+    image_url: member?.image_url || "",
+    instagram_url: member?.instagram_url || "",
+    discord: member?.discord || "",
+    join_date: member?.join_date || "",
+  });
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    onSave(formData);
+  };
+
+  return (
+    <form onSubmit={handleSubmit} className="admin-form">
+      <h2>{member ? "Edit Clan Member" : "Add Clan Member"}</h2>
+
+      <div className="form-group">
+        <label>Name *</label>
+        <input
+          type="text"
+          value={formData.name}
+          onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+          required
+        />
+      </div>
+
+      <div className="form-row">
+        <div className="form-group">
+          <label>IGN</label>
+          <input
+            type="text"
+            value={formData.ign}
+            onChange={(e) => setFormData({ ...formData, ign: e.target.value })}
+            placeholder="In-game name"
+          />
+        </div>
+        <div className="form-group">
+          <label>Role</label>
+          <input
+            type="text"
+            value={formData.role}
+            onChange={(e) => setFormData({ ...formData, role: e.target.value })}
+            placeholder="Member / Player / Coach"
+          />
+        </div>
+      </div>
+
+      <div className="form-row">
+        <div className="form-group">
+          <label>Country</label>
+          <input
+            type="text"
+            value={formData.country}
+            onChange={(e) => setFormData({ ...formData, country: e.target.value })}
+          />
+        </div>
+        <div className="form-group">
+          <label>Join Date</label>
+          <input
+            type="date"
+            value={formData.join_date}
+            onChange={(e) => setFormData({ ...formData, join_date: e.target.value })}
+          />
+        </div>
+      </div>
+
+      <div className="form-group">
+        <label>Image URL</label>
+        <input
+          type="text"
+          value={formData.image_url}
+          onChange={(e) => setFormData({ ...formData, image_url: e.target.value })}
+          placeholder="/DRS ESPORTS/member.jpg"
+        />
+      </div>
+
+      <div className="form-row">
+        <div className="form-group">
+          <label>Instagram URL</label>
+          <input
+            type="text"
+            value={formData.instagram_url}
+            onChange={(e) => setFormData({ ...formData, instagram_url: e.target.value })}
+            placeholder="https://instagram.com/..."
+          />
+        </div>
+        <div className="form-group">
+          <label>Discord</label>
+          <input
+            type="text"
+            value={formData.discord}
+            onChange={(e) => setFormData({ ...formData, discord: e.target.value })}
+            placeholder="username#0000"
+          />
+        </div>
+      </div>
+
+      <div className="form-actions">
+        <button type="button" className="cancel-btn" onClick={onCancel}>Cancel</button>
+        <button type="submit" className="save-btn">Save</button>
+      </div>
+    </form>
+  );
+}
+
 function TournamentForm({ tournament, onSave, onCancel }) {
   const [formData, setFormData] = useState({
     name: tournament?.name || "",
