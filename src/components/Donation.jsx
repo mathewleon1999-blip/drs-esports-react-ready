@@ -1,5 +1,5 @@
-import { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { useState } from "react";
+import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import Navbar from "./Navbar";
 import Footer from "./Footer";
@@ -45,6 +45,27 @@ function Donation() {
   const [donationSuccess, setDonationSuccess] = useState(false);
   const [recentDonors, setRecentDonors] = useState(simulatedRecentDonors);
 
+  const UPI_VPA = "drsesports@upi";
+  const UPI_PAYEE_NAME = "DRS Esports";
+  const UPI_NOTE_PREFIX = "Donation";
+
+  const buildUpiUri = ({ amount, name, email, phone }) => {
+    const txnRef = `DON-${Date.now()}`;
+    const noteParts = [UPI_NOTE_PREFIX, name || "Supporter", email || "", phone || ""].filter(Boolean);
+    const note = noteParts.join(" | ").slice(0, 80);
+
+    const params = new URLSearchParams({
+      pa: UPI_VPA,
+      pn: UPI_PAYEE_NAME,
+      am: String(Number(amount || 0)),
+      cu: "INR",
+      tn: note,
+      tr: txnRef,
+    });
+
+    return { uri: `upi://pay?${params.toString()}`, txnRef };
+  };
+
   const presetAmounts = [50, 100, 200, 500, 1000];
 
   const donationAmount = useCustomAmount ? (parseInt(customAmount) || 0) : selectedAmount;
@@ -71,19 +92,46 @@ function Donation() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (donationAmount < 10) {
       alert("Minimum donation amount is ₹10");
       return;
     }
 
+    // If UPI: redirect to UPI app with deeplink (real UPI intent flow)
+    if (paymentMethod === "upi") {
+      const donorName = formData.anonymous ? "Anonymous" : (formData.name || "Supporter");
+      const { uri, txnRef } = buildUpiUri({
+        amount: donationAmount,
+        name: donorName,
+        email: formData.email,
+        phone: formData.phone,
+      });
+
+      const donation = {
+        amount: donationAmount,
+        paymentMethod,
+        donorName,
+        donorEmail: formData.email,
+        message: formData.message,
+        anonymous: formData.anonymous,
+        status: "initiated",
+        txnRef,
+        upiUri: uri,
+      };
+
+      saveDonation(donation);
+      window.location.href = uri;
+      return;
+    }
+
     setIsProcessing(true);
 
-    // Simulate payment processing
+    // Non-UPI methods are still demo/simulated
     await new Promise((resolve) => setTimeout(resolve, 2000));
 
     const donorName = formData.anonymous ? "Anonymous" : (formData.name || "Supporter");
-    
+
     const donation = {
       amount: donationAmount,
       paymentMethod,
@@ -91,12 +139,12 @@ function Donation() {
       donorEmail: formData.email,
       message: formData.message,
       anonymous: formData.anonymous,
+      status: "success",
+      txnRef: `DON-${Date.now()}`,
     };
 
-    // Save donation
     saveDonation(donation);
 
-    // Update recent donors display
     const newDonor = { name: donorName, amount: donationAmount, message: formData.message };
     setRecentDonors([newDonor, ...recentDonors.slice(0, 4)]);
 
@@ -343,14 +391,28 @@ function Donation() {
                           <span className="spinner"></span>
                           Processing...
                         </span>
+                      ) : paymentMethod === "upi" ? (
+                        <>Pay via UPI ₹{donationAmount}</>
                       ) : (
                         <>Donate ₹{donationAmount}</>
                       )}
                     </button>
 
-                    <p className="secure-notice">
-                      🔒 Secure payment powered by encrypted connection
-                    </p>
+                    {paymentMethod === "upi" ? (
+                      <p className="secure-notice" style={{ marginTop: 10 }}>
+                        You will be redirected to your UPI app to complete payment.
+                      </p>
+                    ) : (
+                      <p className="secure-notice" style={{ marginTop: 10 }}>
+                        🔒 Secure payment powered by encrypted connection
+                      </p>
+                    )}
+
+                    {paymentMethod === "upi" ? (
+                      <p className="secure-notice" style={{ marginTop: 6, opacity: 0.9 }}>
+                        UPI ID: <strong>{UPI_VPA}</strong>
+                      </p>
+                    ) : null}
                   </form>
                 </div>
               </motion.div>

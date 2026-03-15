@@ -52,6 +52,26 @@ function Cart() {
     paymentMethod: "cod",
   });
 
+  const UPI_VPA = "drsesports@upi";
+  const UPI_PAYEE_NAME = "DRS Esports";
+
+  const buildOrderUpiUri = ({ amount, orderId, customerName, phone }) => {
+    const params = new URLSearchParams({
+      pa: UPI_VPA,
+      pn: UPI_PAYEE_NAME,
+      am: String(Number(amount || 0)),
+      cu: "INR",
+      tn: `Order ${orderId} | ${customerName || "Customer"}`.slice(0, 80),
+      tr: orderId,
+    });
+
+    // Some UPI apps accept optional phone via "mc"/"mam" etc. We avoid non-standard params.
+    // Phone is already stored in the order for verification.
+    void phone;
+
+    return `upi://pay?${params.toString()}`;
+  };
+
   const subtotal = cart.reduce((sum, item) => sum + item.price * (item.quantity || 1), 0);
   const shipping = subtotal > 1000 ? 0 : 99;
   const total = subtotal + shipping;
@@ -83,12 +103,10 @@ function Cart() {
     e.preventDefault();
 
     if (!isLoggedIn) {
-      // Safety check: prevent order placement if user session is missing
       navigate("/login", { state: { from: "/cart" } });
       return;
     }
 
-    // Create order object (still saved locally for the user)
     const newOrder = {
       id: `ORD-${Date.now().toString(36).toUpperCase()}`,
       items: cart.map((item) => ({
@@ -103,7 +121,7 @@ function Cart() {
       subtotal,
       shipping,
       total,
-      status: "pending",
+      status: formData.paymentMethod === "upi" ? "awaiting_payment" : "pending",
       date: new Date().toISOString(),
       customer: {
         name: formData.name,
@@ -115,14 +133,32 @@ function Cart() {
       },
       paymentMethod: formData.paymentMethod,
       createdAt: new Date().toLocaleString(),
+      payment: formData.paymentMethod === "upi" ? {
+        upi_vpa: UPI_VPA,
+        upi_uri: buildOrderUpiUri({
+          amount: total,
+          orderId: `ORD-${Date.now().toString(36).toUpperCase()}`,
+          customerName: formData.name,
+          phone: formData.phone,
+        }),
+        status: "initiated",
+      } : null,
     };
 
-    // Save locally (so user can track order on the same device)
+    // Fix: ensure the same orderId is used in the UPI uri
+    if (newOrder.payment?.upi_uri) {
+      newOrder.payment.upi_uri = buildOrderUpiUri({
+        amount: total,
+        orderId: newOrder.id,
+        customerName: newOrder.customer.name,
+        phone: newOrder.customer.phone,
+      });
+    }
+
     const existingOrders = getOrders();
     const updatedOrders = [newOrder, ...existingOrders];
     saveOrders(updatedOrders);
 
-    // Save to Supabase (for admin + cross-device visibility)
     try {
       const { error } = await createOrder(newOrder);
       if (error) {
@@ -132,6 +168,11 @@ function Cart() {
     } catch (err) {
       console.error("Supabase order insert crashed:", err);
       setSyncError("Supabase order sync crashed");
+    }
+
+    // If UPI: redirect to UPI app to pay
+    if (formData.paymentMethod === "upi" && newOrder.payment?.upi_uri) {
+      window.location.href = newOrder.payment.upi_uri;
     }
 
     setOrderPlaced(true);
@@ -429,7 +470,7 @@ function Cart() {
                         checked={formData.paymentMethod === "upi"}
                         onChange={handleInputChange}
                       />
-                      <span>UPI</span>
+                      <span>UPI (redirect to app)</span>
                     </label>
                     <label className="payment-option">
                       <input
