@@ -281,15 +281,28 @@ const deleteDiscount = (discountId) => {
   const addTransaction = async (transaction) => {
     try {
       const payload = {
-        ...transaction,
+        // enforce required fields and types
+        date: transaction?.date || new Date().toISOString().slice(0, 10),
+        category: String(transaction?.category || "").trim(),
+        player_name: transaction?.player_name ? String(transaction.player_name).trim() : null,
+        paid_by: String(transaction?.paid_by || "").trim(),
+        amount: Number(transaction?.amount),
+        currency: transaction?.currency ? String(transaction.currency).trim() : "AED",
+        payment_method: transaction?.payment_method ? String(transaction.payment_method).trim() : null,
+        description: transaction?.description ? String(transaction.description).trim() : null,
         created_by: admin?.username || "admin",
       };
+
+      if (!payload.category || !payload.paid_by || !Number.isFinite(payload.amount)) {
+        showToast("Please fill Category, Paid By and Amount", "error");
+        return;
+      }
 
       const { data, error } = await supabase.from("transactions").insert(payload).select().single();
 
       if (error) {
         console.error("Supabase insert failed:", error);
-        showToast("Failed to add transaction (Supabase)", "error");
+        showToast(`Failed to add transaction (Supabase): ${error.message}`, "error");
         return;
       }
 
@@ -304,16 +317,25 @@ const deleteDiscount = (discountId) => {
 
   const updateTransaction = async (transactionId, updates) => {
     try {
+      const normalizedUpdates = {
+        ...updates,
+        // normalize amount if present
+        ...(Object.prototype.hasOwnProperty.call(updates || {}, "amount")
+          ? { amount: Number(updates.amount) }
+          : {}),
+        updated_at: new Date().toISOString(),
+      };
+
       const { data, error } = await supabase
         .from("transactions")
-        .update({ ...updates, updated_at: new Date().toISOString() })
+        .update(normalizedUpdates)
         .eq("id", transactionId)
         .select()
         .single();
 
       if (error) {
         console.error("Supabase update failed:", error);
-        showToast("Failed to update transaction (Supabase)", "error");
+        showToast(`Failed to update transaction (Supabase): ${error.message}`, "error");
         return;
       }
 
@@ -333,7 +355,7 @@ const deleteDiscount = (discountId) => {
 
       if (error) {
         console.error("Supabase delete failed:", error);
-        showToast("Failed to delete transaction (Supabase)", "error");
+        showToast(`Failed to delete transaction (Supabase): ${error.message}`, "error");
         return;
       }
 
