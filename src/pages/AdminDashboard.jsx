@@ -69,6 +69,7 @@ function AdminDashboard() {
   const [products, setProducts] = useState([]);
   const [users, setUsers] = useState([]);
   const [tournaments, setTournaments] = useState([]);
+  const [loadingTournaments, setLoadingTournaments] = useState(false);
   const [news, setNews] = useState([]);
   const [discounts, setDiscounts] = useState([]);
   const [transactions, setTransactions] = useState([]);
@@ -113,15 +114,54 @@ function AdminDashboard() {
     }
   }
 
+  async function fetchTournamentsFromSupabase() {
+    try {
+      setLoadingTournaments(true);
+      const { data, error } = await supabase
+        .from("tournaments")
+        .select("*")
+        .order("created_at", { ascending: false });
+
+      if (error) {
+        console.error("Supabase tournaments fetch failed:", error);
+        // fallback to local
+        setTournaments(getStoredData("drs-tournaments-admin", defaultTournaments));
+        showToast("Tournaments sync failed (Supabase)", "error");
+        return;
+      }
+
+      const normalized = (data || []).map((t) => ({
+        id: t.id,
+        name: t.name,
+        date: t.date || "",
+        game: t.game || "",
+        description: t.description || "",
+        prizePool: t.prize_pool || "",
+        status: t.status || "upcoming",
+        teams: Number(t.teams ?? 0),
+        registered: Number(t.registered ?? 0),
+      }));
+
+      setTournaments(normalized);
+    } catch (err) {
+      console.error("Supabase tournaments fetch crashed:", err);
+      setTournaments(getStoredData("drs-tournaments-admin", defaultTournaments));
+      showToast("Tournaments sync error (Supabase)", "error");
+    } finally {
+      setLoadingTournaments(false);
+    }
+  }
+
   // Initialize data
   useEffect(() => {
     // Auth is enforced by route guard (RequireAdmin). We only read session for display.
     const session = JSON.parse(localStorage.getItem("drs-admin-session") || "{}");
     setAdmin(session?.loggedIn ? session : { username: "Admin" });
 
-    // Load all other data (still local for now)
+    // Load all other data
     setOrders(getStoredData("drs-orders", []));
     setProducts(getStoredData("drs-products", defaultProducts));
+
     // Users: Supabase (sync across devices)
     (async () => {
       try {
@@ -137,7 +177,11 @@ function AdminDashboard() {
         setUsers(getStoredData("drs-users", defaultUsers));
       }
     })();
-    setTournaments(getStoredData("drs-tournaments-admin", defaultTournaments));
+
+    // Tournaments: Supabase
+    fetchTournamentsFromSupabase();
+
+    // News/Discounts still local
     setNews(getStoredData("drs-news-admin", defaultNews));
     setDiscounts(getStoredData("drs-discounts", defaultDiscounts));
 
@@ -252,32 +296,130 @@ function AdminDashboard() {
     }
   };
 
-  // Tournament functions
-  const addTournament = (tournament) => {
-    const newTournament = { ...tournament, id: Date.now(), registrations: 0 };
-    const updatedTournaments = [...tournaments, newTournament];
-    setTournaments(updatedTournaments);
-    setStoredData("drs-tournaments-admin", updatedTournaments);
-    showToast("Tournament added!");
-    setShowModal(false);
+  // Tournament functions (Supabase-backed)
+  const addTournament = async (tournament) => {
+    try {
+      const payload = {
+        name: String(tournament?.name || "").trim(),
+        date: tournament?.date || null,
+        game: String(tournament?.game || "PUBG Mobile").trim(),
+        description: String(tournament?.description || "").trim() || null,
+        prize_pool: tournament?.prizePool != null ? String(tournament.prizePool) : null,
+        status: String(tournament?.status || "upcoming").trim(),
+        teams: Number(tournament?.teams ?? 0),
+        registered: Number(tournament?.registered ?? 0),
+      };
+
+      if (!payload.name) {
+        showToast("Tournament name is required", "error");
+        return;
+      }
+
+      const { data, error } = await supabase.from("tournaments").insert(payload).select().single();
+      if (error) {
+        console.error("Supabase tournament insert failed:", error);
+        showToast(`Failed to add tournament: ${error.message}`, "error");
+        return;
+      }
+
+      setTournaments((prev) => [
+        {
+          id: data.id,
+          name: data.name,
+          date: data.date || "",
+          game: data.game || "",
+          description: data.description || "",
+          prizePool: data.prize_pool || "",
+          status: data.status || "upcoming",
+          teams: Number(data.teams ?? 0),
+          registered: Number(data.registered ?? 0),
+        },
+        ...prev,
+      ]);
+
+      showToast("Tournament added!");
+      setShowModal(false);
+    } catch (err) {
+      console.error("Supabase tournament insert crashed:", err);
+      showToast("Failed to add tournament", "error");
+    }
   };
 
-  const updateTournament = (tournamentId, updates) => {
-    const updatedTournaments = tournaments.map(t => 
-      t.id === tournamentId ? { ...t, ...updates } : t
-    );
-    setTournaments(updatedTournaments);
-    setStoredData("drs-tournaments-admin", updatedTournaments);
-    showToast("Tournament updated!");
-    setShowModal(false);
-    setEditingItem(null);
+  const updateTournament = async (tournamentId, updates) => {
+    try {
+      const payload = {
+        ...(Object.prototype.hasOwnProperty.call(updates || {}, "name")
+          ? { name: String(updates.name || "").trim() }
+          : {}),
+        ...(Object.prototype.hasOwnProperty.call(updates || {}, "date") ? { date: updates.date || null } : {}),
+        ...(Object.prototype.hasOwnProperty.call(updates || {}, "game")
+          ? { game: String(updates.game || "").trim() }
+          : {}),
+        ...(Object.prototype.hasOwnProperty.call(updates || {}, "description")
+          ? { description: String(updates.description || "").trim() || null }
+          : {}),
+        ...(Object.prototype.hasOwnProperty.call(updates || {}, "prizePool")
+          ? { prize_pool: updates.prizePool != null ? String(updates.prizePool) : null }
+          : {}),
+        ...(Object.prototype.hasOwnProperty.call(updates || {}, "status")
+          ? { status: String(updates.status || "upcoming").trim() }
+          : {}),
+        ...(Object.prototype.hasOwnProperty.call(updates || {}, "teams") ? { teams: Number(updates.teams ?? 0) } : {}),
+        ...(Object.prototype.hasOwnProperty.call(updates || {}, "registered")
+          ? { registered: Number(updates.registered ?? 0) }
+          : {}),
+      };
+
+      const { data, error } = await supabase
+        .from("tournaments")
+        .update(payload)
+        .eq("id", tournamentId)
+        .select()
+        .single();
+
+      if (error) {
+        console.error("Supabase tournament update failed:", error);
+        showToast(`Failed to update tournament: ${error.message}`, "error");
+        return;
+      }
+
+      const normalized = {
+        id: data.id,
+        name: data.name,
+        date: data.date || "",
+        game: data.game || "",
+        description: data.description || "",
+        prizePool: data.prize_pool || "",
+        status: data.status || "upcoming",
+        teams: Number(data.teams ?? 0),
+        registered: Number(data.registered ?? 0),
+      };
+
+      setTournaments((prev) => prev.map((t) => (t.id === tournamentId ? normalized : t)));
+      showToast("Tournament updated!");
+      setShowModal(false);
+      setEditingItem(null);
+    } catch (err) {
+      console.error("Supabase tournament update crashed:", err);
+      showToast("Failed to update tournament", "error");
+    }
   };
 
-  const deleteTournament = (tournamentId) => {
-    const updatedTournaments = tournaments.filter(t => t.id !== tournamentId);
-    setTournaments(updatedTournaments);
-    setStoredData("drs-tournaments-admin", updatedTournaments);
-    showToast("Tournament deleted!");
+  const deleteTournament = async (tournamentId) => {
+    try {
+      const { error } = await supabase.from("tournaments").delete().eq("id", tournamentId);
+      if (error) {
+        console.error("Supabase tournament delete failed:", error);
+        showToast(`Failed to delete tournament: ${error.message}`, "error");
+        return;
+      }
+
+      setTournaments((prev) => prev.filter((t) => t.id !== tournamentId));
+      showToast("Tournament deleted!");
+    } catch (err) {
+      console.error("Supabase tournament delete crashed:", err);
+      showToast("Failed to delete tournament", "error");
+    }
   };
 
   // News functions
@@ -882,13 +1024,21 @@ const deleteDiscount = (discountId) => {
                 </button>
               </div>
               <div className="tournaments-list">
-                {tournaments.map(tournament => (
+                {loadingTournaments ? (
+                  <div className="empty-state">
+                    <p>Loading tournaments…</p>
+                  </div>
+                ) : tournaments.length === 0 ? (
+                  <div className="empty-state">
+                    <p>No tournaments yet</p>
+                  </div>
+                ) : tournaments.map(tournament => (
                   <div key={tournament.id} className="tournament-card-admin">
                     <div className="tournament-info">
                       <h3>{tournament.name}</h3>
                       <p><strong>Date:</strong> {tournament.date}</p>
-                      <p><strong>Prize Pool:</strong> ₹{tournament.prizePool?.toLocaleString()}</p>
-                      <p><strong>Registrations:</strong> {tournament.registrations}</p>
+                      <p><strong>Prize Pool:</strong> {tournament.prizePool}</p>
+                      <p><strong>Teams:</strong> {tournament.registered}/{tournament.teams}</p>
                       <span className={`status-badge ${tournament.status}`}>{tournament.status}</span>
                     </div>
                     <div className="tournament-actions">
