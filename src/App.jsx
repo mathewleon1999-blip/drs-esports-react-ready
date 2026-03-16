@@ -44,6 +44,7 @@ const LoyaltyDashboard = lazy(() => import("./pages/LoyaltyDashboard"));
 const Predictions = lazy(() => import("./pages/Predictions"));
 const PrizePool = lazy(() => import("./pages/PrizePool"));
 const PUBGTracker = lazy(() => import("./pages/PUBGTracker"));
+const PayUPI = lazy(() => import("./pages/PayUPI"));
 
 function App() {
   return (
@@ -101,6 +102,7 @@ function App() {
                     <Route path="/player/:playerId" element={<PlayerProfile />} />
                     <Route path="/password-reset" element={<PasswordReset />} />
                     <Route path="/donate" element={<Donation />} />
+                    <Route path="/pay" element={<PayUPI />} />
 
                     {/* New Feature Routes */}
                     <Route path="/loyalty" element={<LoyaltyDashboard />} />

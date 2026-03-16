@@ -39,6 +39,7 @@ function Cart() {
   const [showCheckout, setShowCheckout] = useState(false);
   const [orderPlaced, setOrderPlaced] = useState(false);
   const [syncError, setSyncError] = useState("");
+  const [pendingUpiDraftId, setPendingUpiDraftId] = useState("");
   const player = getLocalStorage("drs-player", {});
   const isLoggedIn = Boolean(player?.loggedIn);
 
@@ -107,8 +108,55 @@ function Cart() {
       return;
     }
 
+    const orderId = `ORD-${Date.now().toString(36).toUpperCase()}`;
+
+    // If UPI: do NOT create order yet. Create a local draft and redirect to /pay.
+    if (formData.paymentMethod === "upi") {
+      const draftId = `draft_${Date.now().toString(36)}`;
+
+      const draft = {
+        draftId,
+        id: orderId,
+        items: cart.map((item) => ({
+          id: item.id,
+          name: item.name,
+          price: item.price,
+          size: item.size,
+          color: item.color,
+          quantity: item.quantity || 1,
+        })),
+        itemCount: cart.reduce((sum, item) => sum + (item.quantity || 1), 0),
+        subtotal,
+        shipping,
+        total,
+        status: "pending",
+        customer: {
+          name: formData.name,
+          email: formData.email,
+          phone: formData.phone,
+          address: formData.address,
+          city: formData.city,
+          pincode: formData.pincode,
+        },
+        paymentMethod: "upi",
+      };
+
+      const drafts = getLocalStorage("drs-order-drafts", []);
+      setLocalStorage("drs-order-drafts", [draft, ...drafts].slice(0, 10));
+      setPendingUpiDraftId(draftId);
+
+      // Clear cart locally now
+      setCart([]);
+      saveCart([]);
+
+      // Go to pay page
+      navigate(`/pay?order=${encodeURIComponent(draftId)}`);
+      return;
+    }
+
+    // Non-UPI flow: create order immediately
     const newOrder = {
-      id: `ORD-${Date.now().toString(36).toUpperCase()}`,
+      id: orderId,
       items: cart.map((item) => ({
         id: item.id,
         name: item.name,
@@ -121,7 +169,7 @@ function Cart() {
       subtotal,
       shipping,
       total,
-      status: formData.paymentMethod === "upi" ? "awaiting_payment" : "pending",
+      status: "pending",
       date: new Date().toISOString(),
       customer: {
         name: formData.name,
@@ -132,28 +180,9 @@ function Cart() {
         pincode: formData.pincode,
       },
       paymentMethod: formData.paymentMethod,
+      paymentStatus: formData.paymentMethod === "cod" ? "unpaid" : "unknown",
       createdAt: new Date().toLocaleString(),
-      payment: formData.paymentMethod === "upi" ? {
-        upi_vpa: UPI_VPA,
-        upi_uri: buildOrderUpiUri({
-          amount: total,
-          orderId: `ORD-${Date.now().toString(36).toUpperCase()}`,
-          customerName: formData.name,
-          phone: formData.phone,
-        }),
-        status: "initiated",
-      } : null,
     };
-
-    // Fix: ensure the same orderId is used in the UPI uri
-    if (newOrder.payment?.upi_uri) {
-      newOrder.payment.upi_uri = buildOrderUpiUri({
-        amount: total,
-        orderId: newOrder.id,
-        customerName: newOrder.customer.name,
-        phone: newOrder.customer.phone,
-      });
-    }
 
     const existingOrders = getOrders();
     const updatedOrders = [newOrder, ...existingOrders];
@@ -168,11 +197,6 @@ function Cart() {
     } catch (err) {
       console.error("Supabase order insert crashed:", err);
       setSyncError("Supabase order sync crashed");
-    }
-
-    // If UPI: redirect to UPI app to pay
-    if (formData.paymentMethod === "upi" && newOrder.payment?.upi_uri) {
-      window.location.href = newOrder.payment.upi_uri;
     }
 
     setOrderPlaced(true);
