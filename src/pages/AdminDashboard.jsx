@@ -460,7 +460,48 @@ function AdminDashboard() {
 
     // Load all other data
     setOrders(getStoredData("drs-orders", []));
-    setProducts(getStoredData("drs-products", defaultProducts));
+
+    // Products: Supabase is source-of-truth.
+    // Important: avoid falling back to localStorage when Supabase returns data,
+    // because stale localStorage can cause price mismatch vs Supabase.
+    (async () => {
+      try {
+        const { data, error } = await supabase
+          .from("products")
+          .select("*")
+          .order("created_at", { ascending: false });
+
+        if (error) {
+          console.error("Supabase products fetch failed:", error);
+          setProducts(getStoredData("drs-products", defaultProducts));
+          return;
+        }
+
+        // normalize product shape to match existing UI
+        const normalized = (data || []).map((p) => ({
+          id: p.id,
+          name: p.name,
+          // Supabase numeric can arrive as string; keep exact numeric value
+          price: p.price == null || p.price === "" ? 0 : Number(p.price),
+          stock: p.stock == null || p.stock === "" ? 0 : Number(p.stock),
+          category: p.category || "Jersey",
+          featured: Boolean(p.featured),
+          images: p.images || [],
+          colors: p.colors || [],
+          sizes: p.sizes || [],
+          created_at: p.created_at || null,
+          updated_at: p.updated_at || null,
+        }));
+
+        setProducts(normalized);
+
+        // Keep a local cache, but only after a successful Supabase read.
+        setStoredData("drs-products", normalized);
+      } catch (err) {
+        console.error("Supabase products fetch crashed:", err);
+        setProducts(getStoredData("drs-products", defaultProducts));
+      }
+    })();
 
     // Users: Supabase (sync across devices)
     (async () => {
@@ -543,31 +584,133 @@ function AdminDashboard() {
   };
 
   // Product functions
-  const addProduct = (product) => {
-    const newProduct = { ...product, id: Date.now() };
-    const updatedProducts = [...products, newProduct];
-    setProducts(updatedProducts);
-    setStoredData("drs-products", updatedProducts);
-    showToast("Product added successfully!");
-    setShowModal(false);
+  const addProduct = async (product) => {
+    try {
+      const payload = {
+        name: String(product.name || "").trim(),
+        price: Number(product.price || 0),
+        stock: Number(product.stock || 0),
+        category: product.category || "Jersey",
+        featured: !!product.featured,
+        images: product.images || [],
+        colors: product.colors || [],
+        sizes: product.sizes || [],
+        created_at: new Date().toISOString(),
+      };
+
+      if (!payload.name) {
+        showToast("Product name is required", "error");
+        return;
+      }
+
+      const { data, error } = await supabase.from("products").insert(payload).select().single();
+      if (error) {
+        console.error("Supabase product insert failed:", error);
+        // fallback to local
+        const newProduct = { ...payload, id: Date.now() };
+        const updatedProducts = [...products, newProduct];
+        setProducts(updatedProducts);
+        setStoredData("drs-products", updatedProducts);
+        showToast("Product added locally (Supabase failed)");
+        setShowModal(false);
+        return;
+      }
+
+      const normalized = {
+        id: data.id,
+        name: data.name,
+        price: Number(data.price || 0),
+        stock: Number(data.stock || 0),
+        category: data.category || "Jersey",
+        featured: Boolean(data.featured),
+        images: data.images || [],
+        colors: data.colors || [],
+        sizes: data.sizes || [],
+        created_at: data.created_at || null,
+        updated_at: data.updated_at || null,
+      };
+
+      setProducts((prev) => [normalized, ...prev]);
+      setStoredData("drs-products", [normalized, ...products]);
+      showToast("Product added successfully!");
+      setShowModal(false);
+    } catch (err) {
+      console.error("Add product crashed:", err);
+      showToast("Failed to add product", "error");
+    }
   };
 
-  const updateProduct = (productId, updates) => {
-    const updatedProducts = products.map(p => 
-      p.id === productId ? { ...p, ...updates } : p
-    );
-    setProducts(updatedProducts);
-    setStoredData("drs-products", updatedProducts);
-    showToast("Product updated successfully!");
-    setShowModal(false);
-    setEditingItem(null);
+  const updateProduct = async (productId, updates) => {
+    try {
+      const payload = {
+        ...(Object.prototype.hasOwnProperty.call(updates || {}, "name") ? { name: String(updates.name || "").trim() } : {}),
+        ...(Object.prototype.hasOwnProperty.call(updates || {}, "price") ? { price: Number(updates.price) } : {}),
+        ...(Object.prototype.hasOwnProperty.call(updates || {}, "stock") ? { stock: Number(updates.stock) } : {}),
+        ...(Object.prototype.hasOwnProperty.call(updates || {}, "category") ? { category: updates.category } : {}),
+        ...(Object.prototype.hasOwnProperty.call(updates || {}, "featured") ? { featured: !!updates.featured } : {}),
+        ...(Object.prototype.hasOwnProperty.call(updates || {}, "images") ? { images: updates.images } : {}),
+        ...(Object.prototype.hasOwnProperty.call(updates || {}, "colors") ? { colors: updates.colors } : {}),
+        ...(Object.prototype.hasOwnProperty.call(updates || {}, "sizes") ? { sizes: updates.sizes } : {}),
+        updated_at: new Date().toISOString(),
+      };
+
+      // Try Supabase update if productId looks like a numeric DB id
+      if (productId) {
+        const { data, error } = await supabase.from("products").update(payload).eq("id", productId).select().single();
+        if (error) {
+          console.error("Supabase product update failed:", error);
+          // fallback local update
+          const updatedProducts = products.map(p => p.id === productId ? { ...p, ...updates } : p);
+          setProducts(updatedProducts);
+          setStoredData("drs-products", updatedProducts);
+          showToast("Product updated locally (Supabase failed)");
+        } else {
+          const normalized = {
+            id: data.id,
+            name: data.name,
+            price: Number(data.price || 0),
+            stock: Number(data.stock || 0),
+            category: data.category || "Jersey",
+            featured: Boolean(data.featured),
+            images: data.images || [],
+            colors: data.colors || [],
+            sizes: data.sizes || [],
+            created_at: data.created_at || null,
+            updated_at: data.updated_at || null,
+          };
+          setProducts((prev) => prev.map((p) => (p.id === productId ? normalized : p)));
+          setStoredData("drs-products", products.map((p) => (p.id === productId ? normalized : p)));
+          showToast("Product updated successfully!");
+        }
+      }
+
+      setShowModal(false);
+      setEditingItem(null);
+    } catch (err) {
+      console.error("Update product crashed:", err);
+      showToast("Failed to update product", "error");
+    }
   };
 
-  const deleteProduct = (productId) => {
-    const updatedProducts = products.filter(p => p.id !== productId);
-    setProducts(updatedProducts);
-    setStoredData("drs-products", updatedProducts);
-    showToast("Product deleted!");
+  const deleteProduct = async (productId) => {
+    try {
+      const { error } = await supabase.from("products").delete().eq("id", productId);
+      if (error) {
+        console.error("Supabase product delete failed:", error);
+        const updatedProducts = products.filter(p => p.id !== productId);
+        setProducts(updatedProducts);
+        setStoredData("drs-products", updatedProducts);
+        showToast("Product deleted locally (Supabase failed)");
+        return;
+      }
+
+      setProducts((prev) => prev.filter(p => p.id !== productId));
+      setStoredData("drs-products", products.filter(p => p.id !== productId));
+      showToast("Product deleted!");
+    } catch (err) {
+      console.error("Delete product crashed:", err);
+      showToast("Failed to delete product", "error");
+    }
   };
 
   // User functions
@@ -1396,7 +1539,7 @@ const deleteDiscount = (discountId) => {
                     </div>
                     <div className="product-details">
                       <h3>{product.name}</h3>
-                      <p className="product-price">₹{product.price}</p>
+                      <p className="product-price">₹{Number(product.price ?? 0).toLocaleString()}</p>
                       <p className="product-stock">Stock: {product.stock}</p>
                       <p className="product-category">{product.category}</p>
                     </div>
