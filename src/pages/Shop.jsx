@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import { useWishlist } from "../components/WishlistContext";
+import { supabase } from "../lib/supabaseClient";
 
 // Admin edits products in localStorage key: drs-products
 const getAdminProducts = () => {
@@ -15,6 +16,19 @@ const getAdminProducts = () => {
     return null;
   }
 };
+
+const normalizeProduct = (p) => ({
+  id: p.id,
+  name: p.name,
+  description: p.description || "",
+  price: p.price == null || p.price === "" ? 0 : Number(p.price),
+  stock: p.stock == null || p.stock === "" ? 0 : Number(p.stock),
+  category: p.category || "Jersey",
+  featured: Boolean(p.featured),
+  images: Array.isArray(p.images) && p.images.length ? p.images : [],
+  colors: Array.isArray(p.colors) && p.colors.length ? p.colors : [],
+  sizes: Array.isArray(p.sizes) && p.sizes.length ? p.sizes : [],
+});
 
 // Jersey and Hoodie product data with front and back images
 const jerseys = [
@@ -77,6 +91,45 @@ function Shop() {
   const [sortBy, setSortBy] = useState("default");
   const [categoryFilter, setCategoryFilter] = useState("all");
   const [showFilters, setShowFilters] = useState(false);
+
+  // Load products from Supabase (source-of-truth). Fallback to localStorage, then hardcoded defaults.
+  useEffect(() => {
+    let cancelled = false;
+
+    const load = async () => {
+      try {
+        const { data, error } = await supabase
+          .from("products")
+          .select("*")
+          .order("created_at", { ascending: false });
+
+        if (!cancelled && !error && Array.isArray(data) && data.length > 0) {
+          const normalized = data.map(normalizeProduct).map((p) => ({
+            ...p,
+            // If DB row doesn't include arrays (images/colors/sizes), keep safe defaults
+            images: p.images.length ? p.images : jerseys.find((j) => j.name === p.name)?.images || [],
+            colors: p.colors.length ? p.colors : jerseys.find((j) => j.name === p.name)?.colors || ["Black"],
+            sizes: p.sizes.length ? p.sizes : jerseys.find((j) => j.name === p.name)?.sizes || ["M"],
+          }));
+
+          setProducts(normalized);
+          localStorage.setItem("drs-products", JSON.stringify(normalized));
+          return;
+        }
+      } catch {
+        // ignore and fall back
+      }
+
+      if (!cancelled) {
+        setProducts(getAdminProducts() || jerseys);
+      }
+    };
+
+    load();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   // keep in sync if admin updates products in another tab
   useEffect(() => {
@@ -393,7 +446,7 @@ function Shop() {
                       <span className="color-count">{jersey.colors.length} colors</span>
                     </div>
                     <div className="product-price">
-                      <span className="price">₹{jersey.price}</span>
+                      <span className="price">₹{Number(jersey.price ?? 0).toLocaleString()}</span>
                       <span className="sizes">Sizes: {jersey.sizes.join(", ")}</span>
                     </div>
                     <button 
@@ -480,7 +533,7 @@ function Shop() {
               <div className="modal-details">
                 <h2>{selectedJersey.name}</h2>
                 <p className="modal-description">{selectedJersey.description}</p>
-                <div className="product-price large">₹{selectedJersey.price}</div>
+                <div className="product-price large">₹{Number(selectedJersey.price ?? 0).toLocaleString()}</div>
                 
                 <div className="option-group">
                   <label>Color:</label>
@@ -513,7 +566,7 @@ function Shop() {
                 </div>
 
                 <button className="confirm-add-btn" onClick={handleConfirmAdd}>
-                  Add to Cart - ₹{selectedJersey.price}
+                  Add to Cart - ₹{Number(selectedJersey.price ?? 0).toLocaleString()}
                 </button>
               </div>
             </div>
