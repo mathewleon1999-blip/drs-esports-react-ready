@@ -69,6 +69,9 @@ function AdminDashboard() {
   const [activeTab, setActiveTab] = useState("overview");
   const [orders, setOrders] = useState([]);
   const [products, setProducts] = useState([]);
+  const [productsLoadedFromSupabase, setProductsLoadedFromSupabase] = useState(false);
+  const [productsLoading, setProductsLoading] = useState(false);
+  const [productsError, setProductsError] = useState("");
   const [users, setUsers] = useState([]);
   const [tournaments, setTournaments] = useState([]);
   const [loadingTournaments, setLoadingTournaments] = useState(false);
@@ -461,11 +464,15 @@ function AdminDashboard() {
     // Load all other data
     setOrders(getStoredData("drs-orders", []));
 
-    // Products: Supabase is source-of-truth.
-    // Important: avoid falling back to localStorage when Supabase returns data,
-    // because stale localStorage can cause price mismatch vs Supabase.
+    // Products: Admin dashboard must use Supabase-only.
+    // Falling back to local/default products can create fake ids (1/2) that don't exist in Supabase,
+    // causing updates to affect 0 rows.
     (async () => {
       try {
+        setProductsLoading(true);
+        setProductsError("");
+        setProductsLoadedFromSupabase(false);
+
         const { data, error } = await supabase
           .from("products")
           .select("*")
@@ -473,7 +480,8 @@ function AdminDashboard() {
 
         if (error) {
           console.error("Supabase products fetch failed:", error);
-          setProducts(getStoredData("drs-products", defaultProducts));
+          setProducts([]);
+          setProductsError(`Products sync failed (Supabase): ${error.message}`);
           return;
         }
 
@@ -481,7 +489,6 @@ function AdminDashboard() {
         const normalized = (data || []).map((p) => ({
           id: p.id,
           name: p.name,
-          // Supabase numeric can arrive as string; keep exact numeric value
           price: p.price == null || p.price === "" ? 0 : Number(p.price),
           stock: p.stock == null || p.stock === "" ? 0 : Number(p.stock),
           category: p.category || "Jersey",
@@ -494,12 +501,16 @@ function AdminDashboard() {
         }));
 
         setProducts(normalized);
+        setProductsLoadedFromSupabase(true);
 
-        // Keep a local cache, but only after a successful Supabase read.
+        // Keep a local cache for Shop.
         setStoredData("drs-products", normalized);
       } catch (err) {
         console.error("Supabase products fetch crashed:", err);
-        setProducts(getStoredData("drs-products", defaultProducts));
+        setProducts([]);
+        setProductsError("Products sync error (Supabase)");
+      } finally {
+        setProductsLoading(false);
       }
     })();
 
@@ -642,6 +653,11 @@ function AdminDashboard() {
 
   const updateProduct = async (productId, updates) => {
     try {
+      if (!productsLoadedFromSupabase) {
+        showToast("Products are not synced from Supabase. Refresh and try again.", "error");
+        return;
+      }
+
       const payload = {
         ...(Object.prototype.hasOwnProperty.call(updates || {}, "name") ? { name: String(updates.name || "").trim() } : {}),
         ...(Object.prototype.hasOwnProperty.call(updates || {}, "price") ? { price: Number(updates.price) } : {}),
@@ -1554,25 +1570,38 @@ const deleteDiscount = (discountId) => {
                   onChange={(e) => setSearchTerm(e.target.value)}
                 />
               </div>
-              <div className="products-grid-admin">
-                {filteredProducts.map(product => (
-                  <div key={product.id} className="product-card-admin">
-                    <div className="product-image">
-                      <img src={product.images?.[0] || "/JERSEY/WhatsApp Image 2026-03-03 at 5.36.51 PM.jpeg"} alt={product.name} />
+              {productsLoading ? (
+                <div className="empty-state"><p>Loading products…</p></div>
+              ) : productsError ? (
+                <div className="empty-state">
+                  <p>{productsError}</p>
+                  <button className="add-btn" onClick={() => window.location.reload()}>
+                    ↻ Reload
+                  </button>
+                </div>
+              ) : filteredProducts.length === 0 ? (
+                <div className="empty-state"><p>No products yet</p></div>
+              ) : (
+                <div className="products-grid-admin">
+                  {filteredProducts.map(product => (
+                    <div key={product.id} className="product-card-admin">
+                      <div className="product-image">
+                        <img src={product.images?.[0] || "/JERSEY/WhatsApp Image 2026-03-03 at 5.36.51 PM.jpeg"} alt={product.name} />
+                      </div>
+                      <div className="product-details">
+                        <h3>{product.name}</h3>
+                        <p className="product-price">₹{Number(product.price ?? 0).toLocaleString()}</p>
+                        <p className="product-stock">Stock: {product.stock}</p>
+                        <p className="product-category">{product.category}</p>
+                      </div>
+                      <div className="product-actions">
+                        <button className="edit-btn" onClick={() => openModal("editProduct", product)}>✏️ Edit</button>
+                        <button className="delete-btn" onClick={() => deleteProduct(product.id)}>🗑️</button>
+                      </div>
                     </div>
-                    <div className="product-details">
-                      <h3>{product.name}</h3>
-                      <p className="product-price">₹{Number(product.price ?? 0).toLocaleString()}</p>
-                      <p className="product-stock">Stock: {product.stock}</p>
-                      <p className="product-category">{product.category}</p>
-                    </div>
-                    <div className="product-actions">
-                      <button className="edit-btn" onClick={() => openModal("editProduct", product)}>✏️ Edit</button>
-                      <button className="delete-btn" onClick={() => deleteProduct(product.id)}>🗑️</button>
-                    </div>
-                  </div>
-                ))}
-              </div>
+                  ))}
+                </div>
+              )}
             </motion.div>
           )}
 
