@@ -654,36 +654,52 @@ function AdminDashboard() {
         updated_at: new Date().toISOString(),
       };
 
-      // Try Supabase update if productId looks like a numeric DB id
-      if (productId) {
-        const { data, error } = await supabase.from("products").update(payload).eq("id", productId).select().single();
-        if (error) {
-          console.error("Supabase product update failed:", error);
-          // fallback local update
-          const updatedProducts = products.map(p => p.id === productId ? { ...p, ...updates } : p);
-          setProducts(updatedProducts);
-          setStoredData("drs-products", updatedProducts);
-          showToast("Product updated locally (Supabase failed)");
-        } else {
-          const normalized = {
-            id: data.id,
-            name: data.name,
-            price: Number(data.price || 0),
-            stock: Number(data.stock || 0),
-            category: data.category || "Jersey",
-            featured: Boolean(data.featured),
-            images: data.images || [],
-            colors: data.colors || [],
-            sizes: data.sizes || [],
-            created_at: data.created_at || null,
-            updated_at: data.updated_at || null,
-          };
-          setProducts((prev) => prev.map((p) => (p.id === productId ? normalized : p)));
-          setStoredData("drs-products", products.map((p) => (p.id === productId ? normalized : p)));
-          showToast("Product updated successfully!");
-        }
+      if (!productId) {
+        showToast("Missing product id", "error");
+        return;
       }
 
+      // Supabase is the source-of-truth for products.
+      const { data, error } = await supabase
+        .from("products")
+        .update(payload)
+        .eq("id", productId)
+        .select()
+        .single();
+
+      if (error) {
+        console.error("Supabase product update failed:", error);
+        showToast(`Failed to update product (Supabase): ${error.message}`, "error");
+        return;
+      }
+
+      const normalized = {
+        id: data.id,
+        name: data.name,
+        price: data.price == null || data.price === "" ? 0 : Number(data.price),
+        stock: data.stock == null || data.stock === "" ? 0 : Number(data.stock),
+        category: data.category || "Jersey",
+        featured: Boolean(data.featured),
+        images: data.images || [],
+        colors: data.colors || [],
+        sizes: data.sizes || [],
+        created_at: data.created_at || null,
+        updated_at: data.updated_at || null,
+      };
+
+      const nextProducts = products.map((p) => (p.id === productId ? normalized : p));
+      setProducts(nextProducts);
+      setStoredData("drs-products", nextProducts);
+
+      // Notify other tabs (Shop) immediately.
+      // This forces the `storage` listener in Shop.jsx to reload products without a refresh.
+      try {
+        localStorage.setItem("drs-products:last-updated", String(Date.now()));
+      } catch {
+        // ignore
+      }
+
+      showToast("Product updated successfully!");
       setShowModal(false);
       setEditingItem(null);
     } catch (err) {
