@@ -13,7 +13,7 @@ const ADMIN_AUTH = {
   username: "admin",
   email: "drsesports@gmail.com",
   // Password is checked on the client only.
-  password: "admin",
+  password: "drsadmin1234",
 };
 
 function Admin() {
@@ -166,7 +166,7 @@ function Admin() {
                   <div className="demo-credentials">
                     <p><strong>Admin Credentials:</strong></p>
                     <p>Username: admin (or {ADMIN_AUTH.email})</p>
-                    <p>Password: admin</p>
+                    <p>Password: {ADMIN_AUTH.password}</p>
                     <p style={{ opacity: 0.8, marginTop: 6 }}>
                       Note: this is client-side auth. For real security, we will move this to Firebase/Supabase.
                     </p>
