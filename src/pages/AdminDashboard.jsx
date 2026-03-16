@@ -664,8 +664,15 @@ function AdminDashboard() {
         .from("products")
         .update(payload)
         .eq("id", productId)
-        .select()
-        .single();
+        // With PostgREST, UPDATE only returns rows if you explicitly select.
+        // If zero/multiple rows are returned, `.single()` will throw.
+        .select("*")
+        .maybeSingle();
+
+      if (!error && !data) {
+        showToast("No product row returned from Supabase. Check the product id.", "error");
+        return;
+      }
 
       if (error) {
         console.error("Supabase product update failed:", error);
