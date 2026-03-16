@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import * as XLSX from "xlsx";
@@ -94,6 +94,7 @@ function AdminDashboard() {
   const [modalType, setModalType] = useState("");
   const [editingItem, setEditingItem] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
+  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("");
   const [toast, setToast] = useState({ show: false, message: "", type: "success" });
   const [financeFilters, setFinanceFilters] = useState({
     dateFrom: "",
@@ -444,6 +445,12 @@ function AdminDashboard() {
       showToast("Failed to save team row", "error");
     }
   }
+
+  // Debounce search to avoid filtering on every keystroke
+  useEffect(() => {
+    const t = setTimeout(() => setDebouncedSearchTerm(searchTerm.trim()), 300);
+    return () => clearTimeout(t);
+  }, [searchTerm]);
 
   // Initialize data
   useEffect(() => {
@@ -1038,19 +1045,45 @@ const deleteDiscount = (discountId) => {
   const totalProducts = products.length;
 
   // Filtered data
-  const filteredOrders = orders.filter(order => 
-    order.id?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    order.customer?.name?.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const filteredOrders = useMemo(() => {
+    const q = debouncedSearchTerm.toLowerCase();
+    if (!q) return orders;
 
-  const filteredProducts = products.filter(product => 
-    product.name?.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+    return orders.filter((order) => {
+      const orderId = String(order.id || "").toLowerCase();
+      const name = String(order.customer?.name || "").toLowerCase();
+      const email = String(order.customer?.email || "").toLowerCase();
+      const phone = String(order.customer?.phone || "").toLowerCase();
+      const status = String(order.status || "").toLowerCase();
+      const payment = String(order.paymentMethod || "").toLowerCase();
+      return (
+        orderId.includes(q) ||
+        name.includes(q) ||
+        email.includes(q) ||
+        phone.includes(q) ||
+        status.includes(q) ||
+        payment.includes(q)
+      );
+    });
+  }, [orders, debouncedSearchTerm]);
 
-  const filteredUsers = users.filter(user => 
-    user.username?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    user.email?.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const filteredProducts = useMemo(() => {
+    const q = debouncedSearchTerm.toLowerCase();
+    if (!q) return products;
+    return products.filter((product) => String(product.name || "").toLowerCase().includes(q));
+  }, [products, debouncedSearchTerm]);
+
+  const filteredUsers = useMemo(() => {
+    const q = debouncedSearchTerm.toLowerCase();
+    if (!q) return users;
+    return users.filter((user) => {
+      const username = String(user.username || "").toLowerCase();
+      const email = String(user.email || "").toLowerCase();
+      const role = String(user.role || "").toLowerCase();
+      const status = String(user.status || "").toLowerCase();
+      return username.includes(q) || email.includes(q) || role.includes(q) || status.includes(q);
+    });
+  }, [users, debouncedSearchTerm]);
 
   if (!admin) return null;
 
