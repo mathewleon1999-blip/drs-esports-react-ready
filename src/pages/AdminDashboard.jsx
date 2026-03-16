@@ -13,6 +13,8 @@ import {
   deleteUser as deleteUserInSupabase,
 } from "../lib/usersRepo";
 import { fetchLiveSettings } from "../lib/liveSettingsRepo";
+import AdminAICommand from "../components/AdminAICommand";
+import NewsAIGenerator from "../components/NewsAIGenerator";
 
 // Transaction categories
 const TRANSACTION_CATEGORIES = [
@@ -1562,6 +1564,47 @@ const deleteDiscount = (discountId) => {
                   + Add Product
                 </button>
               </div>
+
+              <AdminAICommand
+                products={products}
+                onApply={(cmd) => {
+                  if (!cmd || cmd.intent === "unknown") {
+                    showToast("AI: I couldn't understand that command.", "error");
+                    return;
+                  }
+
+                  if (cmd.intent === "filter") {
+                    const q = String(cmd.entities?.query || "").trim();
+                    if (q) setSearchTerm(q);
+                    showToast("AI filter applied");
+                    return;
+                  }
+
+                  if (cmd.intent === "update_product") {
+                    const id = cmd.entities?.id;
+                    if (!id) {
+                      showToast("AI: Missing product id", "error");
+                      return;
+                    }
+                    const updates = {};
+                    if (cmd.entities?.price != null) updates.price = cmd.entities.price;
+                    if (cmd.entities?.stock != null) updates.stock = cmd.entities.stock;
+                    if (cmd.entities?.name) updates.name = cmd.entities.name;
+                    if (cmd.entities?.category) updates.category = cmd.entities.category;
+                    if (typeof cmd.entities?.featured === "boolean") updates.featured = cmd.entities.featured;
+
+                    if (Object.keys(updates).length === 0) {
+                      showToast("AI: No updates found", "error");
+                      return;
+                    }
+
+                    updateProduct(id, updates);
+                    return;
+                  }
+
+                  showToast("AI command received");
+                }}
+              />
               <div className="search-box">
                 <input 
                   type="text" 
@@ -2023,6 +2066,26 @@ const deleteDiscount = (discountId) => {
                   + Add News
                 </button>
               </div>
+
+              <NewsAIGenerator
+                onGenerated={(draft) => {
+                  if (!draft?.title || !draft?.body) return;
+                  const newItem = {
+                    id: Date.now(),
+                    title: String(draft.title),
+                    category: String(draft.category || "AI"),
+                    date: new Date().toISOString().split("T")[0],
+                    featured: false,
+                    content: String(draft.body),
+                  };
+                  // Keep existing behavior: local news list
+                  const updated = [newItem, ...news];
+                  setNews(updated);
+                  localStorage.setItem("drs-news-admin", JSON.stringify(updated));
+                  showToast("AI draft added to News list!");
+                }}
+              />
+
               <div className="news-list">
                 {news.map(item => (
                   <div key={item.id} className="news-card-admin">

@@ -4,6 +4,7 @@ import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import { useWishlist } from "../components/WishlistContext";
 import { supabase } from "../lib/supabaseClient";
+import ShopAIAssistant from "../components/ShopAIAssistant";
 
 // Admin edits products in localStorage key: drs-products
 const getAdminProducts = () => {
@@ -585,6 +586,13 @@ function Shop() {
           {toastMessage}
         </motion.div>
       )}
+
+      <ShopAIAssistant
+        products={products}
+        wishlist={wishlist}
+        cart={cart}
+        filters={{ searchQuery, priceRange, sortBy, categoryFilter }}
+      />
 
       <Footer />
     </>
