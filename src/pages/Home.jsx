@@ -14,12 +14,14 @@ function Home() {
       <Navbar />
       <Hero />
       <LiveMatchTicker />
-      <TeamFloaters3D />
       <Stats />
       <Team />
       <Tree />
       <Tournaments />
+      <TeamFloaters3D />
       <Footer />
+
+
     </>
   );
 }
