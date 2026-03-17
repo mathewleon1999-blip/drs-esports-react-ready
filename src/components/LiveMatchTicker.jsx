@@ -63,6 +63,10 @@ function LiveMatchTicker() {
 
   const match = matches[currentIndex] || matches[0];
 
+  // If we don't have real match data, don't render placeholders.
+  const hasTeams = Boolean(match?.team1 && match?.team2);
+  if (!hasTeams) return null;
+
   const getStatusClass = () => {
     switch (match?.type) {
       case 'live': return 'live';
@@ -72,9 +76,13 @@ function LiveMatchTicker() {
   };
 
   const formatTime = (time) => {
+    if (!time) return '';
     if (time === 'Live Now') return time;
-    const [hours, minutes] = time.split(':');
-    return `${hours}h ${minutes}m`;
+    if (typeof time === 'string' && time.includes(':')) {
+      const [hours, minutes] = time.split(':');
+      return `${hours}h ${minutes}m`;
+    }
+    return String(time);
   };
 
   return (
@@ -92,10 +100,10 @@ function LiveMatchTicker() {
             {match?.type === 'live' ? '🔴 LIVE' : '📅 Soon'}
           </span>
           <span className="match-teams">
-            {match?.team1 || 'DRS Esports'} vs {match?.team2 || 'Rivals'}
+            {match.team1} vs {match.team2}
           </span>
           <span className="match-details">
-            {match?.tournament || 'Major Tournament'} • {formatTime(match?.time || 'Soon')}
+            {match?.tournament ? `${match.tournament} • ` : ''}{formatTime(match?.time)}
           </span>
         </div>
         <Link to="/schedule" className="view-all-btn">
