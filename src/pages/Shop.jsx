@@ -5,6 +5,7 @@ import Footer from "../components/Footer";
 import { useWishlist } from "../components/WishlistContext";
 import { supabase } from "../lib/supabaseClient";
 import ShopAIAssistant from "../components/ShopAIAssistant";
+import QuickViewModal from "../components/QuickViewModal";
 
 // Admin edits products in localStorage key: drs-products
 const getAdminProducts = () => {
@@ -82,9 +83,10 @@ function Shop() {
   const [selectedJersey, setSelectedJersey] = useState(null);
   const [selectedSize, setSelectedSize] = useState("M");
   const [selectedColor, setSelectedColor] = useState("");
-  const [showToast, setShowToast] = useState(false);
+const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
+  const [quickViewProduct, setQuickViewProduct] = useState(null);
   
   // Enhanced shop features
   const [searchQuery, setSearchQuery] = useState("");
@@ -416,7 +418,9 @@ function Shop() {
                   initial={{ opacity: 0, y: 30 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.5, delay: index * 0.1 }}
-                  whileHover={{ y: -10 }}
+                  whileHover={{ y: -10, scale: 1.02 }}
+                  onHoverStart={() => setQuickViewProduct(jersey)}
+                  onHoverEnd={() => setQuickViewProduct(null)}
                 >
                   {jersey.featured && <div className="featured-badge">Featured</div>}
                   <button 
@@ -575,6 +579,34 @@ function Shop() {
         </div>
       )}
 
+      {/* Quick View Modal */}
+      <QuickViewModal
+        product={quickViewProduct}
+        isOpen={!!quickViewProduct}
+        onClose={() => setQuickViewProduct(null)}
+        onAddToCart={(product, options) => {
+          const newItem = {
+            ...product,
+            cartId: Date.now(),
+            size: options.size || 'M',
+            color: options.color || product.colors?.[0] || '',
+          };
+          const newCart = [...cart, newItem];
+          setCart(newCart);
+          saveCart(newCart);
+          
+          setToastMessage(`${product.name} added to cart!`);
+          setShowToast(true);
+          setTimeout(() => setShowToast(false), 3000);
+        }}
+        onFullDetails={(product) => {
+          setSelectedJersey(product);
+          setSelectedColor(product.colors?.[0] || '');
+          setSelectedSize("M");
+          setSelectedImageIndex(0);
+        }}
+      />
+      
       {/* Toast Notification */}
       {showToast && (
         <motion.div 
