@@ -32,20 +32,29 @@ export default async function handler(req, res) {
       }
     }
 
-    const apiKey = process.env.OPENAI_API_KEY;
-    if (!apiKey) {
+    const openaiKey = process.env.OPENAI_API_KEY;
+    const openrouterKey = process.env.OPENROUTER_API_KEY;
+
+    // Prefer OpenRouter if configured, because it can be cheaper/free-tier depending on the account.
+    // Fallback to OpenAI.
+    const provider = openrouterKey ? "openrouter" : openaiKey ? "openai" : null;
+
+    if (!provider) {
       res.statusCode = 500;
       res.setHeader("Content-Type", "application/json");
       res.end(
         JSON.stringify({
           error:
-            "OPENAI_API_KEY is not configured on the server. Add it in Vercel Environment Variables.",
+            "No AI provider key configured. Set OPENROUTER_API_KEY (recommended) or OPENAI_API_KEY in Vercel Environment Variables.",
         })
       );
       return;
     }
 
-    const model = process.env.OPENAI_MODEL || "gpt-4o-mini";
+    const model =
+      provider === "openrouter"
+        ? process.env.OPENROUTER_MODEL || "openrouter/hunter-alpha"
+        : process.env.OPENAI_MODEL || "gpt-4o-mini";
 
     const systemByAction = {
       shop_assistant:
@@ -101,12 +110,26 @@ export default async function handler(req, res) {
       },
     ];
 
-    const openAIResp = await fetch("https://api.openai.com/v1/chat/completions", {
+    const url =
+      provider === "openrouter"
+        ? "https://openrouter.ai/api/v1/chat/completions"
+        : "https://api.openai.com/v1/chat/completions";
+
+    const headers = {
+      Authorization: `Bearer ${provider === "openrouter" ? openrouterKey : openaiKey}`,
+      "Content-Type": "application/json",
+      // OpenRouter recommended headers
+      ...(provider === "openrouter"
+        ? {
+            "HTTP-Referer": req.headers?.origin || "https://drs-esports-react-ready.vercel.app",
+            "X-Title": "DRS Esports",
+          }
+        : {}),
+    };
+
+    const openAIResp = await fetch(url, {
       method: "POST",
-      headers: {
-        Authorization: `Bearer ${apiKey}`,
-        "Content-Type": "application/json",
-      },
+      headers,
       body: JSON.stringify({
         model,
         temperature: action === "admin_command" ? 0.1 : 0.6,
