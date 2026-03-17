@@ -26,25 +26,7 @@ function LiveMatchTicker() {
       } catch (error) {
         console.error('Live ticker error:', error);
         setStatus('error');
-        // Fallback demo data
-        setMatches([
-          {
-            id: 'demo1',
-            team1: 'DRS Esports',
-            team2: 'Rivals',
-            time: 'Live Now',
-            tournament: 'UAE 2025 Qualifier',
-            type: 'live'
-          },
-          {
-            id: 'demo2',
-            team1: 'DRS Esports',
-            team2: 'Elite Squad',
-            time: '2h 15m',
-            tournament: 'PMNC India',
-            type: 'upcoming'
-          }
-        ]);
+        setMatches([]);
       }
     };
 

@@ -5,6 +5,7 @@ import Team from "../components/Team";
 import Tree from "../components/Tree";
 import Tournaments from "../components/Tournaments";
 import LiveMatchTicker from "../components/LiveMatchTicker";
+import TeamFloaters3D from "../components/TeamFloaters3D";
 import Footer from "../components/Footer";
 
 function Home() {
@@ -13,6 +14,7 @@ function Home() {
       <Navbar />
       <Hero />
       <LiveMatchTicker />
+      <TeamFloaters3D />
       <Stats />
       <Team />
       <Tree />

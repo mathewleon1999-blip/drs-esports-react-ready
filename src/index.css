@@ -9422,6 +9422,67 @@ body.dark-mode .ai-panel {
 }
 
 /* ========================================
+   3D TEAM FLOATERS - HOME PAGE BOTTOM
+   ======================================== */
+
+.team-floaters-3d {
+  position: relative;
+  height: 400px;
+  width: 100%;
+  overflow: hidden;
+  border-radius: 24px;
+  margin: 40px auto;
+  max-width: 1400px;
+}
+
+.team-floaters-3d canvas {
+  border-radius: 24px;
+}
+
+.team-floaters-3d.bottom-fixed {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: calc(100vw - 40px);
+  max-width: 800px;
+  height: 300px;
+  z-index: 100;
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-shadow);
+}
+
+.team-floaters-3d.bottom-fixed::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 24px;
+  background: linear-gradient(135deg, rgba(0, 212, 255, 0.1) 0%, rgba(255, 0, 110, 0.1) 100%);
+  backdrop-filter: var(--glass-blur);
+  z-index: -1;
+}
+
+@media (max-width: 768px) {
+  .team-floaters-3d {
+    height: 350px;
+    margin: 30px -20px;
+    border-radius: 16px;
+  }
+  
+  .team-floaters-3d.bottom-fixed {
+    width: calc(100vw - 20px);
+    height: 250px;
+    bottom: 10px;
+  }
+}
+
+/* 3D Canvas Focus */
+.team-floaters-3d:focus-within {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+/* ========================================
    END OF UNIFIED DESIGN SYSTEM
    ======================================== */
 
