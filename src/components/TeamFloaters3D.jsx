@@ -6,77 +6,102 @@ import { EffectComposer, Bloom } from '@react-three/postprocessing';
 import { Suspense } from 'react';
 
 function PlayerModel({ position, name, role, color = '#00d4ff' }) {
-  // Simplified player model - capsule for body + sphere for head
+  const playerImages = {
+    'Zen': '/DRS ESPORTS/DRS ZEN (1).jpg',
+    'Shakkir': '/DRS ESPORTS/SHAKKIR).jpg',
+    'Akos': '/DRS ESPORTS/AKOS (3).png',
+    'Noisy': '/DRS ESPORTS/noisy n (3).png',
+    'Mechanic': '/DRS ESPORTS/DRS MECHANIC.jpeg'
+  };
+
+  const playerTexture = useTexture(playerImages[name] || '/DRS ESPORTS/Dream.jpg');
+  
   return (
     <Float floatIntensity={0.8} rotationIntensity={0.3}>
-      <mesh position={position}>
-        {/* Body */}
-        <capsuleGeometry args={[0.15, 0.6]} />
-        <meshStandardMaterial 
-          color={color} 
-          metalness={0.3} 
-          roughness={0.2}
-          emissive="#001122"
-        />
-        
-        {/* Head */}
-        <mesh position={[0, 0.45, 0]}>
-          <sphereGeometry args={[0.12]} />
+      <group position={position}>
+        {/* Player Image Plane */}
+        <mesh rotation={[-Math.PI / 4, 0, 0]}>
+          <planeGeometry args={[0.4, 0.6]} />
           <meshStandardMaterial 
-            color="#f0f8ff" 
-            metalness={0.1}
-            roughness={0.8}
+            map={playerTexture}
+            transparent
+          />
+        </mesh>
+        
+        {/* Hologram Ring */}
+        <mesh scale={0.8}>
+          <torusGeometry args={[0.25, 0.02, 8, 32]} />
+          <meshStandardMaterial 
+            color={color}
+            emissive={`${color}33`}
+            transparent 
+            opacity={0.7}
           />
         </mesh>
 
-        {/* Name tag */}
-        <Billboard position={[0, 0.8, 0]}>
+        {/* Name & Role Billboard */}
+        <Billboard position={[0, 0.4, 0]}>
           <Text
-            fontSize={0.08}
+            fontSize={0.06}
             anchorX="center"
             anchorY="middle"
-            maxWidth={1.5}
-            letterSpacing={0.02}
+            maxWidth={1.2}
           >
             {name}
-            <meshStandardMaterial color="white" />
+            <meshStandardMaterial color={color} emissive="#ffffff22" />
           </Text>
           <Text
             position={[0, -0.08, 0]}
-            fontSize={0.05}
+            fontSize={0.04}
             anchorX="center"
             anchorY="middle"
           >
             {role}
-            <meshStandardMaterial color="#00d4ff" emissive="#001133" />
+            <meshStandardMaterial color="#888888" />
           </Text>
         </Billboard>
-      </mesh>
+      </group>
     </Float>
   );
 }
 
 function TeamLogo() {
+  const logoTexture = useTexture('/DRSLOGO.jpg');
+  
   return (
-    <mesh position={[0, 0, 0]} scale={0.8}>
-      <torusKnotGeometry args={[0.5, 0.15, 128, 32]} />
-      <meshStandardMaterial 
-        color="#00d4ff"
-        metalness={0.8}
-        roughness={0.2}
-        emissive="#001144"
-      />
+    <group position={[0, 0, 0]} scale={0.6}>
+      {/* 3D Logo Plane */}
+      <mesh>
+        <planeGeometry args={[2, 1.5]} />
+        <meshStandardMaterial 
+          map={logoTexture}
+          transparent
+          alphaTest={0.1}
+        />
+      </mesh>
+      
+      {/* Logo Glow Ring */}
+      <mesh rotation={[Math.PI / 2, 0, 0]}>
+        <torusGeometry args={[1.2, 0.05, 8, 64]} />
+        <meshStandardMaterial 
+          color="#00d4ff" 
+          emissive="#001144"
+          transparent 
+          opacity={0.8}
+        />
+      </mesh>
+      
+      {/* DRS Text */}
       <Text
-        position={[0, 0, 0.6]}
-        fontSize={0.3}
+        position={[0, 0, 0.8]}
+        fontSize={0.25}
         anchorX="center"
         anchorY="middle"
-        rotation={[0, 0, 0]}
       >
-        DRS
-        <meshStandardMaterial color="white" emissive="#ffffff11" />
+        DRS ESPORTS
+        <meshStandardMaterial color="#00d4ff" emissive="#004488" />
       </Text>
-    </mesh>
+    </group>
   );
 }
 
@@ -86,8 +111,16 @@ export default function TeamFloaters3D({ bottomFixed = false }) {
     { name: 'Shakkir', role: 'Fragger', color: '#ff006e', position: [0, 0, 0] },
     { name: 'Akos', role: 'Support', color: '#ffd700', position: [0, 0, 0] },
     { name: 'Noisy', role: 'Rifler', color: '#4ade80', position: [0, 0, 0] },
-    { name: 'Mechanic', role: 'Entry', color: '#8b5cf6', position: [0, 0, 0] },
+    { name: 'Dream', role: 'Entry', color: '#8b5cf6', position: [0, 0, 0] },
   ];
+
+  const playerImages = {
+    'Zen': '/DRS ESPORTS/DRS ZEN (1).jpg',
+    'Shakkir': '/DRS ESPORTS/SHAKKIR).jpg',
+    'Akos': '/DRS ESPORTS/AKOS (3).png',
+    'Noisy': '/DRS ESPORTS/noisy n (3).png',
+    'Dream': '/DRS ESPORTS/Dream.jpg'
+  };
 
   return (
     <div className={`team-floaters-3d ${bottomFixed ? 'bottom-fixed' : ''}`}>
