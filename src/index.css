@@ -4349,8 +4349,6 @@ footer {
   margin-bottom: 20px;
 }
 
-/*
-
 .filters-bar .search-box {
   flex: 1;
   min-width: 250px;
@@ -13282,7 +13280,3 @@ select:focus {
   flex-direction: column;
   }
   }
-  
-  /*
-  (blank)
-  */
