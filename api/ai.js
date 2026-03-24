@@ -7,9 +7,11 @@
 //  - POST /api/ai?action=news_draft
 //
 // Env vars required in Vercel (NOT VITE_*)
-//  - OPENAI_API_KEY
+//  - OPENAI_API_KEY (optional if using OpenRouter)
+//  - OPENROUTER_API_KEY (optional)
 // Optional:
 //  - OPENAI_MODEL (default: gpt-4o-mini)
+//  - OPENROUTER_MODEL
 
 export default async function handler(req, res) {
   try {
@@ -35,8 +37,7 @@ export default async function handler(req, res) {
     const openaiKey = process.env.OPENAI_API_KEY;
     const openrouterKey = process.env.OPENROUTER_API_KEY;
 
-    // Prefer OpenRouter if configured, because it can be cheaper/free-tier depending on the account.
-    // Fallback to OpenAI.
+    // Prefer OpenRouter if configured.
     const provider = openrouterKey ? "openrouter" : openaiKey ? "openai" : null;
 
     if (!provider) {
@@ -72,7 +73,6 @@ export default async function handler(req, res) {
       return;
     }
 
-    // Developer instructions / schemas for structured outputs
     const developerByAction = {
       shop_assistant:
         "You will be given: message, catalog (products), optional wishlist/cart, and optional active filters. Respond in JSON with keys: reply (string, markdown allowed), suggestions (array of {id,name,price,reason} up to 5). If you can't find matching products, suggestions should be empty and reply should suggest how to adjust.",
@@ -90,7 +90,6 @@ export default async function handler(req, res) {
       return;
     }
 
-    // Build context payload
     const context = {
       ...(body?.catalog ? { catalog: body.catalog } : {}),
       ...(body?.wishlist ? { wishlist: body.wishlist } : {}),
@@ -118,10 +117,10 @@ export default async function handler(req, res) {
     const headers = {
       Authorization: `Bearer ${provider === "openrouter" ? openrouterKey : openaiKey}`,
       "Content-Type": "application/json",
-      // OpenRouter recommended headers
       ...(provider === "openrouter"
         ? {
-            "HTTP-Referer": req.headers?.origin || "https://drs-esports-react-ready.vercel.app",
+            "HTTP-Referer":
+              req.headers?.origin || "https://drs-esports-react-ready.vercel.app",
             "X-Title": "DRS Esports",
           }
         : {}),
@@ -139,7 +138,8 @@ export default async function handler(req, res) {
 
     if (!openAIResp.ok) {
       const txt = await openAIResp.text();
-      res.statusCode = 500;
+      // Preserve upstream status when possible to avoid masking 4xx as 500.
+      res.statusCode = openAIResp.status || 500;
       res.setHeader("Content-Type", "application/json");
       res.end(
         JSON.stringify({
@@ -153,7 +153,6 @@ export default async function handler(req, res) {
     const data = await openAIResp.json();
     const content = data?.choices?.[0]?.message?.content || "";
 
-    // Try parse JSON; if not JSON, wrap as reply.
     let parsed;
     try {
       parsed = JSON.parse(content);
